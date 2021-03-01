@@ -5,7 +5,7 @@
 [Ashley Voglewede](https://github.com/avwede)  
 [Cameron Berezuk](https://github.com/CameronBerezuk)  
 [Daniel Vail](https://github.com/d-vail)  
-[David Florez](https://github.com/DMFLo)
+[David Florez](https://github.com/DMFLo)  
 [Gabe Gomez](https://github.com/ggomez31)  
 [Harrison Luu](https://github.com/HrrsnL)  
 [Prathik Ramesh](https://github.com/prathik2001)   
