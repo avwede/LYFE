@@ -9,3 +9,9 @@
 * [Gabe Gomez](https://github.com/ggomez31)  
 * [Harrison Luu](https://github.com/HrrsnL)  
 * [Prathik Ramesh](https://github.com/prathik2001)   
+
+## Description
+
+## Features
+
+## Technologies Used
