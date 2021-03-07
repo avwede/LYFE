@@ -1,4 +1,5 @@
 # LYFE
+An all in one life manager. 
 
 ## Meet the Team! 
 ##### Processes for Object Oriented Software Development COP 4331 - Group 11   
