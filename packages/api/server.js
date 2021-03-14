@@ -11,11 +11,11 @@ server.get('/api', (req, res) => {
 });
 
 // In production routes outside of the api are redirected to client.
-if (NODE_ENV != 'production') {
+if (NODE_ENV === 'production') {
   server.use(
     express.static(path.resolve(__dirname, '../client/build'))
   );
-  
+
   server.get('*', (req, res) => {
     res.sendFile(
       path.resolve(__dirname, '../client/build', 'index.html')
