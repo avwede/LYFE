@@ -1,11 +1,15 @@
 {
   "name": "lyfe",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "LYFE",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "api": "cd ./packages/api && npm start",
+    "api-install": "cd ./packages/api && npm install",
+    "client": "cd ./packages/client && npm start",
+    "client-build": "cd ./packages/client && npm install && npm run build",
+    "client-install": "cd ./packages/client && npm install",
+    "heroku-postbuild": "npm run api-install && npm run client-build",
+    "install": "npm run api-install && npm run client-install"
   },
-  "author": "",
   "license": "ISC"
 }

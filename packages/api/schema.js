@@ -26,7 +26,7 @@ const lyfeSchema = new Schema({
         {
             className: String,
             schedule: [{day: String}]
-        }]
+        }],
     reminders:[
         {
             category: String,
