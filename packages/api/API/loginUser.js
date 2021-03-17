@@ -2,9 +2,7 @@
 const app = require ('express').Router();
 const MongoClient = require ('mongodb').MongoClient;
 const url = 'mongodb+srv://lyfe:lyfeapp@lyfecluster.arnlc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
-
-const client = new MongoClient(url);
-client.connect();
+MongoClient.connect(url, { useUnifiedTopology: true });
 
 app.post('/loginUser', async (req, res, next) =>
 {
