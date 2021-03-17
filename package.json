@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {
   "name": "lyfe",
   "version": "1.0.0",
@@ -17,20 +16,3 @@
     "dotenv": "^8.2.0"
   }
 }
-=======
-{
-  "name": "lyfe",
-  "version": "1.0.0",
-  "description": "LYFE",
-  "scripts": {
-    "api": "cd ./packages/api && npm start",
-    "api-install": "cd ./packages/api && npm install",
-    "client": "cd ./packages/client && npm start",
-    "client-build": "cd ./packages/client && npm install && npm run build",
-    "client-install": "cd ./packages/client && npm install",
-    "heroku-postbuild": "npm run api-install && npm run client-build",
-    "install": "npm run api-install && npm run client-install"
-  },
-  "license": "ISC"
-}
->>>>>>> 19caf17d05a3f6ba263c4f1596b6f8d4321cb2ec
