@@ -1,4 +1,6 @@
 // loginUser
+const app = require ('express').Router();
+const router = express.Router();
 
 const MongoClient = require ('mongodb').MongoClient;
 const url = 'mongodb+srv://lyfe:lyfeapp@lyfecluster.arnlc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
@@ -6,7 +8,7 @@ const url = 'mongodb+srv://lyfe:lyfeapp@lyfecluster.arnlc.mongodb.net/myFirstDat
 const client = new MongoClient(url);
 client.connect();
 
-app.post('/api/loginUser', async (req, res, next)) =>
+app.post('/loginUser', async (req, res, next)) =>
 {
     // Input: login, password
     // Return: id, firstName, lastName, error
@@ -33,4 +35,6 @@ app.post('/api/loginUser', async (req, res, next)) =>
     var ret = {id: id, firstName: fn, lastName: ln, error: ''};
     res.status(200).json(ret);
 
-}
+});
+
+module.exports = app;
