@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const emergencyContactSchema = require('./EmergencyContact');
 const reminderSchema = require('./Reminder');
-const { Schema, model } = mongoose;
+const saltRounds = 12;
 
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
     required: [true, 'First name is required.'],
@@ -44,4 +45,13 @@ const userSchema = new Schema({
   courses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course'}],
 });
 
-module.exports = model('User', userSchema);
+// Hash user password before saving to database.
+userSchema.pre('save', function hashPassword(next) {
+  bcrypt.hash(this.password, saltRounds, (err, hash) => {
+    if (err) next(err);
+    this.password = hash;
+    next();
+  });
+});
+
+module.exports = mongoose.model('User', userSchema);
