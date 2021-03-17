@@ -2,10 +2,11 @@ require('dotenv').config();
 
 const express = require('express');
 const path = require('path');
-const router = require('/API/loginUser');
-
+const router = require('./API/loginUser');
 const server = express();
 const { PORT, NODE_ENV } = process.env;
+
+server.use('/API', router);
 
 server.get('/api', (req, res) => {
   res.set('Content-Type', 'application/json');
