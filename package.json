@@ -11,5 +11,8 @@
     "heroku-postbuild": "npm run api-install && npm run client-build",
     "install": "npm run api-install && npm run client-install"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0"
+  }
 }
