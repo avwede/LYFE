@@ -1,10 +1,13 @@
 require('dotenv').config();
 
 const path = require('path');
+const { userRouter } = require('./users');
 const { NODE_ENV } = process.env;
 
 module.exports = {
   routes: (server) => {
+    server.use('/api/users', userRouter);
+
     server.get('/api', (req, res) => {
       res.set('Content-Type', 'application/json');
       res.send('{"message": "LYFE API"}');
