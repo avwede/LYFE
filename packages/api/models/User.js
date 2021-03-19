@@ -55,8 +55,8 @@ userSchema.pre('save', function hashPassword(next) {
 });
 
 // Validate user password.
-userSchema.methods.isValidPassword = function (password, cb) {
-  return bcrypt.compare(password, this.password, cb);
+userSchema.methods.isValidPassword = function (password) {
+  return bcrypt.compare(password, this.password);
 };
 
 module.exports = mongoose.model('User', userSchema);
