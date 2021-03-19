@@ -1,15 +1,14 @@
 const mongoose = require('mongoose');
 const reviewSchema = require('./Review');
-const { Schema, model } = mongoose;
 
-const professorSchema = new Schema({
+const professorSchema = new mongoose.Schema({
   firstName: {
     type: String,
-    required: [true, 'First name is required.'],
+    required: [true, 'First name is required for Professor.'],
   },
   lastName: {
     type: String,
-    required: [true, 'Last name is required.'],
+    required: [true, 'Last name is required for Professor.'],
   },
   department: String,
   email: {
@@ -20,7 +19,7 @@ const professorSchema = new Schema({
         /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/.test(
           val
         ),
-      message: '{VALUE} is not a valid email address',
+      message: '{VALUE} is not a valid email address.',
     },
   },
   office: locationSchema,
@@ -30,4 +29,4 @@ const professorSchema = new Schema({
   reviews: [reviewSchema],
 });
 
-module.exports = model('Professor', professorSchema);
+module.exports = mongoose.model('Professor', professorSchema);

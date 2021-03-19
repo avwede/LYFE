@@ -1,11 +1,10 @@
 const mongoose = require('mongoose');
-const locationSchema = require('./Location');
-const { Schema, model } = mongoose;
+const locationSchema = require('./Location.embeddedModel');
 
-const reminderSchema = new Schema({
+const reminderSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Name is required.'],
+    required: [true, 'Name is required for Reminder.'],
   },
   description: String,
   type: {
@@ -18,4 +17,4 @@ const reminderSchema = new Schema({
   repeat: Boolean,
 });
 
-module.exports = model('Reminder', reminderSchema);
+module.exports = mongoose.model('Reminder', reminderSchema);
