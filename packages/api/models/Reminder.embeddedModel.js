@@ -17,4 +17,4 @@ const reminderSchema = new mongoose.Schema({
   repeat: Boolean,
 });
 
-module.exports = mongoose.model('Reminder', reminderSchema);
+module.exports = reminderSchema;
