@@ -2,7 +2,6 @@
  * @todo PUT '/' - update user, return updated user data
  * @todo DELETE '/' - delete user
  * @todo authenticate update and delete routes
- * @todo try swagger-jsdocs
  */
 
 const router = require('express').Router();
@@ -10,7 +9,26 @@ const User = require('../models/User');
 const { sendResponse, sendError } = require('../util/responses');
 const { generateJWT } = require('../middleware/routerMiddleware');
 
-
+/**
+ * @openapi
+ * 
+ * paths:
+ *  /api/users/register:
+ *    post:
+ *      tags: [users]
+ *      description: Creates a new user and returns a signed JSON Web Token.
+ *      operationId: createUser
+ *      requestBody:
+ *        description: User to create.
+ *        content: 
+ *          application/json:
+ *            schema: 
+ *              $ref: '#/components/schemas/User'
+ *        required: true
+ *      responses:
+ *        201:
+ *          description: New user created.
+ */
 router.post('/register', (req, res) => {
   const newUser = req.body;
 
