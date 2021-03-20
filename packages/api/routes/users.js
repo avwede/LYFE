@@ -2,7 +2,7 @@
  * @todo PUT '/' - update user, return updated user data
  * @todo DELETE '/' - delete user
  * @todo authenticate update and delete routes
- * @todo stry swagger-jsdocs
+ * @todo try swagger-jsdocs
  */
 
 const router = require('express').Router();
