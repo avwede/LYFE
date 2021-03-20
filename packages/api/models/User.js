@@ -4,6 +4,55 @@ const emergencyContactSchema = require('./EmergencyContact.embeddedModel');
 const reminderSchema = require('./Reminder.embeddedModel');
 const saltRounds = 12;
 
+/**
+ * @openapi
+ * 
+ * components:
+ *  schemas:
+ *    User:
+ *      title: User
+ *      type: object
+ *      required:
+ *        - firstName
+ *        - lastName
+ *        - email
+ *        - password
+ *      properties:
+ *        firstName:
+ *          type: string
+ *          example: John
+ *        lastName:
+ *          type: string
+ *          example: Smith
+ *        email:
+ *          type: string
+ *          format: email
+ *        password:
+ *          type: string
+ *          format: password
+ *          example: Password123#
+ *        dateOfBirth:
+ *          type: string
+ *          format: date
+ *        allergies:
+ *          type: array
+ *          items:
+ *            type: string
+ *          example: ['Peanuts']
+ *        emergencyContact:
+ *          type: array
+ *          items:
+ *            $ref: '#/components/schemas/EmergencyContact'
+ *        reminders:
+ *          type: array
+ *          items:
+ *            $ref: '#/components/schemas/Reminder'
+ *        courses:
+ *          type: array
+ *          items:
+ *            type: objectId
+ *          example: ['5b1ed13e8cea93c6ba72b1da', '5b1ed13e8cea93c6ba72b1db']
+ */
 const userSchema = new mongoose.Schema({
   firstName: {
     type: String,

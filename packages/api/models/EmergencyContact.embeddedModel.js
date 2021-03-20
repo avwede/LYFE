@@ -1,5 +1,36 @@
 const mongoose = require('mongoose');
 
+/**
+ * @openapi
+ * 
+ * components:
+ *  schemas:
+ *    EmergencyContact:
+ *      title: Emergency Contact
+ *      type: object
+ *      required:
+ *        - firstName
+ *        - lastName
+ *        - phoneNumber
+ *        - email
+ *        - relation
+ *      properties:
+ *        firstName:
+ *          type: string
+ *          example: John
+ *        lastName:
+ *          type: string
+ *          example: Smith
+ *        phoneNumber:
+ *          type: string
+ *          example: 123-123-7878
+ *        email:
+ *          type: string
+ *          format: email
+ *        relation:
+ *          type: string
+ *          example: Dad
+ */
 const emergencyContactSchema = new mongoose.Schema({
   firstName: {
     type: String,

@@ -1,5 +1,23 @@
 const mongoose = require('mongoose');
 
+/**
+ * @openapi
+ * 
+ * components:
+ *  schemas:
+ *    Location:
+ *      title: Location
+ *      type: object
+ *      required:
+ *        - type
+ *      properties:
+ *        type:
+ *          type: string
+ *          enum: [Address, Link]
+ *        location:
+ *          type: string
+ *          example: Classroom Building 2 Room 101
+ */
 const locationSchema = new mongoose.Schema({
   type: {
     type: String,

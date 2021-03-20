@@ -1,6 +1,36 @@
 const mongoose = require('mongoose');
 const locationSchema = require('./Location.embeddedModel');
 
+/**
+ * @openapi
+ * 
+ * components:
+ *  schemas:
+ *    Reminder:
+ *      title: Reminder
+ *      type: object
+ *      required:
+ *        - name
+ *      properties:
+ *        name:
+ *          type: string
+ *          example: Doctor's Appointment
+ *        description:
+ *          type: string
+ *        type:
+ *          type: string
+ *          format: objectId
+ *          example: 5b1ed13e8cea93c6ba72b1da
+ *        location:
+ *          $ref: '#/components/schemas/Location'
+ *        datetime:
+ *          type: array
+ *          items:
+ *            type: string
+ *            format: date
+ *        repeat:
+ *          type: boolean
+ */
 const reminderSchema = new mongoose.Schema({
   name: {
     type: String,
