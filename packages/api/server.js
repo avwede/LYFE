@@ -1,36 +1,34 @@
 require('dotenv').config();
 
-const express = require('express');
-const path = require('path');
-const router = require('/API/loginUser');
+const mongoose = require('mongoose');
+const server = require('express')();
+const setupMiddleware = require('./middleware/serverMiddleware').serverMiddleware;
+const setupRoutes = require('./routes/routes').routes;
+const setupDocs = require('./docs/swagger').swagger;
+const { MONGODB_URI, PORT } = process.env;
 
-const server = express();
-const { PORT, NODE_ENV } = process.env;
+// Apply server level middleware.
+setupMiddleware(server);
 
-server.get('/api', (req, res) => {
-  res.set('Content-Type', 'application/json');
-  res.send('{"message": "LYFE API"}');
-});
+// Setup api documentation.
+setupDocs(server);
 
-// In production routes outside of the api are redirected to client.
-if (NODE_ENV === 'production') {
-  server.use(
-    express.static(path.resolve(__dirname, '../client/build'))
-  );
+// Setup api routes.
+setupRoutes(server);
 
-  server.get('*', (req, res) => {
-    res.sendFile(
-      path.resolve(__dirname, '../client/build', 'index.html')
-    );
-    console.log(path.resolve(__dirname, '../client/build', 'index.html'));
+// Setup database connection.
+mongoose
+  .connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+  })
+  .then(() => {
+    console.log(`\n*** Connected to database ${MONGODB_URI} ***\n`);
+    server.listen(PORT, () => {
+      console.log(`\n*** Server listening on port ${PORT} ***\n`);
+    });
+  })
+  .catch((err) => {
+    console.log('\n*** Error connecting to database ***\n', err);
   });
-} else {
-  server.get('*', (req, res) => {
-    res.set('Content-Type', 'application/json');
-    res.send('{"message": "In production this action will result in a redirect to the client."}');
-  });
-}
-
-server.listen(PORT, () => {
-  console.log(`\n*** Server listening on port ${PORT} ***\n`);
-});
