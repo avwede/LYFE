@@ -46,7 +46,6 @@ const emergencyContactSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    unique: true,
     validate: {
       validator: (val) =>
         /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/.test(
