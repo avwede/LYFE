@@ -11,11 +11,10 @@ const { MONGODB_URI, PORT } = process.env;
 setupMiddleware(server);
 
 // Setup api documentation.
-setupDocs(server);
+// setupDocs(server);
 
 // Setup api routes.
 setupRoutes(server);
-
 
 // Setup database connection.
 mongoose
