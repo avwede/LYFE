@@ -33,7 +33,7 @@ router.post('/register', (req, res) => {
   const newUser = req.body;
 
   User.create(newUser)
-    .then(({ _id, firstName, lastName }) => {
+    .then(({ _id }) => {
       const token = generateJWT({ id: _id });
       sendResponse(res, 201, { token });
     })
