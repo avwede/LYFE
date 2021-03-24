@@ -49,5 +49,5 @@ const { generateJWT } = require('../middleware/routerMiddleware');
 
 
 module.exports = {
-  userRouter: router,
+  coursesRouter: router,
 }
