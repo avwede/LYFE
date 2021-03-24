@@ -1,32 +1,60 @@
+const { urlencoded } = require('express');
 const mongoose = require('mongoose');
 const locationSchema = require('./Location');
 
+/**
+ * @openapi
+ * 
+ * components:
+ *  schemas:
+ *    Courses:
+ *      title: Courses
+ *      type: array
+ *      required:
+ *        - courseCode
+ *        - professor
+ *        - link
+ *        - location
+ *        - day
+ *        - start
+ *        - end
+ *      properties: 
+ *        courseCode:
+ *          type: string
+ *          example: COP 4331
+ *        professor:
+ *          type: string
+ *          example: Professor Szumlanski
+ *        link:
+ *          type: URL
+ *          example: https://ucf.zoom.us/j/91549966557
+ *        location:
+ *          type: String
+ *          example: HEC 110
+ *        day:
+ *          type: [String]
+ *          example: [Monday, Wednesday, Friday]
+ *        start:
+ *          type: Date
+ *          example: 11:00:00
+ *        end:
+ *          type: Date
+ *          example: 12:15:00
+ */
+
 const courseSchema = new mongoose.Schema({
-  subject: {
-    type: String,
-    required: [true, 'Subject is required for Course.'],
-  },
-  courseNumber: {
+  courseCode: {
     type: Number,
-    required: [true, 'Course number is required for Course.'],
+    required: [true, 'Course code is required for Course.'],
   },
-  classNumber: {
-    type: Number,
-    required: [true, 'Class number is required for Course.'],
-  },
-  section: {
-    type: String,
-    required: [true, 'Section is required for Course.'],
-  },
-  name: {
-    type: String,
-    required: [true, 'Name is required for Course.'],
-  },
-  description: String,
   professor: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'ReminderType',
     required: [true, 'Professor is required for Course.'],
+  },
+  link: {
+    type: URL,
+    required: [true, 'Zoom link is required for Course.'],
   },
   location: locationSchema,
   day: {
