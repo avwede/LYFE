@@ -38,8 +38,18 @@ const { generateJWT } = require('../middleware/routerMiddleware');
  *        description: Login user.
  *        content: 
  *          application/json:
- *            schema: 
- *              $ref: '#/components/schemas/User'
+ *           schema: 
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *               password:
+ *                 type: string 
+ *                 example: Password123#
  *        required: true
  *      responses:
  *        201:
