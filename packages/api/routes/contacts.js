@@ -1,6 +1,6 @@
 const router = require('express').Router();
-//const Contact = require('./EmergencyContact.embeddedModel');
-const Contact = require('../models/User');
+const emergencyContactSchema = require('../models/EmergencyContact.embeddedModel');
+//const Contact = require('../models/User');
 const { sendResponse, sendError } = require('../util/responses');
 const { generateJWT } = require('../middleware/routerMiddleware');
 // add contact, edit contact, delete contact
@@ -9,7 +9,7 @@ const { generateJWT } = require('../middleware/routerMiddleware');
  * @openapi
  * 
  * paths:
- *  /api/users/add:
+ *  /api/contacts/add:
  *    post:
  *      tags: [users]
  *      description: Creates a new emergency contact and returns a signed JSON Web Token.
@@ -28,7 +28,7 @@ const { generateJWT } = require('../middleware/routerMiddleware');
 
  router.post('/add', (req, res) => {
      const newContact = req.body;
-    Contact.updateOne({"$push": { "emergenyContacts": newContact}})
+     emergencyContactSchema.updateOne({"$push": { "emergenyContacts": newContact}})
     .catch((err) => {
         sendError(res, err, 'The contact could not be created.');
       });
@@ -36,7 +36,7 @@ const { generateJWT } = require('../middleware/routerMiddleware');
 
   router.post('/edit', (req, res) => {
     const newContact = req.body;
-   Contact.updateOne({"$set": { "emergenyContacts": newContact}})
+    emergencyContactSchema.updateOne({"$set": { "emergenyContacts": newContact}})
    .catch((err) => {
        sendError(res, err, 'The contact could not be created.');
      });
@@ -44,7 +44,7 @@ const { generateJWT } = require('../middleware/routerMiddleware');
 
  router.post('/delete', (req, res) => {
     const newContact = req.body;
-   Contact.updateOne({"$pull": { "emergenyContacts": newContact}})
+    emergencyContactSchema.updateOne({"$pull": { "emergenyContacts": newContact}})
    .catch((err) => {
        sendError(res, err, 'The contact could not be created.');
      });
