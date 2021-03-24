@@ -29,22 +29,32 @@ const { generateJWT } = require('../middleware/routerMiddleware');
  router.post('/addCourse', (req, res) => {
     const newCourse = req.body;
   
-    Course.create(newCourse)
-      .then(({ _id }) => {
-        const token = generateJWT({ id: _id });
-        sendResponse(res, 201, { token });
-      })
-      .catch((err) => {
-        sendError(res, err, 'The course could not be created.');
+    Contact.updateOne({"$push": { "courses": newCourse}})
+    .catch((err) => {
+        sendError(res, err, 'The course could not be added.');
       });
   });
 
   router.post('/editCourse', (req, res) => {
-
+    Course.findByIdAndUpdate({ _id }, req, function(err, result){
+        if (err){
+          sendError(res, '401', 'Could not edit course.');
+        }
+        else {
+          sendResponse(res, 200, result);
+        }
+      })
   });
   
   router.post('/deleteCourse', (req, res) => {
-
+    Course.findByIdAndDelete({ _id }, req, function(err, result){
+      if (err){
+        sendError(res, '401', 'Could not delete course.');
+      }
+      else {
+        sendResponse(res, 200, result);
+      }
+    })
   });
 
 

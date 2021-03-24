@@ -8,7 +8,7 @@ module.exports = {
   routes: (server) => {
     server.use('/api/users', userRouter);
     //server.use('/api/contacts', contactsRouter);
-    server.use('/api/courses', coursesRouter);
+    //server.use('/api/courses', coursesRouter);
 
     server.get('/api', (req, res) => {
       res.set('Content-Type', 'application/json');
