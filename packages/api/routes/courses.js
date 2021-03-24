@@ -19,7 +19,7 @@ const { generateJWT } = require('../middleware/routerMiddleware');
  *        content: 
  *          application/json:
  *            schema: 
- *              $ref: '#/components/schemas/User'
+ *              $ref: '#/components/schemas/Courses'
  *        required: true
  *      responses:
  *        201:
