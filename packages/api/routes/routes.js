@@ -3,13 +3,14 @@ require('dotenv').config();
 const path = require('path');
 const { userRouter } = require('./users');
 const { coursesRouter } = require('./courses');
+const { contactsRouter } = require('./contacts');
 const { NODE_ENV } = process.env;
 
 module.exports = {
   routes: (server) => {
     server.use('/api/users', userRouter);
-    //server.use('/api/contacts', contactsRouter);
     server.use('/api/courses', coursesRouter);
+    server.use('/api/contacts', contactsRouter);
 
     server.get('/api', (req, res) => {
       res.set('Content-Type', 'application/json');
