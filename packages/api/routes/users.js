@@ -28,6 +28,32 @@ const { generateJWT } = require('../middleware/routerMiddleware');
  *      responses:
  *        201:
  *          description: New user created.
+ * 
+ *  /api/users/login:
+ *    post:
+ *      tags: [users]
+ *      description: Logs in to the user's account.
+ *      operationId: loginUser
+ *      requestBody:
+ *        description: Login user.
+ *        content: 
+ *          application/json:
+ *           schema: 
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: user@example.com
+ *               password:
+ *                 type: string 
+ *                 example: Password123#
+ *        required: true
+ *      responses:
+ *        201:
+ *          description: Successfully logged in.
  */
 router.post('/register', (req, res) => {
   const newUser = req.body;
