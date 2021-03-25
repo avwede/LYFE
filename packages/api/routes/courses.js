@@ -67,22 +67,30 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
  *          description: Course edited.
  */
 
- router.post('/editCourse', authenticateJWT, (req, res) => {
+ router.post('/editCourse/:id', authenticateJWT, (req, res) => {
     const newCourse = req.body;
     const {id} = req.tokenPayload;
+    const coursetId = req.params.id;
 
-    courseUser.findByIdAndUpdate(id, {"$set": { "courses": editCourse}}, {new: true}, function(err, result){
-    
-    if (err)
-    {
-      res.send(err)
-    }
-    else
-    {
-      res.send(result)
-    }
-    
-    })
+    courseUser.findById(id, function(err, result){
+      if(err)
+      {
+        res.send(err)
+      }
+      else
+      {
+        result.findByIdAndUpdate(courseId, {"$set": { "courses": editCourse}}, {new: true}, function(err, result){
+          if (err)
+          {
+            res.send(err)
+          }
+          else
+          {
+            res.send(result)
+          }
+        })
+      }
+  })
 });
 
 /**
