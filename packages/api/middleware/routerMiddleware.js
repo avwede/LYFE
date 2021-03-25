@@ -28,7 +28,11 @@ const authenticateJWT = (req, res, next) => {
 
   jwt.verify(token, JWT_SECRET, (err, decoded) => {
     if (err) {
-      sendError(res, '401', 'Access denied. Invalid token.');
+      sendError(
+        res,
+        '401',
+        'Access denied. This request requires user authentication.'
+      );
     } else {
       req.tokenPayload = decoded;
       next();
