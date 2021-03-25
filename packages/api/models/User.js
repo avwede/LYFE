@@ -116,4 +116,12 @@ userSchema.methods.updateContacts = function(id, updatedContact){
   return this.save();
 }
 
+userSchema.methods.updateCourses = function(id, updatedCourse){
+  const index = this.courses.findIndex(obj => obj._id == id);
+  console.log(index);
+  this.courses[index] = updatedCourse;
+  console.log(this.course);
+  return this.save();
+}
+
 module.exports = mongoose.model('User', userSchema);

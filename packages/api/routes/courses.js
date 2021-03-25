@@ -70,7 +70,7 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
  router.post('/editCourse/:id', authenticateJWT, (req, res) => {
     const newCourse = req.body;
     const {id} = req.tokenPayload;
-    const coursetId = req.params.id;
+    const courseId = req.params.id;
 
     courseUser.findById(id, function(err, result){
       if(err)
@@ -79,16 +79,8 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
       }
       else
       {
-        result.findByIdAndUpdate(courseId, {"$set": { "courses": editCourse}}, {new: true}, function(err, result){
-          if (err)
-          {
-            res.send(err)
-          }
-          else
-          {
-            res.send(result)
-          }
-        })
+        result.updateCourses(courseId, newCourse)
+          .then(user => res.send(user))
       }
   })
 });
