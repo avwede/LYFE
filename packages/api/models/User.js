@@ -108,4 +108,11 @@ userSchema.methods.isValidPassword = function (password) {
   return bcrypt.compare(password, this.password);
 };
 
+userSchema.methods.updateContacts = function(id, updatedContact){
+  const index = this.emergencyContacts.findIndex(obj => obj._id == id);
+  console.log(index);
+  this.emergencyContacts[index] = updatedContact;
+  return this.save();
+}
+
 module.exports = mongoose.model('User', userSchema);
