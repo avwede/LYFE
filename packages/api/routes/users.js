@@ -55,6 +55,7 @@ const { generateJWT } = require('../middleware/routerMiddleware');
  *        201:
  *          description: Successfully logged in.
  */
+
 router.post('/register', (req, res) => {
   const newUser = req.body;
 
@@ -81,7 +82,7 @@ router.post('/login', (req, res) => {
 /**
  * Verify that both an email and password are present.
  * 
- * @param {Strin} email The user's email address. 
+ * @param {String} email The user's email address. 
  * @param {String} password The user's password.
  * @returns 
  */
