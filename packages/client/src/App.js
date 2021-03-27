@@ -2,6 +2,8 @@ import 'antd/dist/antd.css';
 import { Layout, Menu, Breadcrumb } from 'antd';
 import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
 import './App.css';
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import logo from './logo2.png';
 
 // React Router for pages
 import React, { Component } from "react";
@@ -18,21 +20,41 @@ import RegisterPage from "./pages/Register";
 import ErrorPage from "./pages/Error";
 import DashboardPage from "./pages/Dashboard";
 
-class App extends Component {
-  render() {
-    return (
-    <Router>
-      <Switch>
-        <Route exact path = "/" component={LoginPage} />
-        <Route exact path = "/Login" component={LoginPage} />
-        <Route exact path = "/Register" component={RegisterPage} />
-        <Route exact path = "/Error" component={ErrorPage} />
-        <Route exact path = "/Dashboard" component={DashboardPage} />
-        <Redirect to = "/Error" />
-      </Switch>
-    </Router>
-    );
-  }
+function App(){
+  return (
+      <Router>
+        <div className="App">
+          <nav className="navbar navbar-expand-lg navbar-light fixed-top">
+            <div className="container">
+              <Link className="navbar-brand" to={"/Login"}><img className="Header-logo" src={logo} style={{width: '70%', height: '70%'}} alt="Logo" /></Link>
+              <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
+                <ul className="navbar-nav ml-auto">
+                  <li className="nav-item">
+                    <Link className="nav-link" to={"/Login"}>Login</Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to={"/Register"}>Register</Link>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+
+        <div className="outer">
+          <div className="inner">
+            <Switch>
+              <Route exact path = "/" component={LoginPage} />
+              <Route exact path = "/Login" component={LoginPage} />
+              <Route exact path = "/Register" component={RegisterPage} />
+              <Route exact path = "/Error" component={ErrorPage} />
+              <Route exact path = "/Dashboard" component={DashboardPage} />
+              <Redirect to = "/Error" />
+            </Switch>
+          </div>
+        </div>  
+        
+      </div></Router>
+  );
 }
 
 /*
