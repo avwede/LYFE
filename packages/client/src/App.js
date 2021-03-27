@@ -3,10 +3,41 @@ import { Layout, Menu, Breadcrumb } from 'antd';
 import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
 import './App.css';
 
+// React Router for pages
+import React, { Component } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Link,
+  Redirect
+} from "react-router-dom";
+
+import LoginPage from "./pages/Login";
+import RegisterPage from "./pages/Register";
+import ErrorPage from "./pages/Error";
+import DashboardPage from "./pages/Dashboard";
+
+class App extends Component {
+  render() {
+    return (
+    <Router>
+      <Switch>
+        <Route exact path = "/" component={LoginPage} />
+        <Route exact path = "/Login" component={LoginPage} />
+        <Route exact path = "/Register" component={RegisterPage} />
+        <Route exact path = "/Error" component={ErrorPage} />
+        <Route exact path = "/Dashboard" component={DashboardPage} />
+        <Redirect to = "/Error" />
+      </Switch>
+    </Router>
+    );
+  }
+}
+
+/*
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
-
-
 
 function App() {
   return (
@@ -60,5 +91,6 @@ function App() {
     </Layout>
     );
   }
+*/
 
 export default App;
