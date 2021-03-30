@@ -4,6 +4,16 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 const {width: WIDTH} = Dimensions.get('window')
 class Login extends Component{
+    constructor(props) {
+        super(props);
+    
+        this.focusNextField = this.focusNextField.bind(this);
+        this.inputs = {};
+      }
+    
+      focusNextField(id) {
+        this.inputs[id].focus();
+      }
         render(){
             return(
                 <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
@@ -17,6 +27,9 @@ class Login extends Component{
                         placeholderTextColor='black'
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
+                        blurOnSubmit={false}
+                        onSubmitEditing = {() => this.focusNextField('two')}
+                        ref={ input => {this.inputs['one'] = input;}}
                         ></TextInput>
                     </View>
                     <View style={{alignItems:'center'}}>
@@ -26,6 +39,8 @@ class Login extends Component{
                         placeholderTextColor='black'
                         underlineColorAndroid='transparent'
                         secureTextEntry={true}
+                        blurOnSubmit={true}
+                        ref={ input => {this.inputs['two'] = input;}}
                         ></TextInput>
                         <TouchableOpacity style={styles.forgotPos}>
                             <Text style={styles.forgotText}>
@@ -65,14 +80,6 @@ const styles = StyleSheet.create({
         width: 140,
         height: 140,
     },
-    loginTitle: {
-        fontWeight: 'bold',
-        fontSize: 30,
-        fontFamily: 'sans-serif',
-    },
-    inputContainer:{
-        marginTop:10
-    },
     inputView:{
         width: WIDTH - 100,
         backgroundColor:"white",
@@ -93,7 +100,9 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     loginText:{
-        color:'white'
+        color:'white',
+        fontSize: 13,
+        fontFamily: 'sans-serif',
     },
     forgotPos:{
         paddingBottom: 5,
