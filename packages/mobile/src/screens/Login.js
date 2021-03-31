@@ -2,7 +2,11 @@ import React, { Component} from 'react';
 import { StyleSheet, Text, View, Image, KeyboardAvoidingView, TextInput, TouchableOpacity, Dimensions, ScrollView} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-const {width: WIDTH} = Dimensions.get('window')
+//import { useNavigation } from '@react-navigation/native';
+
+const {width: WIDTH} = Dimensions.get('window');
+//const navigation = useNavigation();
+
 class Login extends Component{
     constructor(props) {
         super(props);
@@ -42,7 +46,8 @@ class Login extends Component{
                         blurOnSubmit={true}
                         ref={ input => {this.inputs['two'] = input;}}
                         ></TextInput>
-                        <TouchableOpacity style={styles.forgotPos}>
+                        <TouchableOpacity style={styles.forgotPos} 
+                        onPress={() => this.props.navigation.navigate('Forgot Password')}>
                             <Text style={styles.forgotText}>
                                 Forgot Password?
                             </Text>
@@ -52,7 +57,8 @@ class Login extends Component{
                                 Sign in
                             </Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.loginBtn}>
+                        <TouchableOpacity style={styles.loginBtn}
+                        onPress={() => this.props.navigation.navigate('Register')}>
                             <Text style={styles.loginText}>
                                 Register
                             </Text>

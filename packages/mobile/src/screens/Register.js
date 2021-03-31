@@ -1,8 +1,12 @@
 import React, { Component} from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Dimensions} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+//import { useNavigation } from '@react-navigation/native';
 
-const {width: WIDTH} = Dimensions.get('window')
+
+const {width: WIDTH} = Dimensions.get('window');
+//const navigation = useNavigation();
+
 class Register extends Component{
     constructor(props) {
         super(props);
@@ -70,7 +74,8 @@ class Register extends Component{
                 <TouchableOpacity style={styles.loginBtn}>
                     <Text style={styles.signUp} >Create Account</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.toLogin}>
+                <TouchableOpacity style={styles.toLogin}
+                onPress={() => this.props.navigation.navigate('Login')}>
                 <View style={{alignContent:'center', marginTop:30}}>
                     <Text style={styles.loginText} >
                         Already have an account? Tap here.
@@ -91,8 +96,8 @@ const styles = StyleSheet.create({
     },
     logoContainer: {
         alignItems:'center',
-        paddingBottom:40,
-        marginTop:70
+        paddingBottom:20,
+        marginTop:100
     },
     logo:{
         width: 140,

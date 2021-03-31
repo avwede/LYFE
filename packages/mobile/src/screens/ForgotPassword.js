@@ -20,29 +20,13 @@ class ForgotPassword extends Component{
                 <View style={styles.logoContainer}>
                     <Image style={styles.logo} source={require('../../assets/logo4.png')}></Image>
                 </View>
-                <View style={{alignItems:'center', marginTop:30}}>
-                    <TextInput
-                    style={styles.inputView}
-                    placeholder= 'First Name'
-                    placeholderTextColor='black'
-                    underlineColorAndroid='transparent'
-                    returnKeyType='next'
-                    blurOnSubmit={false}
-                    onSubmitEditing = {() => this.focusNextField('two')}
-                    ref={ input => {this.inputs['one'] = input;}}
-                    ></TextInput>
-                </View>
-                <View style={{alignItems:'center'}}>
-                    <TextInput
-                    style={styles.inputView}
-                    placeholder= 'Last Name'
-                    placeholderTextColor='black'
-                    underlineColorAndroid='transparent'
-                    returnKeyType='next'
-                    blurOnSubmit={false}
-                    onSubmitEditing = {() => this.focusNextField('three')}
-                    ref={ input => {this.inputs['two'] = input;}}
-                    ></TextInput>
+                <View style={{alignItems:'center', marginBottom:60}}>
+                    <Text style={styles.loginText}>
+                        Forgot your password? No problem!
+                    </Text>
+                    <Text style={styles.loginText}>
+                        Enter your email, and we'll send you a link to reset your password.
+                    </Text>
                 </View>
                 <View style={{alignItems:'center'}}>
                     <TextInput
@@ -56,21 +40,11 @@ class ForgotPassword extends Component{
                     ref={ input => {this.inputs['three'] = input;}}
                     ></TextInput>
                 </View>
-                <View style={{alignItems:'center'}}>
-                    <TextInput
-                    style={styles.inputView}
-                    placeholder= 'Password'
-                    placeholderTextColor='black'
-                    underlineColorAndroid='transparent'
-                    secureTextEntry={true}
-                    blurOnSubmit={true}
-                    ref={ input => {this.inputs['four'] = input;}}
-                    ></TextInput>
-                </View>
                 <TouchableOpacity style={styles.loginBtn}>
-                    <Text style={styles.signUp} >Create Account</Text>
+                    <Text style={styles.signUp} >Reset Password</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.toLogin}>
+                <TouchableOpacity style={styles.toLogin}
+                onPress={() => this.props.navigation.navigate('Login')}>
                 <View style={{alignContent:'center', marginTop:30}}>
                     <Text style={styles.loginText} >
                         Already have an account? Tap here.
@@ -92,7 +66,6 @@ const styles = StyleSheet.create({
     logoContainer: {
         alignItems:'center',
         paddingBottom:40,
-        marginTop:70
     },
     logo:{
         width: 140,
