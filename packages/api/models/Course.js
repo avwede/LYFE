@@ -41,25 +41,25 @@ const locationSchema = require('./Location.embeddedModel');
 const courseSchema = new mongoose.Schema({
   courseCode: {
     type: String,
-    required: [true, 'Course code is required for Course.'],
+    //required: [true, 'Course code is required for Course.'],
   },
   professor: {
     type: String,
     ref: 'ReminderType',
-    required: [true, 'Professor is required for Course.'],
+    //required: [true, 'Professor is required for Course.'],
   },
   location: locationSchema,
   day: {
     type: [String],
-    required: [true, 'Meeting day(s) is required for Course.'],
+    //required: [true, 'Meeting day(s) is required for Course.'],
   },
   start: {
     type: Date,
-    required: [true, 'Start date is required for Course.'],
+    //required: [true, 'Start date is required for Course.'],
   },
   end: {
     type: Date,
-    required: [true, 'End date is required for Course.'],
+    //required: [true, 'End date is required for Course.'],
   },
 });
 
