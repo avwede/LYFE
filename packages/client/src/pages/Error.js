@@ -2,8 +2,13 @@ import React from "react";
 
 const ErrorPage = () => {
     return (
-        <div>
-            <h1>404 Not Found</h1>
+        <div className="inner">
+            <div>
+                
+                <h3> Oh no!</h3>
+                <h3>A 404 error occured.</h3>
+                <h3>Please return to the LYFE homepage.</h3>
+            </div>
         </div>
     );
 }

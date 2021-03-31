@@ -1,8 +1,10 @@
-import React from "react";
+import React, { Component } from "react";
 
-const RegisterPage = () => {
-    return (
-        <form>
+export default class RegisterPage extends Component{
+    render() {
+        return (
+        <div className="inner">
+            <form>
                 <h3>Register</h3>
 
                 <div className="form-group">
@@ -30,7 +32,7 @@ const RegisterPage = () => {
                     Already registered <a href="#">log in?</a>
                 </p>
             </form>
+        </div>
     );
+    }   
 }
-
-export default RegisterPage;
