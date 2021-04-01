@@ -7,9 +7,7 @@ body {
   display: flex;
   font-weight: 400;
   font-family: sans-serif;
-  background: #9CECFF;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #ACC1FF, #9CECFF, #DBF3FA);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right, #ACC1FF, #9CECFF, #DBF3FA); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  
 }
 
 body, html, .App, #root, .outer {
@@ -27,6 +25,9 @@ body, html, .App, #root, .outer {
   justify-content: center;
   flex-direction: column;
   text-align: left;
+  background: #9CECFF;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #ACC1FF, #9CECFF, #DBF3FA);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #ACC1FF, #9CECFF, #DBF3FA); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
 .inner {
@@ -66,4 +67,27 @@ body, html, .App, #root, .outer {
 
 .forgot-password a {
   color: #167bff;
+}
+
+.homePageBackground{
+  background-image: url('background.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-blend-mode: lighten;
+}
+
+.homePageBackgroundFilter{
+  width: 100%;
+  height: 100%;
+  background-color: rgba(38, 70, 83, 0.7);
+}
+
+
+.homePageImage{
+  background-image: url('./animation2.png');
+  background-repeat: no-repeat;
+  width: 556px;
+  height: 384px;
+  vertical-align: middle;
+  text-align: right;
 }

@@ -11,33 +11,38 @@ import {
   Redirect
 } from "react-router-dom";
 
-import LoginPage from "./pages/Login.component";
-import RegisterPage from "./pages/Register.component";
+import LoginPage from "./pages/Login";
+import RegisterPage from "./pages/Register";
 import ErrorPage from "./pages/Error";
 import DashboardPage from "./pages/Dashboard";
+import HomePage from "./pages/Home";
 import Header from "./pages/Header";
+
 
 function App(){
   return (
       <Router>
        <div className="App">
-            <div className="outer">
-            <Switch>
+       
+            <Switch>      
             <Route exact path = "/Dashboard" component={DashboardPage} />
             
+
             <Fragment>
                 <Header />
-                <Route exact path = "/" component={LoginPage} />
+                <div className="outer">
+                <Route exact path = "/" component={HomePage} />
+                <Route exact path = "/Home" component={HomePage} />
                 <Route exact path = "/Login" component={LoginPage} />
                 <Route exact path = "/Register" component={RegisterPage} />
                 <Route exact path = "/Error" component={ErrorPage} />
+                </div>
             </Fragment>
-              
+          
             <Redirect to = "/Error" />
-              
-              
+            
             </Switch>
-           </div>  
+            
         
       </div>
       </Router>

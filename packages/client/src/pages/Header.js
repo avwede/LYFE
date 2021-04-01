@@ -15,7 +15,9 @@ export default class Header extends Component{
         return(
             <nav className="navbar navbar-expand-lg navbar-light fixed-top">
             <div className="container">
-            <Link className="navbar-brand" to={"/Login"}><img className="Header-logo" src={logo} style={{width: '70%', height: '70%'}} alt="Logo" /></Link>
+            <Link className="navbar-brand" to={"/Home"}>
+                <img className="Header-logo" src={logo} style={{width: '70%', height: '70%'}} alt="Logo" />
+            </Link>
             <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
                 <ul className="navbar-nav ml-auto">
                 <li className="nav-item">
