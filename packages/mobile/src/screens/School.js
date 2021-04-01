@@ -3,18 +3,7 @@ import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Dimensions}
 import { LinearGradient } from 'expo-linear-gradient';
 
 const {width: WIDTH} = Dimensions.get('window')
-class School extends Component{
-    constructor(props) {
-        super(props);
-    
-        this.focusNextField = this.focusNextField.bind(this);
-        this.inputs = {};
-      }
-    
-      focusNextField(id) {
-        this.inputs[id].focus();
-      }
-    render(){
+const School = (props) => {
         return(
             <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
                 <View style={styles.logoContainer}>

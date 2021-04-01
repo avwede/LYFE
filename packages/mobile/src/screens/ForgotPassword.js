@@ -3,18 +3,7 @@ import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Dimensions}
 import { LinearGradient } from 'expo-linear-gradient';
 
 const {width: WIDTH} = Dimensions.get('window')
-class ForgotPassword extends Component{
-    constructor(props) {
-        super(props);
-    
-        this.focusNextField = this.focusNextField.bind(this);
-        this.inputs = {};
-      }
-    
-      focusNextField(id) {
-        this.inputs[id].focus();
-      }
-    render(){
+const ForgotPassword = (props) => {
         return(
             <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
                 <View style={styles.logoContainer}>
@@ -44,7 +33,7 @@ class ForgotPassword extends Component{
                     <Text style={styles.signUp} >Reset Password</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.toLogin}
-                onPress={() => this.props.navigation.navigate('Login')}>
+                onPress={() => props.navigation.navigate('Login')}>
                 <View style={{alignContent:'center', marginTop:30}}>
                     <Text style={styles.loginText} >
                         Already have an account? Tap here.

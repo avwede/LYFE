@@ -18,7 +18,7 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function App() {
-  const [loggedIn, toggleLoggedIn] = React.useState(0);
+  const [loggedIn, toggleLoggedIn] = React.useState(false);
   
   const onLogin = async (string) => {
       await SecureStore.setItemAsync('jwt', string);
@@ -27,6 +27,9 @@ export default function App() {
 
   const getToken = () =>  SecureStore.getItemAsync('jwt');
   
+  // TODO: https://reactjs.org/docs/context.html
+  // Need to use context to pass getToken prop.
+  // Also need to figure out how to pass login info.
   return (
     <NavigationContainer>
       {!loggedIn ?
