@@ -1,4 +1,4 @@
-import React, { Component} from 'react';
+import React, { useState, useContext, Component} from 'react';
 import { StyleSheet, Text, View, Image, KeyboardAvoidingView, TextInput, TouchableOpacity, Dimensions, ScrollView} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';

@@ -1,4 +1,4 @@
-import React, { Component} from 'react';
+import React, { useState, useContext, Component} from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Dimensions} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -14,8 +14,6 @@ const Reminders = (props) => {
                 underlineColorAndroid='transparent'
                 returnKeyType='next'
                 blurOnSubmit={false}
-                onSubmitEditing = {() => this.focusNextField('two')}
-                ref={ input => {this.inputs['one'] = input;}}
                 ></TextInput>
             </View>
             <View style={{alignItems:'center'}}>
@@ -26,8 +24,6 @@ const Reminders = (props) => {
                 underlineColorAndroid='transparent'
                 returnKeyType='next'
                 blurOnSubmit={false}
-                onSubmitEditing = {() => this.focusNextField('three')}
-                ref={ input => {this.inputs['two'] = input;}}
                 ></TextInput>
             </View>
             <View style={{alignItems:'center'}}>
@@ -38,8 +34,6 @@ const Reminders = (props) => {
                 underlineColorAndroid='transparent'
                 returnKeyType='next'
                 blurOnSubmit={false}
-                onSubmitEditing = {() => this.focusNextField('four')}
-                ref={ input => {this.inputs['three'] = input;}}
                 ></TextInput>
             </View>
             <View style={{alignItems:'center'}}>
@@ -50,7 +44,6 @@ const Reminders = (props) => {
                 underlineColorAndroid='transparent'
                 secureTextEntry={true}
                 blurOnSubmit={true}
-                ref={ input => {this.inputs['four'] = input;}}
                 ></TextInput>
             </View>
             <TouchableOpacity style={styles.loginBtn}>
