@@ -1,60 +1,86 @@
-import React, { useState, useContext, Component} from 'react';
+import React, { useState, useContext, useEffect, Component} from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Dimensions} from 'react-native';
+import { SafeAreaView } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Header } from '@react-navigation/stack';
+
+// Title and Button at top.
+// Button goes to Overlay with TextInputs and Checkbox and submit Button.
+// Has to interface with DateTimePicker and system alarm.
+// Followed by Accordion list of reminders (the entire Accordion should be wrapped in View), 
+// With edit and delete Icons from fontawesome.
+
+// Call Array.from() on any json recieved so .map() can be 
+// called on that.
+/* example: {items.map((item) => {
+        return (<Accordion item={item.title}>
+                    <ComponentInsideAccordion>
+                    </C>
+                </A>
+    })} */
+
 
 const {width: WIDTH} = Dimensions.get('window')
 const Reminders = (props) => {
+    // Fetch tasks after each modal submission by enabling
+    // a "refresh" useState. The (ASYNC) function it calls will then 
+    // set "refresh" back to false.
+    const [refresh, setRefresh] = useState(false);
+/*  useEffect(() => {
+       getReminders();
+    }, []); 
+    
+    if (refresh) {
+        getReminders();
+    }*/
+    
     return(
         <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
-            <View style={{alignItems:'center', marginTop:30}}>
-                <TextInput
-                style={styles.inputView}
-                placeholder= 'First Name'
-                placeholderTextColor='black'
+            <SafeAreaView style={{alignItems:'center', marginTop:10}}>
+                <Header
                 underlineColorAndroid='transparent'
                 returnKeyType='next'
-                blurOnSubmit={false}
-                ></TextInput>
-            </View>
-            <View style={{alignItems:'center'}}>
+                >Reminders</Header>
+            </SafeAreaView>
+            <SafeAreaView style={{alignItems:'center'}}>
                 <TextInput
-                style={styles.inputView}
+                style={styles.inputSafeAreaView}
                 placeholder= 'Last Name'
                 placeholderTextColor='black'
                 underlineColorAndroid='transparent'
                 returnKeyType='next'
                 blurOnSubmit={false}
                 ></TextInput>
-            </View>
-            <View style={{alignItems:'center'}}>
+            </SafeAreaView>
+            <SafeAreaView style={{alignItems:'center'}}>
                 <TextInput
-                style={styles.inputView}
+                style={styles.inputSafeAreaView}
                 placeholder= 'Email'
                 placeholderTextColor='black'
                 underlineColorAndroid='transparent'
                 returnKeyType='next'
                 blurOnSubmit={false}
                 ></TextInput>
-            </View>
-            <View style={{alignItems:'center'}}>
+            </SafeAreaView>
+            <SafeAreaView style={{alignItems:'center'}}>
                 <TextInput
-                style={styles.inputView}
+                style={styles.inputSafeAreaView}
                 placeholder= 'Password'
                 placeholderTextColor='black'
                 underlineColorAndroid='transparent'
                 secureTextEntry={true}
                 blurOnSubmit={true}
                 ></TextInput>
-            </View>
+            </SafeAreaView>
             <TouchableOpacity style={styles.loginBtn}>
                 <Text style={styles.signUp} >Create Account</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.toLogin}>
-            <View style={{alignContent:'center', marginTop:30}}>
+            <SafeAreaView style={{alignContent:'center', marginTop:30}}>
                 <Text style={styles.loginText} >
                     Already have an account? Tap here.
                 </Text>
-            </View>
+            </SafeAreaView>
             </TouchableOpacity>
         </LinearGradient>
     );
@@ -80,7 +106,7 @@ const styles = StyleSheet.create({
     inputContainer:{
         marginTop:10
     },
-    inputView:{
+    inputSafeAreaView:{
         width: WIDTH - 100,
         backgroundColor:"white",
         borderRadius:25,
