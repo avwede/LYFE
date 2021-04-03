@@ -1,4 +1,4 @@
-import './App.css';
+import './index.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 // React Router for pages
@@ -16,26 +16,24 @@ import RegisterPage from "./pages/Register";
 import ErrorPage from "./pages/Error";
 import DashboardPage from "./pages/Dashboard";
 import HomePage from "./pages/Home";
-import Header from "./pages/Header";
+import Header from "./components/Header";
 
 
 function App(){
   return (
       <Router>
-       <div className="App">
-       
             <Switch>      
             <Route exact path = "/Dashboard" component={DashboardPage} />
-            
 
             <Fragment>
                 <Header />
-                <div className="outer">
                 <Route exact path = "/" component={HomePage} />
                 <Route exact path = "/Home" component={HomePage} />
-                <Route exact path = "/Login" component={LoginPage} />
-                <Route exact path = "/Register" component={RegisterPage} />
-                <Route exact path = "/Error" component={ErrorPage} />
+
+                <div className="outer">
+                  <Route exact path = "/Login" component={LoginPage} />
+                  <Route exact path = "/Register" component={RegisterPage} />
+                  <Route exact path = "/Error" component={ErrorPage} />
                 </div>
             </Fragment>
           
@@ -44,7 +42,7 @@ function App(){
             </Switch>
             
         
-      </div>
+      
       </Router>
   );
 }
