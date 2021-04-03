@@ -30,15 +30,16 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
     const newCourse = req.body;
     const {id} = req.tokenPayload;
   
-    courseUser.findByIdAndUpdate(id, {"$push": { "courses": newCourse}}, {new: true}, function(err, result){
+    courseUser.findByIdAndUpdate(id, {"$push": { "courses": newCourse}}, {new: true, runValidators : true}, function(err, result){
     
     if (err)
     {
-      res.send(err)
+      sendError(res, err, 'The course could not be created.');
     }
     else
     {
-      res.send(result)
+      sendResponse(res, 201, {"response": "Course was created."});
+      //res.send(result)
     }
     
     })
@@ -119,7 +120,7 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
       }
       else
       {
-        res.send(result)
+        sendResponse(res, 201, {"response": "Course was deleted."});
       }
     })
   });

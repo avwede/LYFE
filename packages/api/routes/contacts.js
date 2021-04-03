@@ -31,15 +31,15 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
      //console.log(req.body);
      //console.log(req.tokenPayload);
      const {id} = req.tokenPayload;
-     contactUser.findByIdAndUpdate(id, {"$push": { "emergencyContacts": newContact}}, {new:true}, function(err, result){
+     contactUser.findByIdAndUpdate(id, {"$push": { "emergencyContacts": newContact}}, {new: true, runValidators : true}, function(err, result){
     
     if (err)
      {
-       res.send(err)
+       sendError(res, err, 'The contact could not be created.');
      }
     else
     {
-      res.send(result)
+      sendResponse(res, 201, {"response": "Contact was created."});
     }
   })
   });
@@ -80,6 +80,9 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
       {
         result.updateContacts(contactId, editContact)
           .then(user => res.send(user))
+          .catch((err) => {
+            sendError(res, err, err.message);
+          });
       }
     })
  });
@@ -113,11 +116,11 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
     contactUser.findByIdAndUpdate(id, {"$pull": { "emergencyContacts": {"_id": deleteId}}}, {new:true}, function(err, result){
       if (err)
       {
-          res.send(err)
+        sendError(res, err, 'The contact could not be deleted.');
       }
       else
       {
-        res.send(result)
+        sendResponse(res, 201, {"response": "Contact was deleted."});
       }
     })
   });
