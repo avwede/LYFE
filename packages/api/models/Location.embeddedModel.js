@@ -17,6 +17,7 @@ const mongoose = require('mongoose');
  *        location:
  *          type: string
  *          example: Classroom Building 2 Room 101
+ *        
  */
 const locationSchema = new mongoose.Schema({
   type: {
@@ -28,4 +29,4 @@ const locationSchema = new mongoose.Schema({
   location: String,
 });
 
-module.exports = locationSchema;;
+module.exports = locationSchema;

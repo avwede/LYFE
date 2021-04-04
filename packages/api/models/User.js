@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const emergencyContactSchema = require('./EmergencyContact.embeddedModel');
 const reminderSchema = require('./Reminder.embeddedModel');
+const courseSchema = require('./Course');
 const saltRounds = 12;
 
 /**
@@ -50,9 +51,9 @@ const saltRounds = 12;
  *        courses:
  *          type: array
  *          items:
- *            type: objectId
- *          example: ['5b1ed13e8cea93c6ba72b1da', '5b1ed13e8cea93c6ba72b1db']
+ *            $ref: '#/components/schemas/Courses'
  */
+
 const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
@@ -91,7 +92,7 @@ const userSchema = new mongoose.Schema({
   allergies: [String],
   emergencyContacts: [emergencyContactSchema],
   reminders: [reminderSchema],
-  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course'}],
+  courses: [courseSchema],
 });
 
 // Hash user password before saving to database.
@@ -107,5 +108,20 @@ userSchema.pre('save', function hashPassword(next) {
 userSchema.methods.isValidPassword = function (password) {
   return bcrypt.compare(password, this.password);
 };
+
+userSchema.methods.updateContacts = function(id, updatedContact){
+  const index = this.emergencyContacts.findIndex(obj => obj._id == id);
+  console.log(index);
+  this.emergencyContacts[index] = updatedContact;
+  return this.save();
+}
+
+userSchema.methods.updateCourses = function(id, updatedCourse){
+  const index = this.courses.findIndex(obj => obj._id == id);
+  console.log(index);
+  this.courses[index] = updatedCourse;
+  console.log(this.course);
+  return this.save();
+}
 
 module.exports = mongoose.model('User', userSchema);
