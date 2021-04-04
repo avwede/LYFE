@@ -54,7 +54,7 @@ class Login extends Component{
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.loginBtn}>
                             <Text style={styles.loginText}>
-                                Sign in
+                                Sign In
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.loginBtn}
