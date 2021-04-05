@@ -5,16 +5,6 @@ const { sendError } = require('../util/responses');
 const { JWT_SECRET } = process.env;
 
 /**
- * Generate a new JWT.
- * 
- * @param {Object} payload JSON object to be embedded in JWT
- * @returns {String} The JWT.
- */
-const generateJWT = (payload) => {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
-};
-
-/**
  *  Authenticate the JWT; Verify that it is valid.
  * 
  * @param {Object} req Express request object.
@@ -41,6 +31,5 @@ const authenticateJWT = (req, res, next) => {
 };
 
 module.exports = {
-  generateJWT: generateJWT,
-  authenticateJWT: authenticateJWT,
+  authenticateJWT,
 }

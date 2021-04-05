@@ -1,12 +1,17 @@
-const mongoose = require('mongoose');
+require('dotenv').config();
+
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+const randomBytes = require('randombytes');
 const emergencyContactSchema = require('./EmergencyContact.embeddedModel');
 const reminderSchema = require('./Reminder.embeddedModel');
 const saltRounds = 12;
+const { JWT_SECRET } = process.env;
 
 /**
  * @openapi
- * 
+ *
  * components:
  *  schemas:
  *    User:
@@ -31,6 +36,12 @@ const saltRounds = 12;
  *          type: string
  *          format: password
  *          example: Password123#
+ *        verified:
+ *          type: boolean
+ *          default: false
+ *        verificationToken:
+ *          type: string
+ *          example: cb68ea67877553f1047c9a87c1f3e98e884f2ef36850bdcf800b728c3a55be83
  *        dateOfBirth:
  *          type: string
  *          format: date
@@ -87,15 +98,31 @@ const userSchema = new mongoose.Schema({
         'Password must contain 1 uppercase letter, 1 lowercase letter, 1 digit and 1 special character: !, @, #, $, %, &.',
     },
   },
+  verified: {
+    type: Boolean,
+    default: false,
+  },
+  verificationToken: {
+    type: String,
+  },
   dateOfBirth: Date,
   allergies: [String],
   emergencyContacts: [emergencyContactSchema],
   reminders: [reminderSchema],
-  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course'}],
+  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],
 });
 
-// Hash user password before saving to database.
+/**
+ * hashPassword: Pre save hook to hash user password before saving to database.
+ * 
+ * @param {Function} next Express middleware function; call the next function in the stack.
+ */
 userSchema.pre('save', function hashPassword(next) {
+  // Prevents rehashing an already hashed password on save. Only hash if user is new or password
+  // has been modified.
+  if (!this.isModified('password'))
+    return next();
+
   bcrypt.hash(this.password, saltRounds, (err, hash) => {
     if (err) next(err);
     this.password = hash;
@@ -103,9 +130,34 @@ userSchema.pre('save', function hashPassword(next) {
   });
 });
 
-// Validate user password.
+/**
+ * Validate the user password; compare the plain text password to the hashed password.
+ * 
+ * @param {String} password The user's password.
+ * @returns {Promise} A promise that resolves to the comparison result.
+ */
 userSchema.methods.isValidPassword = function (password) {
   return bcrypt.compare(password, this.password);
+};
+
+/**
+ * Generate a new JSON web token with the user id embedded.
+ * 
+ * @returns {String} The JSON web token.
+ */
+userSchema.methods.generateJWT = function () {
+  const payload = { id: this._id };
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
+};
+
+/**
+ * Generate a verification token for this user.
+ * 
+ * @returns {Promise} A Promise that will resolve to the saved user document.
+ */
+userSchema.methods.generateVerificationToken = function () {
+  this.verificationToken = randomBytes(32).toString('hex');
+  return this.save();
 };
 
 module.exports = mongoose.model('User', userSchema);
