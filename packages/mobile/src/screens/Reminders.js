@@ -3,23 +3,10 @@ import { StyleSheet, Image, TextInput, TouchableNativeFeedback, Dimensions, Chec
 import { LinearGradient } from 'expo-linear-gradient';
 import { Overlay, Divider, Button, registerCustomIconType } from 'react-native-elements';
 import { Container, Header, Content, Icon, Accordion, Text, View } from 'native-base';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
-// Nest View's for alignment.
-// Title and Button at top.
-// Button goes to Overlay with TextInputs and Checkbox and submit Button.
-// Has to interface with DateTimePicker and system alarm.
-// Followed by Accordion list of reminders (the entire Accordion should be wrapped in View), 
-// With edit and delete Icons from fontawesome.
-
+// TODO: Integrate push notifications.
 // https://reactnative.dev/docs/flexbox
-
-// Call .map() when generating
-/* example: {items.map((item, index) => {
-        return (<Accordion item={item.title}>
-                    <ComponentInsideAccordion>
-                    </C>
-                </A>
-    })} */
 
 const {width: WIDTH} = Dimensions.get('window')
 const {height: HEIGHT} = Dimensions.get('window')
@@ -30,32 +17,83 @@ const Reminders = (props) => {
     const [addOrEdit, setAddorEdit] = useState(true);
     const [visible, setVisible] = useState(false);
     const [data, setData] = useState();
+    const [checked, setChecked] = useState(false);
+    const [date, setDate] = useState(new Date());
+    const [time, setTime] = useState(new Date());
+    const [mode, setMode] = useState('date');
+    const [show, setShow] = useState(false);
+    // This holds index in state for the edit and delete overlay. 
+    const [activeIndex, setActiveIndex] = useState(Number.MIN_SAFE_INTEGER);
+
+    // https://stackoverflow.com/questions/58925515/using-react-native-community-datetimepicker-how-can-i-display-a-datetime-picker
+    const onChangeDate = (event, selectedDate) => {
+        setShow(Platform.OS === 'ios');
+        if (mode == 'date') {
+            const currentDate = selectedDate || date;
+            setDate(currentDate);
+            setMode('time');
+            setShow(Platform.OS !== 'ios'); 
+        } else {
+            const selectedTime = selectedDate || new Date();
+            setTime(selectedTime);
+            setShow(Platform.OS === 'ios'); 
+            setMode('date'); 
+        }
+    };
+
+    const showMode = (currentMode) => {
+        setShow(true);
+        setMode(currentMode);
+    };
+
+    const showDatepicker = () => {
+        showMode('date');
+    };
 
     const toggleOverlay = () => {
-      setVisible(!visible);
+        setVisible(!visible);
     };
 
     // Get data from "data" state corresponding to this index.
     // Put it into the states for the overlay.
     const editHelper = (index) => {
-        return;
+        setActiveIndex(index);
+        setAddorEdit(true);
+        setDeleteOverlay(false);
+        toggleOverlay();
+    }
+
+    const deleteHelper = (index) => {
+        setActiveIndex(index);
+        setDeleteOverlay(true); 
+        toggleOverlay();
     }
 
     // For the following functions, make a POST request followed
     // by a GET request to fetch the updated data, then update "data" state
     const addReminder = () => {
+        if (checked) {
+
+        }
         return;
     }
 
-    const editReminder = (index) => {
+    const editReminder = () => {
+
+        setActiveIndex(Number.MIN_SAFE_INTEGER);
+        toggleOverlay();
         return;
     }
     
-    const deleteReminder = (index) => {
+    // Turn off alarm if needed
+    const deleteReminder = () => {
+
+        setActiveIndex(Number.MIN_SAFE_INTEGER);
+        toggleOverlay();       
         return;
     }
 
-    const renderHeader = (expanded) => {
+    const renderHeader = () => {
         return(<View style={{
             flexDirection: "row",
             padding: 10,
@@ -65,14 +103,13 @@ const Reminders = (props) => {
           <Text style={{ fontWeight: "600" }}>
               Reminder #1
             </Text>
-            {expanded
-              ? <Icon style={{ fontSize: 18 }} name="remove-circle" />
-              : <Icon style={{ fontSize: 18 }} name="add-circle" />}
           </View>)
     }
 
     // Take in individual items once API set up
     // Accordion component should handle .map()
+    // Try to set up so the item's position in array (index) is passed
+    // to editHelper()
     const renderAccordion = () => {
         return(
         <View>
@@ -86,21 +123,25 @@ const Reminders = (props) => {
             <Text>Type: Assignment</Text>
         </View>
         <View>
-            <TouchableNativeFeedback style={styles.loginBtn}
-            onPress = {editHelper(0)}>
-                <Text>
-                    Edit
-                </Text>
+            <TouchableNativeFeedback 
+            onPress = {(index) => editHelper(index)}>
+                <Icon type="FontAwesome5" name="edit">
+                </Icon>
             </TouchableNativeFeedback>
-            <TouchableNativeFeedback style={styles.loginBtn}
-            onPress = {() => {setDeleteOverlay(true); toggleOverlay();}}>
-                <Text>
-                    Delete
-                </Text>
+            <TouchableNativeFeedback 
+            onPress = {(index) => deleteHelper(index)}>
+                <Icon type="FontAwesome5" name="trash-alt">
+                </Icon>
             </TouchableNativeFeedback>
         </View>
         </View>)
     }
+
+    // https://stackoverflow.com/questions/58925515/using-react-native-community-datetimepicker-how-can-i-display-a-datetime-picker
+    const formatDate = (date, time) => {
+        return `${date.getMonth()}/${date.getDate() +
+          1}/${date.getFullYear()} ${time.getHours()}:${time.getMinutes()}`;
+    };
 
     // For testing purposes
     const dataArray = [
@@ -118,7 +159,7 @@ const Reminders = (props) => {
                 <Text>
                     Reminders
                 </Text>
-                <Button title="Add Reminder" onPress = {() => {setDeleteOverlay(false); toggleOverlay();}} />
+                <Button title="Add Reminder" onPress = {() => {setDeleteOverlay(false); setAddorEdit(false); toggleOverlay();}} />
                     {(!deleteOverlay) ?
                         (<Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
                         <View><Text>New Reminder</Text></View>
@@ -146,14 +187,21 @@ const Reminders = (props) => {
                         returnKeyType='next'
                         blurOnSubmit={false}
                         ></TextInput></View>
-                        <View><TextInput
-                        style={styles.inputView}
-                        placeholder= 'Date and Time'
-                        placeholderTextColor='black'
-                        underlineColorAndroid='transparent'
-                        returnKeyType='next'
-                        blurOnSubmit={false}
-                        ></TextInput></View>
+                        <View>
+                        <TouchableNativeFeedback 
+                        title='Show Date Picker'
+                        onPress={() => showDatepicker()}>
+                            <Text>{formatDate(date, time)}</Text>
+                        </TouchableNativeFeedback>
+                        {show && (
+                            <DateTimePicker
+                                value={date}
+                                display='default'
+                                mode={mode}
+                                onChange={onChangeDate}
+                            />
+                        )}
+                        </View>
                         <View><TextInput
                         style={styles.inputView}
                         placeholder= 'Type'
@@ -162,19 +210,28 @@ const Reminders = (props) => {
                         returnKeyType='next'
                         blurOnSubmit={false}
                         ></TextInput></View>
-                        <View><Text>Alarm?</Text></View>
-                        {addOrEdit ? (<Button title="Add" onPress={addReminder}></Button>) : 
-                        (<Button title="Edit" onPress={editReminder}></Button>)}
+                        <View>
+                            <CheckBox title='Set Alarm' iconRight
+                            checked={checked} onPress={() => setChecked(!checked)}
+                            />
+                        </View>
+                        {addOrEdit ? (<Button title="Add" onPress={() => addReminder}></Button>) : 
+                        (<Button title="Edit" onPress={() => editReminder()}></Button>)}
                         </Overlay>) :
                         (<Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
                         <Text> Are you sure you want to delete this reminder? </Text>
-                        <TouchableNativeFeedback style={styles.loginBtn}
-                        onPress = {() => {toggleOverlay();}}>
-                            <Text>
-                            Cancel
-                            </Text>
-                        </TouchableNativeFeedback>
+                        <View style= {{flexDirection: 'row', justifyContent: 'space-evenly'}}>
+                            <TouchableNativeFeedback style={styles.loginBtn}
+                            onPress = {() => {setActiveIndex(Number.MIN_SAFE_INTEGER); toggleOverlay();}}>
+                                <Text>
+                                Cancel
+                                </Text>
+                            </TouchableNativeFeedback>
+                            <TouchableNativeFeedback style={styles.loginBtn}
+                            onPress = {() => deleteReminder()}>
                             <Text> Delete </Text>
+                            </TouchableNativeFeedback>
+                        </View>
                         </Overlay>)}
             </View>
             <View>
@@ -184,7 +241,9 @@ const Reminders = (props) => {
                 <Accordion
                 dataArray={dataArray}
                 animation={true}
-                expanded={[0]}
+                icon="add"
+                expandedIcon="remove"
+                expanded={[]} 
                 renderHeader={renderHeader}
                 renderContent={renderAccordion}
                 />            

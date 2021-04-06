@@ -1,4 +1,5 @@
 // This component was borrowed from the following source: https://snack.expo.io/@bgpiggin/accordion-list
+// (**This component is not currently being used anywhere**)
 import React, { useState, useRef } from 'react';
 import {
   View,
