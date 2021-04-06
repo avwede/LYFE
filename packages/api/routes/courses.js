@@ -1,5 +1,3 @@
-// school.js
-
 const router = require('express').Router();
 const Course = require('../models/Course');
 const courseUser = require('../models/User');
@@ -32,15 +30,16 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
     const newCourse = req.body;
     const {id} = req.tokenPayload;
   
-    courseUser.findByIdAndUpdate(id, {"$push": { "courses": newCourse}}, {new: true}, function(err, result){
+    courseUser.findByIdAndUpdate(id, {"$push": { "courses": newCourse}}, {new: true, runValidators : true}, function(err, result){
     
     if (err)
     {
-      res.send(err)
+      sendError(res, err, 'The course could not be created.');
     }
     else
     {
-      res.send(result)
+      sendResponse(res, 201, {"response": "Course was created."});
+      //res.send(result)
     }
     
     })
@@ -71,7 +70,7 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
     const newCourse = req.body;
     const {id} = req.tokenPayload;
     const courseId = req.params.id;
-
+    console.log(newCourse);
     courseUser.findById(id, function(err, result){
       if(err)
       {
@@ -81,6 +80,9 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
       {
         result.updateCourses(courseId, newCourse)
           .then(user => res.send(user))
+          .catch((err) => {
+            sendError(res, err, 'The course could not be edited.');
+          });
       }
   })
 });
@@ -106,17 +108,22 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
  *          description: Course deleted.
  */
 
-router.post('/deleteCourse', authenticateJWT, (req, res) => {
-  Course.findByIdAndDelete({ _id }, req, function(err, result){
-    if (err){
-      sendError(res, '401', 'Could not delete course.');
-    }
-    else {
-      sendResponse(res, 200, result);
-    }
-  })
-});
-
+  router.post('/deleteCourse/:id', authenticateJWT, (req, res) => {
+    const deleteId = req.params.id;
+    //console.log(req.body);
+    //console.log(req.tokenPayload);
+    const {id} = req.tokenPayload;
+    courseUser.findByIdAndUpdate(id, {"$pull": { "courses": {"_id": deleteId}}}, {new:true}, function(err, result){
+      if (err)
+      {
+          res.send(err)
+      }
+      else
+      {
+        sendResponse(res, 201, {"response": "Course was deleted."});
+      }
+    })
+  });
 
 module.exports = {
   coursesRouter: router,
