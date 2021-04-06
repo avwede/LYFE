@@ -1,5 +1,6 @@
 /**
  * @todo: complete openapi specs for login
+ * @todo: Email Verification: if unverified user logs in, remind them to verify, do not issue JWT
  */
 require('dotenv').config();
 
@@ -56,8 +57,8 @@ const { APP_URL } = process.env;
  *                type: object
  *                properties:
  *                  message:
- *                    type: String
- *                    example: Requested verification email. Check email for verification code.
+ *                    type: string
+ *                    example: Requested email verification. Check email for verification link.
  *        400:
  *          $ref: '#/components/responses/400BadRequest'
  *        500:
@@ -114,8 +115,8 @@ router.post('/register', (req, res) => {
  *                type: object
  *                properties:
  *                  message:
- *                    type: String
- *                    example: Requested verification email. Check email for verification code.
+ *                    type: string
+ *                    example: Requested email verification. Check email for verification link.
  *        400:
  *          description: Bad request.
  *          content:
@@ -124,7 +125,7 @@ router.post('/register', (req, res) => {
  *                type: object
  *                properties:
  *                  message:
- *                    type: String
+ *                    type: string
  *                    example: This user is already verified.
  *        401:
  *          description: Unauthorized.
@@ -134,7 +135,7 @@ router.post('/register', (req, res) => {
  *                type: object
  *                properties:
  *                  message:
- *                    type: String
+ *                    type: string
  *                    example: Email is not associated with any registered account.
  *        500:
  *          $ref: '#/components/responses/500InternalServerError'
@@ -146,7 +147,7 @@ router.post('/verify/resend', async (req, res) => {
   if (isVerifiable(user, res)) {
     user.generateVerificationToken()
       .then(updatedUser => {
-        sendVerificationEmail(user, updatedUser.verificationToken, res);
+        sendVerificationEmail(updatedUser, updatedUser.verificationToken, res);
       })
       .catch(err => {
         sendError(res, '500', 'Server failed to send verification email.');
@@ -224,7 +225,7 @@ router.post('/verify/:token', async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
 
-  if (hasVerificationCredentials(token, password)) {
+  if (hasTokenCredentials(token, password)) {
     const user = await User.findOne({ verificationToken: token });
 
     if (user)
@@ -244,6 +245,197 @@ router.post('/login', (req, res) => {
   } else {
     sendError(res, '400', 'Email and password are required.');
   }
+});
+
+/**
+ * @openapi
+ * 
+ * paths:
+ *  /api/users/reset:
+ *    post:
+ *      tags: [users]
+ *      summary: Request password reset.
+ *      description: If email exists, generate and email the user a password reset token.
+ *      operationId: recoverPassword
+ *      requestBody:
+ *        description: User's email address.
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              title: Email Address
+ *              type: object
+ *              required:
+ *                - email
+ *              properties:
+ *                email:
+ *                  type: string
+ *                  format: email
+ *      responses:
+ *        200:
+ *          description: Sent password reset email.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  message:
+ *                    type: string
+ *                    example: Requested password reset. Check email for password reset link.
+ *        401:
+ *          description: Unauthorized.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  message:
+ *                    type: string
+ *                    example: Email is not associated with any registered account.
+ *        500:
+ *          $ref: '#/components/responses/500InternalServerError'
+ */
+router.post('/reset', async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+
+  if (user) {
+    user.generatePasswordResetToken()
+      .then(updatedUser => {
+        sendPasswordResetEmail(updatedUser, updatedUser.passwordResetToken, res);
+      })
+      .catch(err => {
+        sendError(res, 500, 'Server failed to send password reset email.');
+      });
+  } else {
+    sendError(res, 401, 'Email is not associated with any registered account.');
+  }
+});
+
+/**
+ * @openapi
+ * 
+ * paths:
+ *  /api/users/reset/{token}:
+ *    post:
+ *      tags: [users]
+ *      summary: Reset password.
+ *      description: If token and password are valid, reset the user's password.
+ *      operationId: resetPassword
+ *      parameters:
+ *        - in: path
+ *          name: token
+ *          required: true
+ *          description: Password reset token.
+ *          schema:
+ *            type: string
+ *          example: 0105274e7e458208977c28bfdf11ddf05b5e0ab54b60cc70666736a030a153b0
+ *      requestBody:
+ *        description: User's new password.
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              title: Password
+ *              type: object
+ *              required:
+ *                - password
+ *              properties:
+ *                password:
+ *                  type: string
+ *                  example: Password123#
+ *      responses:
+ *        200:
+ *          description: Password has been updated.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  message:
+ *                    type: string
+ *                    example: This user's password has been updated.
+ *        400:
+ *          $ref: '#/components/responses/400BadRequest'
+ *        401:
+ *          description: Unauthorized.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  message:
+ *                    type: string
+ *                    example: Password reset token is invalid or has expired.
+ *        500:
+ *          $ref: '#/components/responses/500InternalServerError'
+ */
+router.post('/reset/:token', async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  if (hasTokenCredentials(token, password)) {
+    const user = await User.findOne({
+      passwordResetToken: token,
+      passwordResetExpiration: { $gt: Date.now() },
+    });
+
+    User.validate({ password }, ['password'])
+      .then(() => {
+        resetPassword(user, password, res);
+      })
+      .catch((err) => {
+        sendError(res, err, err.message);
+      });
+  } else {
+    sendError(res, 400, 'Token and new password are required.');
+  }
+});
+
+/**
+ * @openapi
+ * 
+ * paths:
+ *  /api/users/reset/{token}:
+ *    get:
+ *      tags: [users]
+ *      summary: Validate password reset token.
+ *      description: Verify that the password reset token belongs to a user and has not expired.
+ *      operationId: validateResetToken
+ *      parameters:
+ *        - in: path
+ *          name: token
+ *          required: true
+ *          description: Password reset token.
+ *          schema:
+ *            type: string
+ *          example: 0105274e7e458208977c28bfdf11ddf05b5e0ab54b60cc70666736a030a153b0
+ *      responses:
+ *        200:
+ *          description: Get status of password reset token.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  validToken:
+ *                    type: boolean
+ *        500:
+ *          $ref: '#/components/responses/500InternalServerError'
+ */
+router.get('/reset/:token', (req, res) => {
+  const { token } = req.params;
+
+  User.findOne({
+    passwordResetToken: token,
+    passwordResetExpiration: { $gt: Date.now() },
+  })
+    .then(user => {
+      sendResponse(res, 200, { validToken: user != null });
+    })
+    .catch(err => {
+      sendError(res, err, err.message);
+    });
 });
 
 /**
@@ -318,11 +510,11 @@ const hasLoginCredentials = (email, password) => {
 /**
  * Verify that both a token and password are present.
  * 
- * @param {String} token A verification token.
+ * @param {String} token A token.
  * @param {String} password The user's password.
  * @returns 
  */
-const hasVerificationCredentials = (token, password) => {
+const hasTokenCredentials = (token, password) => {
   return token && password;
 };
 
@@ -410,6 +602,26 @@ const validatePassword = (user, password, res) => {
 };
 
 /**
+ * Update the user's password.
+ * 
+ * @param {Document} user Mongoose user document.
+ * @param {String} password The user's new password.
+ * @param {Object} res Express response object.
+ */
+const resetPassword = (user, password, res) => {
+  user.resetPassword(password)
+    .then(updatedUser => {
+      sendResponse(res, 200, {
+        message: "This user's password has been updated.",
+      });
+      sendPasswordUpdateEmail(updatedUser);
+    })
+    .catch(err => {
+      sendError(res, err, err.message);
+    });
+};
+
+/**
  * 
  * @param {Document} user Mongoose user document.
  * @param {Boolean} status Verification status.
@@ -446,12 +658,54 @@ const sendVerificationEmail = (user, token, res) => {
   sendEmail(user.email, 'Please Verify Your Email', emailBody)
     .then(result => {
       sendResponse(res, 200, {
-        message: 'Requested verification email. Check email for verification code.',
+        message: 'Requested email verification. Check email for verification link.',
       });
     })
     .catch(err => {
       sendError(res, '500', 'Server failed to send verification email.');
     });
+};
+
+/**
+ * Construct a password reset email and request that it be sent through the mailer sendMail helper.
+ * 
+ * @param {Document} user Mongoose user document.
+ * @param {String} token The password reset token.
+ * @param {Object} res Express response object.
+ */
+const sendPasswordResetEmail = (user, token, res) => {
+  const passwordResetLink = `${APP_URL}/verify/${token}`;
+  const emailBody = `<p>Hi ${user.firstName} ${user.lastName},</p><br>
+                        <p>We received a request to reset your password. Please create a new password by clicking this link:</p>
+                        <strong><a href="${passwordResetLink}" alt="Reset My Password">Reset My Password</a></strong>
+                        <p>This request will expire in 1 hour. If you cannot click on the link, copy and paste the following URL into a new tab in your browser:</p>
+                        <p>${passwordResetLink}</p><br>
+                        <p>The LYFE Team</p>`;
+
+  sendEmail(user.email, 'Password Reset', emailBody)
+    .then((result) => {
+      sendResponse(res, 200, {
+        message:
+          'Requested password reset. Check email for password reset link.',
+      });
+    })
+    .catch((err) => {
+      sendError(res, 500, 'Server failed to send password reset email.');
+    });
+};
+
+/**
+ * Construct a password reset confirmation email and request that it be sent through the mailer
+ * sendMail helper.
+ * 
+ * @param {Document} user Mongoose user document.
+ */
+const sendPasswordUpdateEmail = (user) => {
+  const emailBody = `<p>Hi ${user.firstName} ${user.lastName},</p><br>
+                        <p>Your password was successfully changed.</p><br>
+                        <p>The LYFE Team</p>`;
+  
+  sendEmail(user.email, 'Password Reset Confirmation', emailBody);
 };
 
 module.exports = {
