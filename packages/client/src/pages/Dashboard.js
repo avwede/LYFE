@@ -2,12 +2,19 @@ import React from "react";
 import 'antd/dist/antd.css';
 import { Layout, Menu, Breadcrumb } from 'antd';
 import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
+import { Card, Row, Col } from 'antd';
+import { Tooltip, Progress } from 'antd';
+
+
 
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
 
 const DashboardPage = () => {
   return (
+    
+    
+
     <Layout>
         <Header className="header">
         <div className="logo" />
@@ -58,7 +65,37 @@ const DashboardPage = () => {
 
             </Menu>
             </Sider>
-            <Content style={{ padding: '0 24px', minHeight: 280 }}>Content</Content>
+            <Content style={{ padding: '0 24px', minHeight: 280 }}>
+                <div className="site-card-wrapper">
+                    <Row gutter={[16, 16]}>
+                        <Col span={24}>
+                        <Card title="Progress Bar" bordered={false}>
+                            <Tooltip title="3 done / 4 to do">
+                            <Progress strokeColor={{
+                                    '0%': '#ACC1FF',
+                                    '100%': '#9CECFF',
+                                }} percent={60} />
+                            </Tooltip>
+                        </Card>
+                        </Col>
+                    </Row>
+                    
+                    <Row gutter={[16, 16]} >
+                    <Col span={16}>
+                        <Card title="Daily Tasks" bordered={false}>
+                                
+                        </Card>
+                    </Col>
+                    <Col span={8} >
+                        <Card title="Health" bordered={false}>
+                        Card content
+                        </Card>
+                    </Col>
+
+                    </Row>
+                </div>
+                            
+            </Content>
         </Layout>
         </Content>
         <Footer style={{ textAlign: 'center' }}>LYFE ©2021</Footer>
