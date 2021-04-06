@@ -36,6 +36,12 @@ const { JWT_SECRET } = process.env;
  *          type: string
  *          format: password
  *          example: Password123#
+ *        passwordResetToken:
+ *          type: string
+ *          example: cb68ea67877553f1047c9a87c1f3e98e884f2ef36850bdcf800b728c3a55be83
+ *        passwordResetExpiration:
+ *          type: string
+ *          format: date-time
  *        verified:
  *          type: boolean
  *          default: false
@@ -98,6 +104,12 @@ const userSchema = new mongoose.Schema({
         'Password must contain 1 uppercase letter, 1 lowercase letter, 1 digit and 1 special character: !, @, #, $, %, &.',
     },
   },
+  passwordResetToken: {
+    type: String,
+  },
+  passwordResetExpiration: {
+    type: Date,
+  },
   verified: {
     type: Boolean,
     default: false,
@@ -157,6 +169,34 @@ userSchema.methods.generateJWT = function () {
  */
 userSchema.methods.generateVerificationToken = function () {
   this.verificationToken = randomBytes(32).toString('hex');
+  return this.save();
+};
+
+/**
+ * Generate a password reset token for this user.
+ * 
+ * @returns {Promise} A Promise that will resolve to the saved user document.
+ */
+userSchema.methods.generatePasswordResetToken = function () {
+  const expiresInHours = 1;
+  const msPerHour = 3600000;
+
+  this.passwordResetToken = randomBytes(32).toString('hex');
+  this.passwordResetExpiration = Date.now() + (expiresInHours * msPerHour);
+
+  return this.save();
+};
+
+/**
+ * Update this user's password and disable their password reset token.
+ * 
+ * @param {String} password The user's password.
+ * @returns {Promise} A Promise that will resolve to the saved user document.
+ */
+userSchema.methods.resetPassword = function (password) {
+  this.password = password;
+  this.passwordResetToken = null;
+  this.passwordResetExpiration = null;
   return this.save();
 };
 
