@@ -16,6 +16,7 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
  * 
  * paths:
 <<<<<<< HEAD
+<<<<<<< HEAD
  *  /api/users/emergencycontacts:
  *    post:
  *      tags: [users]
@@ -47,6 +48,9 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
   });
 =======
  *  /api/contacts/add:
+=======
+ *  /api/contacts/addContact:
+>>>>>>> 3e137b5e550761c22ae2624ba52848fc8c5bafc3
  *    post:
  *      tags: [users]
  *      description: Creates a new emergency contact and returns a signed JSON Web Token.
@@ -63,20 +67,20 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
  *          description: New Emergency Contact created.
  */
 
- router.post('/add', authenticateJWT, (req, res) => {
+ router.post('/addContact', authenticateJWT, (req, res) => {
      const newContact = req.body;
      //console.log(req.body);
      //console.log(req.tokenPayload);
      const {id} = req.tokenPayload;
-     contactUser.findByIdAndUpdate(id, {"$push": { "emergencyContacts": newContact}}, {new:true}, function(err, result){
+     contactUser.findByIdAndUpdate(id, {"$push": { "emergencyContacts": newContact}}, {new: true, runValidators : true}, function(err, result){
     
     if (err)
      {
-       res.send(err)
+       sendError(res, err, 'The contact could not be created.');
      }
     else
     {
-      res.send(result)
+      sendResponse(res, 201, {"response": "Contact was created."});
     }
   })
   });
@@ -85,7 +89,7 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
    * @openapi
    * 
    * paths:
-   *  /api/contacts/edit:
+   *  /api/contacts/editContact:
    *    post:
    *      tags: [users]
    *      description: Edits an emergency contact and returns a signed JSON Web Token.
@@ -102,7 +106,7 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
    *          description: Emergency Contact edited.
    */
 
-  router.post('/edit/:id', authenticateJWT, (req, res) => {
+  router.post('/editContact/:id', authenticateJWT, (req, res) => {
     const editContact = req.body;
     console.log(req.body);
     console.log(req.params);
@@ -117,17 +121,50 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
       {
         result.updateContacts(contactId, editContact)
           .then(user => res.send(user))
+          .catch((err) => {
+            sendError(res, err, err.message);
+          });
       }
     })
  });
-/*
- router.post('/delete', (req, res) => {
-    const newContact = req.body;
-    emergencyContactSchema.updateOne({"$pull": { "emergenyContacts": newContact}})
-   .catch((err) => {
-       sendError(res, err, 'The contact could not be created.');
-     });
- });*/
+
+ /**
+ * @openapi
+ * 
+ * paths:
+ *  /api/contacts/deleteContact:
+ *    post:
+ *      tags: [users]
+ *      description: Deletes an emergency contact and returns a signed JSON Web Token.
+ *      operationId: deleteEmergencyContact
+ *      requestBody:
+ *        description: Contact to delete.
+ *        content: 
+ *          application/json:
+ *            schema: 
+ *              $ref: '#/components/schemas/EmergencyContact'
+ *        required: true
+ *      responses:
+ *        201:
+ *          description: Emergency Contact deleted.
+ */
+
+  router.post('/deleteContact/:id', authenticateJWT, (req, res) => {
+    const deleteId = req.params.id;
+    //console.log(req.body);
+    //console.log(req.tokenPayload);
+    const {id} = req.tokenPayload;
+    contactUser.findByIdAndUpdate(id, {"$pull": { "emergencyContacts": {"_id": deleteId}}}, {new:true}, function(err, result){
+      if (err)
+      {
+        sendError(res, err, 'The contact could not be deleted.');
+      }
+      else
+      {
+        sendResponse(res, 201, {"response": "Contact was deleted."});
+      }
+    })
+  });
 
   module.exports = {
     contactsRouter: router,
