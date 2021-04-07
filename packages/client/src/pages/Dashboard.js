@@ -5,16 +5,12 @@ import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/
 import { Card, Row, Col } from 'antd';
 import { Tooltip, Progress } from 'antd';
 
-
-
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
 
+
 const DashboardPage = () => {
   return (
-    
-    
-
     <Layout>
         <Header className="header">
         <div className="logo" />
