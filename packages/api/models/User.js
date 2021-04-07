@@ -119,6 +119,7 @@ userSchema.methods.updateContacts = function(id, updatedContact){
 userSchema.methods.updateCourses = function(id, updatedCourse){
   const index = this.courses.findIndex(obj => obj._id == id);
   console.log(index);
+  console.log(updatedCourse);
   this.courses[index] = updatedCourse;
   console.log(this.course);
   return this.save();
