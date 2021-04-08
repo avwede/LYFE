@@ -1,33 +1,134 @@
+import ReactDOM from 'react-dom';
 import { Table, Button, Tag, Space } from 'antd';
 import React, { Component, useState } from "react";
-import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import 'antd/dist/antd.css';
+
+function TasksTable(){
+  const columns = [
+    {
+      title: 'Task',
+      dataIndex: 'task',
+      key: 'task',
+      render: text => <a>{text}</a>,
+    },
+    {
+      title: 'Date',
+      dataIndex: 'date',
+      key: 'date',
+    },
+    {
+      title: 'Tags',
+      key: 'tags',
+      dataIndex: 'tags',
+      render: tags => (
+        <>
+          {tags.map(tag => {
+            let color = tag.length > 5 ? 'geekblue' : 'green';
+            if (tag === 'School') {
+              color = 'geekblue';
+            }
+            else if (tag == 'Health'){
+              color = 'green';
+            }
+            else if (tag == 'Medication'){
+              color = 'volcano';
+            }
+            else if (tag == 'Exercise'){
+              color = 'purple';
+            }
+            return (
+              <Tag color={color} key={tag}>
+                {tag.toUpperCase()}
+              </Tag>
+            );
+          })}
+        </>
+      ),
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text, record) => (
+        <Space size="middle">
+          <a>Edit</a>
+          <a>Delete</a>
+        </Space>
+      ),
+    },
+  ];
+
+  const data = [
+    {
+      key: '1',
+      task: 'Finish essay',
+      date: '10/3/21',
+      tags: ['School'],
+    },
+    {
+      key: '2',
+      task: 'Take tylenol',
+      date: '11/11/11',
+      tags: ['Medication', 'Health'],
+    },
+    {
+      key: '3',
+      task: 'Take a walk in the arboretum',
+      date: '11/11/11',
+      tags: ['Exercise', 'Health'],
+    },
+  ];
+
+
+  return (
+      <Table columns={columns} dataSource={data} pagination={false} />
+  );
+}
+// ReactDOM.render(<Table columns={columns} dataSource={data} />, mountNode);
+
+export default TasksTable;
+/*
 
 const columns = [
   {
-    title: 'Name',
-    dataIndex: 'name',
+    title: 'Task',
+    dataIndex: 'task',
   },
   {
-    title: 'Age',
-    dataIndex: 'age',
+    title: 'Tags',
+    dataIndex: 'tags',
+    render: tags => (
+      <span>
+        {tags.map(tag => {
+          let color = tag.length > 5 ? 'geekblue' : 'green';
+          if (tag === 'loser') {
+            color = 'volcano';
+          }
+          return (
+            <Tag color={color} key={tag}>
+              {tag.toUpperCase()}
+            </Tag>
+          );
+        })}
+      </span>
+    ),
   },
   {
-    title: 'Address',
-    dataIndex: 'address',
+    title: 'Date',
+    dataIndex: 'date',
   },
 ];
 
 const data = [];
-for (let i = 0; i < 46; i++) {
+for (let i = 0; i < 20; i++) {
   data.push({
     key: i,
-    name: `Edward King ${i}`,
+    task: `homework ${i}`,
     age: 32,
-    address: `London, Park Lane no. ${i}`,
+    date: `4/7/2021 ${i}`,
   });
 }
 
-class App extends React.Component {
+class TasksTable extends React.Component {
   state = {
     selectedRowKeys: [], // Check here to configure the default column
     loading: false,
@@ -63,7 +164,7 @@ class App extends React.Component {
             Reload
           </Button>
           <span style={{ marginLeft: 8 }}>
-            {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
+            {hasSelected ? `Selected ${selectedRowKeys.length} tasks` : ''}
           </span>
         </div>
         <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
@@ -71,3 +172,7 @@ class App extends React.Component {
     );
   }
 }
+
+ReactDOM.render(<TasksTable/>, document.getElementById('root'));
+
+export default TasksTable;*/
