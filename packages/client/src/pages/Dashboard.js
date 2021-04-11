@@ -1,10 +1,16 @@
-import React from "react";
+import React, { Component } from "react";
 import 'antd/dist/antd.css';
 import { Layout, Menu, Breadcrumb } from 'antd';
 import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
+import { Tooltip, Progress, Button, Card, Row, Col } from 'antd';
+import ReactDOM from 'react-dom';
+
+import WaterCount from "../components/WaterCount";
+import TasksTable from "../components/TasksTable";
 
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
+
 
 const DashboardPage = () => {
   return (
@@ -49,7 +55,7 @@ const DashboardPage = () => {
                 <Menu.Item key="8">Goals</Menu.Item>
                 </SubMenu>
 
-                <SubMenu key="sub3" icon={<NotificationOutlined />} title="Reminders">
+                <SubMenu key="sub3" icon={<NotificationOutlined />} title="Profile">
                 <Menu.Item key="9">Assignments</Menu.Item>
                 <Menu.Item key="10">Errands</Menu.Item>
                 <Menu.Item key="11">Exercise</Menu.Item>
@@ -58,7 +64,37 @@ const DashboardPage = () => {
 
             </Menu>
             </Sider>
-            <Content style={{ padding: '0 24px', minHeight: 280 }}>Content</Content>
+            <Content style={{ padding: '0 24px', minHeight: 280 }}>
+                <div className="site-card-wrapper">
+                    <Row gutter={[16, 16]}>
+                        <Col span={24}>
+                        <Card title="Progress Bar" bordered={false}>
+                            <Tooltip title="3 done / 4 to do">
+                            <Progress strokeColor={{
+                                    '0%': '#ACC1FF',
+                                    '100%': '#9CECFF',
+                                }} percent={60} />
+                            </Tooltip>
+                        </Card>
+                        </Col>
+                    </Row>
+                    
+                    <Row gutter={[16, 16]} >
+                    <Col span={16}>
+                        <Card title="Daily Tasks" bordered={false}>
+                            <TasksTable />
+                        </Card>
+                    </Col>
+                    <Col span={8} >
+                        <Card title="Health" bordered={false}>
+                            <WaterCount />
+                        </Card>
+                    </Col>
+
+                    </Row>
+                </div>
+                            
+            </Content>
         </Layout>
         </Content>
         <Footer style={{ textAlign: 'center' }}>LYFE ©2021</Footer>
