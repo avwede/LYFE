@@ -14,16 +14,20 @@ import {
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
 import ErrorPage from "./pages/Error";
-import DashboardPage from "./pages/Dashboard";
 import HomePage from "./pages/Home";
 import Header from "./components/Header";
+import Dashboard from "./pages/Dashboard";
+import DashboardHome from "./pages/DashboardHome";
+import DashboardHealth from "./pages/DashboardHealth";
+import DashboardSchool from "./pages/DashboardSchool";
+import DashboardProfile from "./pages/DashboardProfile";
 
 
 function App(){
   return (
       <Router>
             <Switch>      
-            <Route exact path = "/Dashboard" component={DashboardPage} />
+            <Route exact path = "/Dashboard" component={Dashboard} />
 
             <Fragment>
                 <Header />
@@ -40,9 +44,6 @@ function App(){
             <Redirect to = "/Error" />
             
             </Switch>
-            
-        
-      
       </Router>
   );
 }

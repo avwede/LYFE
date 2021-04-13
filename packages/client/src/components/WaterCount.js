@@ -28,7 +28,7 @@ class WaterCount extends React.Component {
   render() {
     return (
       <>
-        <h5> Daily Water Tracker</h5>
+        <h5>Daily Water Tracker</h5>
         <Progress strokeColor={{'0%': '#ACC1FF', '100%': '#9CECFF',}} type="circle" percent={this.state.percent}/>
         
         <Button.Group>

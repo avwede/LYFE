@@ -1,9 +1,9 @@
 import ReactDOM from 'react-dom';
-import { Table, Button, Tag, Space } from 'antd';
+import { Table, Button, Tag, Space, Pagination } from 'antd';
 import React, { Component, useState } from "react";
 import 'antd/dist/antd.css';
 
-function TasksTable(){
+function TasksTable() {
   const columns = [
     {
       title: 'Task',
@@ -76,16 +76,60 @@ function TasksTable(){
       date: '11/11/11',
       tags: ['Exercise', 'Health'],
     },
+    {
+      key: '4',
+      task: 'print out homework',
+      date: '11/11/11',
+      tags: ['School'],
+    },
+    {
+      key: '5',
+      task: 'Go to gym',
+      date: '11/11/11',
+      tags: ['Exercise', 'Health'],
+    },
+    {
+      key: '6',
+      task: 'Finish programming assignment',
+      date: '10/3/21',
+      tags: ['School'],
+    },
+    {
+      key: '7',
+      task: 'Take meds',
+      date: '11/14/11',
+      tags: ['Medication', 'Health'],
+    },
+    {
+      key: '8',
+      task: 'Take a bike ride',
+      date: '12/27/11',
+      tags: ['Exercise', 'Health'],
+    },
+    {
+      key: '9',
+      task: 'print out paper',
+      date: '11/11/11',
+      tags: ['School'],
+    },
+    {
+      key: '10',
+      task: 'Go to office hours',
+      date: '11/11/11',
+      tags: ['School'],
+    },
   ];
 
 
   return (
-      <Table columns={columns} dataSource={data} pagination={false} />
+    <>
+      <Table columns={columns} dataSource={data} pagination={{defaultPageSize: 5}}/>
+    </>
   );
 }
-// ReactDOM.render(<Table columns={columns} dataSource={data} />, mountNode);
 
 export default TasksTable;
+
 /*
 
 const columns = [
