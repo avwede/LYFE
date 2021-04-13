@@ -25,8 +25,6 @@ const ForgotPassword = (props) => {
                 underlineColorAndroid='transparent'
                 returnKeyType='next'
                 blurOnSubmit={false}
-                onSubmitEditing = {() => this.focusNextField('four')}
-                ref={ input => {this.inputs['three'] = input;}}
                 ></TextInput>
             </View>
             <TouchableOpacity style={styles.loginBtn}>

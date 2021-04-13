@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -16,6 +16,10 @@ import { LoginContext } from './src/contexts/LoginContext.js'
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+
+// Suppressing an unnecessary warning from datetimepicker
+// Minor error in 3rd party dependency, does not affect functionality
+LogBox.ignoreLogs(['Warning: Possible Unhandled Promise Rejection ']);
 
 export default function App() {  
   const [loggedIn, toggleLoggedIn] = useState(true);

@@ -1,20 +1,19 @@
-import React from "react";
+import React, { Component } from "react";
 import 'antd/dist/antd.css';
 import { Layout, Menu, Breadcrumb } from 'antd';
 import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
-import { Card, Row, Col } from 'antd';
-import { Tooltip, Progress } from 'antd';
+import { Tooltip, Progress, Button, Card, Row, Col } from 'antd';
+import ReactDOM from 'react-dom';
 
-
+import WaterCount from "../components/WaterCount";
+import TasksTable from "../components/TasksTable";
 
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
 
+
 const DashboardPage = () => {
   return (
-    
-    
-
     <Layout>
         <Header className="header">
         <div className="logo" />
@@ -56,7 +55,7 @@ const DashboardPage = () => {
                 <Menu.Item key="8">Goals</Menu.Item>
                 </SubMenu>
 
-                <SubMenu key="sub3" icon={<NotificationOutlined />} title="Reminders">
+                <SubMenu key="sub3" icon={<NotificationOutlined />} title="Profile">
                 <Menu.Item key="9">Assignments</Menu.Item>
                 <Menu.Item key="10">Errands</Menu.Item>
                 <Menu.Item key="11">Exercise</Menu.Item>
@@ -83,12 +82,12 @@ const DashboardPage = () => {
                     <Row gutter={[16, 16]} >
                     <Col span={16}>
                         <Card title="Daily Tasks" bordered={false}>
-                                
+                            <TasksTable />
                         </Card>
                     </Col>
                     <Col span={8} >
                         <Card title="Health" bordered={false}>
-                        Card content
+                            <WaterCount />
                         </Card>
                     </Col>
 
