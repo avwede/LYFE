@@ -8,8 +8,9 @@
     "client": "cd ./packages/client && npm start",
     "client-build": "cd ./packages/client && npm install && npm run build",
     "client-install": "cd ./packages/client && npm install",
-    "heroku-postbuild": "npm run api-install && npm run client-build",
-    "install": "npm run api-install && npm run client-install"
+    "heroku-postbuild": "npm run client-build",
+    "install": "npm run api-install && npm run client-install",
+    "start": "cd ./packages/api && npm start"
   },
   "license": "ISC",
   "dependencies": {
