@@ -10,8 +10,8 @@ module.exports = {
     server.use(express.json());
     
     // In production serve client build as static files.
-    if (NODE_ENV === 'production') {
-      server.use(express.static(path.resolve(__dirname, '../../client/build')));
-    }
+    // if (NODE_ENV === 'production') {
+    //   server.use(express.static(path.resolve(__dirname, '../../client/build')));
+    // }
   },
 };
