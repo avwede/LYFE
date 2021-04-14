@@ -7,7 +7,6 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import {MaterialIcons} from '@expo/vector-icons';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 
-// TODO: Integrate push notifications.
 // https://reactnative.dev/docs/flexbox
 
 const {width: WIDTH} = Dimensions.get('window')
@@ -31,13 +30,12 @@ const Classes = (props) => {
     const [activeIndex, setActiveIndex] = useState(Number.MIN_SAFE_INTEGER);
     const [selectedType, setSelectedType] = useState();
 
-    // Notification scheduling:
+    // Notification scheduling?
     // Get start date, end date, and weekdays from a picker/selector(checkbox, text, flatlist). 
     // Store selected values as integers in set. After submitted, find and store smallest present value
     // then spread to array and rebase so lowest number is 0.
     // Use stored start date and add each (nonzero) integer to it, then schedule a notification 
     // repeating until (end date + integer).
-
     // Need to store a notification id in the database in order to unsubscribe
 
     // https://stackoverflow.com/questions/58925515/using-react-native-community-datetimepicker-how-can-i-display-a-datetime-picker
@@ -89,7 +87,7 @@ const Classes = (props) => {
     // Put it into the states for the overlay.
     const editHelper = (index) => {
         setActiveIndex(index);
-        setAddorEdit(true);
+        setAddorEdit(false);
         setDeleteOverlay(false);
         toggleOverlay();
     }
@@ -146,20 +144,20 @@ const Classes = (props) => {
     // Link if location.type="Link", else text
     const renderAccordion = () => {
         return(
-        <View>
-        <View>
+        <View style={styles.expandedAccordion}>
+        <View style={styles.textSpacing}>
             <Text>(Zoom Link Here)</Text>
         </View>
-        <View>
+        <View style={styles.textSpacing}>
             <Text>Class Days: Monday, Wednesday, Friday (times from start/end date)</Text>
         </View>
-        <View>
+        <View style={styles.textSpacing}>
             <Text>Started: 01/10/2021</Text>
         </View>
-        <View>
+        <View style={styles.textSpacing}>
             <Text>Ending: 04/28/2021</Text>
         </View>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
             <TouchableNativeFeedback 
             onPress = {(index) => editHelper(index)}>
                 <Icon type="FontAwesome5" name="edit">
@@ -195,7 +193,7 @@ const Classes = (props) => {
                 <Text>
                     Classes
                 </Text>
-                <Button title="Add Class" onPress = {() => {setDeleteOverlay(false); setAddorEdit(false); toggleOverlay();}} />
+                <Button title="Add Class" onPress = {() => {setDeleteOverlay(false); setAddorEdit(true); toggleOverlay();}} />
                     {(!deleteOverlay) ?
                         (<Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
                         <View><Text>New Class</Text></View>
@@ -223,7 +221,11 @@ const Classes = (props) => {
                         returnKeyType='next'
                         blurOnSubmit={false}
                         ></TextInput></View>
-                        <View style={styles.inputView}>
+                        <View style={{width: WIDTH - 100,
+                                        height:20,
+                                        paddingLeft:12,
+                                        paddingBottom: 3,
+                                        fontSize: 12}}>
                         <Picker
                             mode="dropdown"
                             placeholder="Type"
@@ -235,7 +237,7 @@ const Classes = (props) => {
                                 <Picker.Item label="Link" value="Link" />
                         </Picker>
                         </View>
-                        <View style = {styles.inputView}>
+                        <View style={styles.inputView, {paddingLeft: 10}}>
                          <SectionedMultiSelect items={[  {name: 'Sunday',
                                                         id: 1,
                                                         },{name: 'Monday',
@@ -314,7 +316,7 @@ const Classes = (props) => {
             <View>
                 <Divider />
             </View>
-            <View style={{alignItems:'center', marginTop: 50}}>
+            <View style={styles.accordion}>
                 <Accordion
                 dataArray={dataArray}
                 animation={true}
@@ -372,5 +374,15 @@ const styles = StyleSheet.create({
         color:'black',
         fontSize: 12,
         fontFamily: 'sans-serif',
-    }
+    },
+    accordion:{
+        alignItems:'center', 
+        marginTop: 50
+    },
+    expandedAccordion: {
+        width: WIDTH - 90
+    },
+    textSpacing:{
+        marginVertical: 10
+    },
 });

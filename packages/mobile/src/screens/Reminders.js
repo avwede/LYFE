@@ -5,7 +5,6 @@ import { Overlay, Divider, Button, registerCustomIconType } from 'react-native-e
 import { Container, Header, Content, Icon, Accordion, Text, View } from 'native-base';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-// TODO: Integrate push notifications.
 // https://reactnative.dev/docs/flexbox
 
 const {width: WIDTH} = Dimensions.get('window')
@@ -57,7 +56,7 @@ const Reminders = (props) => {
     // Put it into the states for the overlay.
     const editHelper = (index) => {
         setActiveIndex(index);
-        setAddorEdit(true);
+        setAddorEdit(false);
         setDeleteOverlay(false);
         toggleOverlay();
     }
@@ -71,9 +70,6 @@ const Reminders = (props) => {
     // For the following functions, make a POST request followed
     // by a GET request to fetch the updated data, then update "data" state
     const addReminder = () => {
-        if (checked) {
-
-        }
         return;
     }
 
@@ -110,23 +106,23 @@ const Reminders = (props) => {
     // to editHelper()
     const renderAccordion = () => {
         return(
-        <View>
-        <View>
+        <View style={styles.expandedAccordion}>
+        <View style={styles.textSpacing}>
             <Text>04/21/2021 06:00 PM</Text>
         </View>
-        <View>
+        <View style={styles.textSpacing}>
             <Text>Submit POOP Large Project</Text>
         </View>
-        <View>
+        <View style={styles.textSpacing}>
             <Text>Type: Assignment</Text>
         </View>
-        <View style={{flexDirection: 'row'}}>
-            <TouchableNativeFeedback 
+        <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
+            <TouchableNativeFeedback
             onPress = {(index) => editHelper(index)}>
                 <Icon type="FontAwesome5" name="edit">
                 </Icon>
             </TouchableNativeFeedback>
-            <TouchableNativeFeedback 
+            <TouchableNativeFeedback
             onPress = {(index) => deleteHelper(index)}>
                 <Icon type="FontAwesome5" name="trash-alt">
                 </Icon>
@@ -156,7 +152,7 @@ const Reminders = (props) => {
                 <Text>
                     Reminders
                 </Text>
-                <Button title="Add Reminder" onPress = {() => {setDeleteOverlay(false); setAddorEdit(false); toggleOverlay();}} />
+                <Button title="Add Reminder" onPress = {() => {setDeleteOverlay(false); setAddorEdit(true); toggleOverlay();}} />
                     {(!deleteOverlay) ?
                         (<Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
                         <View><Text>New Reminder</Text></View>
@@ -184,7 +180,7 @@ const Reminders = (props) => {
                         returnKeyType='next'
                         blurOnSubmit={false}
                         ></TextInput></View>
-                        <View>
+                        <View style={styles.inputView}>
                         <TouchableNativeFeedback 
                         title='Show Date Picker'
                         onPress={() => showDatepicker()}>
@@ -229,7 +225,7 @@ const Reminders = (props) => {
             <View>
                 <Divider />
             </View>
-            <View style={{alignItems:'center', marginTop: 50}}>
+            <View style={styles.accordion}>
                 <Accordion
                 dataArray={dataArray}
                 animation={true}
@@ -287,5 +283,15 @@ const styles = StyleSheet.create({
         color:'black',
         fontSize: 12,
         fontFamily: 'sans-serif',
-    }
+    },
+    accordion:{
+        alignItems:'center', 
+        marginTop: 50
+    },
+    expandedAccordion: {
+        width: WIDTH - 90
+    },
+    textSpacing:{
+        marginVertical: 10
+    },
 });
