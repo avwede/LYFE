@@ -10,25 +10,25 @@ const { MONGODB_URI, PORT } = process.env;
 // Apply server level middleware.
 setupMiddleware(server);
 
-// // Setup api documentation.
-// setupDocs(server);
+// Setup api documentation.
+setupDocs(server);
 
-// // Setup api routes.
-// setupRoutes(server);
+// Setup api routes.
+setupRoutes(server);
 
-// // Setup database connection.
-// mongoose
-//   .connect(MONGODB_URI, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//     useCreateIndex: true,
-//   })
-//   .then(() => {
-//     console.log(`\n*** Connected to database ${MONGODB_URI} ***\n`);
+// Setup database connection.
+mongoose
+  .connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+  })
+  .then(() => {
+    console.log(`\n*** Connected to database ${MONGODB_URI} ***\n`);
     server.listen(PORT, () => {
       console.log(`\n*** Server listening on port ${PORT} ***\n`);
     });
-//   })
-//   .catch((err) => {
-//     console.log('\n*** Error connecting to database ***\n', err);
-//   });
+  })
+  .catch((err) => {
+    console.log('\n*** Error connecting to database ***\n', err);
+  });
