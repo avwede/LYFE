@@ -68,7 +68,7 @@ router.post('/register', (req, res) => {
   const newUser = req.body;
 
   User.create(newUser)
-    .then((user) => {
+    .then(user => {
       user.generateVerificationToken()
         .then(updatedUser => {
           sendVerificationEmail(user, updatedUser.verificationToken, res);
@@ -448,7 +448,7 @@ router.get('/reset/:token', (req, res) => {
  *        - BearerAuth: []
  *      tags: [users]
  *      summary: Delete a user.
- *      description: Deletes a user by id. This action can only be performed by an authenticated 
+ *      description: Delete a user by id. This action can only be performed by an authenticated 
  *        user and users may only delete their own account.
  *      operationId: deleteUser
  *      parameters:
@@ -461,17 +461,8 @@ router.get('/reset/:token', (req, res) => {
  *            format: objectId
  *          example: 6058319d6aedde248dbad720
  *      responses:
- *        200:
- *          description: User deleted successfully.
- *          content: 
- *            application/json:
- *              schema:
- *                type: object
- *                properties:
- *                  _id: 
- *                    type: string
- *                    format: objectId
- *                    example: 6058319d6aedde248dbad720
+ *        204:
+ *          description: User successfully deleted.
  *        401:
  *          $ref: '#/components/responses/401Unauthorized'
  *        403:
@@ -481,12 +472,12 @@ router.get('/reset/:token', (req, res) => {
  */
 router.delete('/:id', authenticateJWT, (req, res) => {
   const { id } = req.params;
-  const thisUser = req.tokenPayload.id;
+  const userId = req.tokenPayload.id;
 
-  if (thisUser === id) {
+  if (userId === id) {
     User.findByIdAndRemove({ _id: id })
       .then(({ _id }) => {
-        sendResponse(res, '200', { _id: _id });
+        sendResponse(res, 204, {});
       })
       .catch((err) => {
         sendError(res, err, `The user with id ${id} could not be removed.`);
@@ -501,7 +492,7 @@ router.delete('/:id', authenticateJWT, (req, res) => {
  * 
  * @param {String} email The user's email address. 
  * @param {String} password The user's password.
- * @returns 
+ * @returns {Boolean} Whether or not both the email and password are present.
  */
 const hasLoginCredentials = (email, password) => {
   return email && password; 
@@ -512,7 +503,7 @@ const hasLoginCredentials = (email, password) => {
  * 
  * @param {String} token A token.
  * @param {String} password The user's password.
- * @returns 
+ * @returns {Boolean} Whether or not both the token and password are present.
  */
 const hasTokenCredentials = (token, password) => {
   return token && password;
@@ -523,6 +514,7 @@ const hasTokenCredentials = (token, password) => {
  * 
  * @param {Document} user Mongoose user document.
  * @param {Object} res Express response object.
+ * @returns {Boolean} Whether or not the user can request a verification email.
  */
 const isVerifiable = (user, res) => {
   let verifiable = true;
@@ -568,7 +560,7 @@ const findUser = (req, res) => {
  * @param {Document} user Mongoose user document.
  * @param {String} password The user's password.
  * @param {Object} res Express response object.
- * @returns 
+ * @returns {Undefined} Return used eto end function early.
  */
 const verifyUser = async (user, password, res) => {
   const result = await user.isValidPassword(password);
