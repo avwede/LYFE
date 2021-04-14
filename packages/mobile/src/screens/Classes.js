@@ -2,43 +2,75 @@ import React, { useState, useContext, useEffect, Component} from 'react';
 import { StyleSheet, Image, TextInput, TouchableNativeFeedback, Dimensions, CheckBox} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Overlay, Divider, Button, registerCustomIconType } from 'react-native-elements';
-import { Container, Header, Content, Icon, Accordion, Text, View } from 'native-base';
+import { Container, Header, Content, Icon, Accordion, Text, View, Picker } from 'native-base';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {MaterialIcons} from '@expo/vector-icons';
+import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 
 // TODO: Integrate push notifications.
 // https://reactnative.dev/docs/flexbox
 
 const {width: WIDTH} = Dimensions.get('window')
 const {height: HEIGHT} = Dimensions.get('window')
-const Reminders = (props) => {
+const Classes = (props) => {
     // Fetch tasks after each modal submission. Make sure it's async.
     // Call setData on response to store in state.
     const [deleteOverlay, setDeleteOverlay] = useState(false);
     const [addOrEdit, setAddorEdit] = useState(true);
     const [visible, setVisible] = useState(false);
     const [data, setData] = useState();
-    const [date, setDate] = useState(new Date());
-    const [time, setTime] = useState(new Date());
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+    const [repeatDays, setRepeatDays] = useState([]);
+    const [startTime, setStartTime] = useState(new Date());
+    const [endTime, setEndTime] = useState(new Date());
     const [mode, setMode] = useState('date');
-    const [show, setShow] = useState(false);
+    const [showStart, setShowStart] = useState(false);
+    const [showEnd, setShowEnd] = useState(false);
     // This holds index in state for the edit and delete overlay. 
     const [activeIndex, setActiveIndex] = useState(Number.MIN_SAFE_INTEGER);
+    const [selectedType, setSelectedType] = useState();
+
+    // Notification scheduling:
+    // Get start date, end date, and weekdays from a picker/selector(checkbox, text, flatlist). 
+    // Store selected values as integers in set. After submitted, find and store smallest present value
+    // then spread to array and rebase so lowest number is 0.
+    // Use stored start date and add each (nonzero) integer to it, then schedule a notification 
+    // repeating until (end date + integer).
+
+    // Need to store a notification id in the database in order to unsubscribe
 
     // https://stackoverflow.com/questions/58925515/using-react-native-community-datetimepicker-how-can-i-display-a-datetime-picker
-    const onChangeDate = (event, selectedDate) => {
-        setShow(Platform.OS === 'ios');
+    const onChangeStartDate = (event, selectedDate) => {
+        setShowStart(Platform.OS === 'ios');
         if (mode == 'date') {
-            const currentDate = selectedDate || date;
-            setDate(currentDate);
+            const currentDate = selectedDate || startDate;
+            setStartDate(currentDate);
             setMode('time');
-            setShow(Platform.OS !== 'ios'); 
+            setShowStart(Platform.OS !== 'ios'); 
         } else {
             const selectedTime = selectedDate || new Date();
-            setTime(selectedTime);
-            setShow(Platform.OS === 'ios'); 
+            setStartTime(selectedTime);
+            setShowStart(Platform.OS === 'ios'); 
             setMode('date'); 
         }
     };
+
+    const onChangeEndDate = (event, selectedDate) => {
+        setShowEnd(Platform.OS === 'ios');
+        if (mode == 'date') {
+            const currentDate = selectedDate || endDate;
+            setEndDate(currentDate);
+            setMode('time');
+            setShowEnd(Platform.OS !== 'ios'); 
+        } else {
+            const selectedTime = selectedDate || new Date();
+            setEndTime(selectedTime);
+            setShowEnd(Platform.OS === 'ios'); 
+            setMode('date'); 
+        }
+    };
+
 
     const showMode = (currentMode) => {
         setShow(true);
@@ -70,21 +102,18 @@ const Reminders = (props) => {
 
     // For the following functions, make a POST request followed
     // by a GET request to fetch the updated data, then update "data" state
-    const addReminder = () => {
-        if (checked) {
-
-        }
+    const addClass = () => {
         return;
     }
 
-    const editReminder = () => {
+    const editClass = () => {
 
         setActiveIndex(Number.MIN_SAFE_INTEGER);
         toggleOverlay();
         return;
     }
     
-    const deleteReminder = () => {
+    const deleteClass = () => {
 
         setActiveIndex(Number.MIN_SAFE_INTEGER);
         toggleOverlay();       
@@ -93,14 +122,20 @@ const Reminders = (props) => {
 
     const renderHeader = () => {
         return(<View style={{
-            flexDirection: "row",
             padding: 10,
             justifyContent: "space-between",
             alignItems: "center" ,
             backgroundColor: "#A9DAD6" }}>
-          <Text style={{ fontWeight: "600" }}>
-              Reminder #1
+            <View>
+            <Text style={{ fontWeight: "600" }}>
+                COP 4331
             </Text>
+            </View>
+            <View>
+            <Text>
+                Dr. Richard Leinecker
+            </Text>
+            </View>
           </View>)
     }
 
@@ -108,17 +143,21 @@ const Reminders = (props) => {
     // Accordion component should handle .map()
     // Try to set up so the item's position in array (index) is passed
     // to editHelper()
+    // Link if location.type="Link", else text
     const renderAccordion = () => {
         return(
         <View>
         <View>
-            <Text>04/21/2021 06:00 PM</Text>
+            <Text>(Zoom Link Here)</Text>
         </View>
         <View>
-            <Text>Submit POOP Large Project</Text>
+            <Text>Class Days: Monday, Wednesday, Friday (times from start/end date)</Text>
         </View>
         <View>
-            <Text>Type: Assignment</Text>
+            <Text>Started: 01/10/2021</Text>
+        </View>
+        <View>
+            <Text>Ending: 04/28/2021</Text>
         </View>
         <View style={{flexDirection: 'row'}}>
             <TouchableNativeFeedback 
@@ -137,7 +176,7 @@ const Reminders = (props) => {
 
     // https://stackoverflow.com/questions/58925515/using-react-native-community-datetimepicker-how-can-i-display-a-datetime-picker
     const formatDate = (date, time) => {
-        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} ${time.getHours()}:${time.getMinutes()}`;
+        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} ${time.getHours()}:${time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes()}`;
     };
 
     // For testing purposes
@@ -146,7 +185,7 @@ const Reminders = (props) => {
     ];
 
     /*useEffect(() => {
-       getReminders();
+       getClasses();
     }, [data]); */
     
     return(
@@ -154,15 +193,15 @@ const Reminders = (props) => {
             <View style={{alignItems:'center', marginTop: 150, flexDirection:'row', 
             justifyContent: "space-between", width:WIDTH-100}}>
                 <Text>
-                    Reminders
+                    Classes
                 </Text>
-                <Button title="Add Reminder" onPress = {() => {setDeleteOverlay(false); setAddorEdit(false); toggleOverlay();}} />
+                <Button title="Add Class" onPress = {() => {setDeleteOverlay(false); setAddorEdit(false); toggleOverlay();}} />
                     {(!deleteOverlay) ?
                         (<Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
-                        <View><Text>New Reminder</Text></View>
+                        <View><Text>New Class</Text></View>
                         <View><TextInput
                         style={styles.inputView}
-                        placeholder= 'Name'
+                        placeholder= 'Course Code'
                         placeholderTextColor='black'
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
@@ -170,7 +209,7 @@ const Reminders = (props) => {
                         ></TextInput></View>
                         <View><TextInput
                         style={styles.inputView}
-                        placeholder= 'Description'
+                        placeholder= 'Professor'
                         placeholderTextColor='black'
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
@@ -184,34 +223,80 @@ const Reminders = (props) => {
                         returnKeyType='next'
                         blurOnSubmit={false}
                         ></TextInput></View>
-                        <View>
+                        <View style={styles.inputView}>
+                        <Picker
+                            mode="dropdown"
+                            placeholder="Type"
+                            selectedValue={selectedType}
+                            onValueChange={(itemValue, itemIndex) =>
+                                setSelectedType(itemValue)
+                            }>
+                                <Picker.Item label="Address" value="Address" />
+                                <Picker.Item label="Link" value="Link" />
+                        </Picker>
+                        </View>
+                        <View style = {styles.inputView}>
+                         <SectionedMultiSelect items={[  {name: 'Sunday',
+                                                        id: 1,
+                                                        },{name: 'Monday',
+                                                        id: 2,
+                                                        },{name: 'Tuesday',
+                                                        id: 3,
+                                                        },{name: 'Wednesday',
+                                                        id: 4,
+                                                        },{name: 'Thursday',
+                                                        id: 5,
+                                                        },{name: 'Friday',
+                                                        id: 6,
+                                                        },{name: 'Saturday',
+                                                        id: 7,
+                                                        },
+                                                    ]}
+                                                IconRenderer={MaterialIcons}
+                                                uniqueKey="id"
+                                                selectText="Choose Days"
+                                                showDropDowns={false}
+                                                onSelectedItemsChange={(selectedItems) => setRepeatDays(selectedItems)}
+                                                selectedItems={repeatDays}
+                                                showChips={false} />
+                                                </View>
+                        <View style={styles.inputView}>
+                        <Text>Select Start Date/Time</Text>
                         <TouchableNativeFeedback 
-                        title='Show Date Picker'
-                        onPress={() => showDatepicker()}>
-                            <Text>{formatDate(date, time)}</Text>
+                        title='Select Start Date/Time'
+                        onPress={() => {setShowStart(true); setMode('date');}}>
+                            <Text>{formatDate(startDate, startTime)}</Text>
                         </TouchableNativeFeedback>
-                        {show && (
+                        {showStart && (
                             <DateTimePicker
-                                value={date}
+                                value={startDate}
                                 display='default'
                                 mode={mode}
-                                onChange={onChangeDate}
+                                onChange={onChangeStartDate}
                             />
                         )}
                         </View>
-                        <View><TextInput
-                        style={styles.inputView}
-                        placeholder= 'Type'
-                        placeholderTextColor='black'
-                        underlineColorAndroid='transparent'
-                        returnKeyType='next'
-                        blurOnSubmit={false}
-                        ></TextInput></View>
-                        {addOrEdit ? (<Button title="Add" onPress={() => addReminder}></Button>) : 
-                        (<Button title="Edit" onPress={() => editReminder()}></Button>)}
+                        <View style={styles.inputView}>
+                        <Text>Select End Date/Time</Text>
+                        <TouchableNativeFeedback 
+                        title='Select End Date/Time'
+                        onPress={() => {setShowEnd(true); setMode('date');}}>
+                            <Text>{formatDate(endDate, endTime)}</Text>
+                        </TouchableNativeFeedback>
+                        {showEnd && (
+                            <DateTimePicker
+                                value={endDate}
+                                display='default'
+                                mode={mode}
+                                onChange={onChangeEndDate}
+                            />
+                        )}
+                        </View>
+                        {addOrEdit ? (<Button title="Add" onPress={() => addClass()}></Button>) : 
+                        (<Button title="Edit" onPress={() => editClass()}></Button>)}
                         </Overlay>) :
                         (<Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
-                        <Text> Are you sure you want to delete this reminder? </Text>
+                        <Text> Are you sure you want to delete this class? </Text>
                         <View style= {{flexDirection: 'row', justifyContent: 'space-evenly'}}>
                             <TouchableNativeFeedback style={styles.loginBtn}
                             onPress = {() => {setActiveIndex(Number.MIN_SAFE_INTEGER); toggleOverlay();}}>
@@ -220,7 +305,7 @@ const Reminders = (props) => {
                                 </Text>
                             </TouchableNativeFeedback>
                             <TouchableNativeFeedback style={styles.loginBtn}
-                            onPress = {() => deleteReminder()}>
+                            onPress = {() => deleteClass()}>
                             <Text> Delete </Text>
                             </TouchableNativeFeedback>
                         </View>
@@ -244,7 +329,7 @@ const Reminders = (props) => {
     );
 }
 
-export default Reminders;
+export default Classes;
 const styles = StyleSheet.create({
     container: {
         flex: 1,

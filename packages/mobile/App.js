@@ -9,7 +9,7 @@ import ForgotPassword from './src/screens/ForgotPassword.js';
 import Dashboard from './src/screens/Dashboard.js';
 import Reminders from './src/screens/Reminders.js';
 import Health from './src/screens/Health.js';
-import School from './src/screens/School.js';
+import Classes from './src/screens/Classes.js';
 import Profile from './src/screens/Profile.js';
 import {JWTProvider, JWTContext} from './src/contexts/JWTContext.js'
 import { LoginContext } from './src/contexts/LoginContext.js'
@@ -17,9 +17,10 @@ import { LoginContext } from './src/contexts/LoginContext.js'
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// Suppressing an unnecessary warning from datetimepicker
+/* Suppressing an unnecessary warning from datetimepicker
 // Minor error in 3rd party dependency, does not affect functionality
-LogBox.ignoreLogs(['Warning: Possible Unhandled Promise Rejection ']);
+LogBox.ignoreLogs(['Warning: Possible Unhandled Promise Rejection']);
+*/
 
 export default function App() {  
   const [loggedIn, toggleLoggedIn] = useState(true);
@@ -40,7 +41,7 @@ export default function App() {
         <Tab.Screen name="Dashboard" component={Dashboard}  />
         <Tab.Screen name="Reminders" component={Reminders}  />
         <Tab.Screen name="Health" component={Health} />
-        <Tab.Screen name="School" component={School} />
+        <Tab.Screen name="School" component={Classes} />
         <Tab.Screen name="Profile" component={Profile} />
       </Tab.Navigator>)}
     </LoginContext.Provider>
