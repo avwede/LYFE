@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const randomBytes = require('randombytes');
-const emergencyContactSchema = require('./EmergencyContact.embeddedModel');
+const healthSchema = require('./Health.embeddedModel');
 const reminderSchema = require('./Reminder.embeddedModel');
 const saltRounds = 12;
 const { JWT_SECRET } = process.env;
@@ -48,18 +48,6 @@ const { JWT_SECRET } = process.env;
  *        verificationToken:
  *          type: string
  *          example: cb68ea67877553f1047c9a87c1f3e98e884f2ef36850bdcf800b728c3a55be83
- *        dateOfBirth:
- *          type: string
- *          format: date
- *        allergies:
- *          type: array
- *          items:
- *            type: string
- *          example: ['Peanuts']
- *        emergencyContact:
- *          type: array
- *          items:
- *            $ref: '#/components/schemas/EmergencyContact'
  *        reminders:
  *          type: array
  *          items:
@@ -69,6 +57,8 @@ const { JWT_SECRET } = process.env;
  *          items:
  *            type: objectId
  *          example: ['5b1ed13e8cea93c6ba72b1da', '5b1ed13e8cea93c6ba72b1db']
+ *        health:
+ *          $ref: '#/components/schemas/Ice' 
  */
 const userSchema = new mongoose.Schema({
   firstName: {
@@ -117,11 +107,9 @@ const userSchema = new mongoose.Schema({
   verificationToken: {
     type: String,
   },
-  dateOfBirth: Date,
-  allergies: [String],
-  emergencyContacts: [emergencyContactSchema],
   reminders: [reminderSchema],
   courses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],
+  health: healthSchema,
 });
 
 /**
