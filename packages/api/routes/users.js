@@ -74,7 +74,7 @@ router.post('/register', (req, res) => {
           sendVerificationEmail(user, updatedUser.verificationToken, res);
         })
         .catch(err => {
-          sendError(res, '500', 'User registered but verification token could not be generated.');
+          sendError(res, 500, 'User registered but verification token could not be generated.');
         });
     })
     .catch((err) => {
@@ -150,7 +150,7 @@ router.post('/verify/resend', async (req, res) => {
         sendVerificationEmail(updatedUser, updatedUser.verificationToken, res);
       })
       .catch(err => {
-        sendError(res, '500', 'Server failed to send verification email.');
+        sendError(res, 500, 'Server failed to send verification email.');
       });
   }
 });
@@ -231,9 +231,9 @@ router.post('/verify/:token', async (req, res) => {
     if (user)
       verifyUser(user, password, res);
     else 
-      sendError(res, '401', 'Token and/or password is not associated with any registered account.');
+      sendError(res, 401, 'Token and/or password is not associated with any registered account.');
   } else {
-    sendError(res, '400', 'Token and password are required.');
+    sendError(res, 400, 'Token and password are required.');
   }
 });
 
@@ -243,7 +243,7 @@ router.post('/login', (req, res) => {
   if (hasLoginCredentials(email, password)) {
     findUser(req, res);
   } else {
-    sendError(res, '400', 'Email and password are required.');
+    sendError(res, 400, 'Email and password are required.');
   }
 });
 
@@ -483,7 +483,7 @@ router.delete('/:id', authenticateJWT, (req, res) => {
         sendError(res, err, `The user with id ${id} could not be removed.`);
       });
   } else {
-    sendError(res, '403', 'This user is not authorized to perform this action.');
+    sendError(res, 403, 'This user is not authorized to perform this action.');
   }
 });
 
@@ -520,10 +520,10 @@ const isVerifiable = (user, res) => {
   let verifiable = true;
 
   if (!user) {
-    sendError(res, '401', `Email is not associated with any registered account.`);
+    sendError(res, 401, `Email is not associated with any registered account.`);
     verifiable = false;
   } else if (user.verified) {
-    sendError(res, '400', 'This user is already verified.');
+    sendError(res, 400, 'This user is already verified.');
     verifiable = false;
   }
 
@@ -545,7 +545,7 @@ const findUser = (req, res) => {
       if (user) {
         validatePassword(user, password, res);
       } else {
-        sendError(res, '401', 'Email and/or password is incorrect.');
+        sendError(res, 401, 'Email and/or password is incorrect.');
       }
     })
     .catch((err) => {
@@ -566,10 +566,10 @@ const verifyUser = async (user, password, res) => {
   const result = await user.isValidPassword(password);
   
   if (!result)
-    return sendError(res, '401', 'Invalid password.');
+    return sendError(res, 401, 'Invalid password.');
 
   if (user.verified)
-    return sendError(res, '400', 'This user is already verified');
+    return sendError(res, 400, 'This user is already verified');
 
   setVerificationStatus(user, true, res);
 };
@@ -586,10 +586,10 @@ const validatePassword = (user, password, res) => {
   user.isValidPassword(password)
     .then((result) => {
       if (!result)
-        return sendError(res, '401', 'Email and/or password is incorrect.');
+        return sendError(res, 401, 'Email and/or password is incorrect.');
       
       const token = user.generateJWT();
-      sendResponse(res, '201', { token });
+      sendResponse(res, 201, { token });
     });
 };
 
@@ -654,7 +654,7 @@ const sendVerificationEmail = (user, token, res) => {
       });
     })
     .catch(err => {
-      sendError(res, '500', 'Server failed to send verification email.');
+      sendError(res, 500, 'Server failed to send verification email.');
     });
 };
 
