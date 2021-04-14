@@ -31,6 +31,14 @@ const swaggerJSDocOptions = {
         name: 'users',
         description: 'Create and manage users and user sessions.',
       },
+      {
+        name: 'reminders',
+        description: 'Create and manage reminders and reminder types.'
+      },
+      {
+        name: 'health',
+        description: 'Manage health profile.'
+      },
     ],
   },
   apis: ['**/docs/*.js', '**/models/*.js', '**/routes/*.js', '**/util/*.js'],
