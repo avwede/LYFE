@@ -38,7 +38,7 @@ const DashboardPage = () => {
                     style={{ height: '100%' }}
                 >   
                     <Menu.Item key="sub0" icon={<HomeOutlined />}>Home
-                    <Link to="/Dashboard" />
+                    <Link to= "/Dashboard" />
                     </Menu.Item>
 
                     <Menu.Item key="sub1" icon={<MedicineBoxOutlined />}>Health

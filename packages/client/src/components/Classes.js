@@ -1,43 +1,37 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Card } from 'antd';
+import { Space, Card} from 'antd';
 
 
 class Classes extends React.Component {
 
     gridStyle = {
-        width: '33.33%',
+        width: '32%',
         textAlign: 'center',
-        background: '#ACC1FF',
+        background: '#DBF3FA',
+        marginBottom: '10px',
+        marginRight: '5px',
+        marginLeft: '8px',
+        marginTop: '8px',
     };
 
     render() {
         return (
             <Card title="Classes">
-                <Card.Grid style={this.gridStyle, {background: '#fff1f0', textAlign: 'center'}}>COP 4331 - Leiniker</Card.Grid>
-                <Card.Grid style={this.gridStyle, {background: '#f6ffed', textAlign: 'center'}}>COP 3402</Card.Grid>
-                <Card.Grid style={this.gridStyle, {background: '#e6f7ff', textAlign: 'center'}}>CDA 3103</Card.Grid>
-                <Card.Grid style={this.gridStyle, {background: '#f9f0ff', textAlign: 'center'}}>COP 3503</Card.Grid>
-                <Card.Grid style={this.gridStyle, {background: '#fff0f6', textAlign: 'center'}}>FIL 1000</Card.Grid>
-                <Card.Grid style={this.gridStyle, {background: '#feffe6', textAlign: 'center'}}>CHM 2500</Card.Grid>
+                <a href='https://ucf.zoom.us/j/91549966557' target='_blank'>
+                    <Card.Grid style={this.gridStyle}>
+                        <h4>COP 4331 - Leinecker</h4>
+                    </Card.Grid>
+                </a>
+
+                <Card.Grid style={this.gridStyle}><h4>COP 3503 - Szumlanski</h4></Card.Grid>
+                <Card.Grid style={this.gridStyle}><h4>COP 4331 - Angell</h4></Card.Grid>
+                <Card.Grid style={this.gridStyle}><h4>COP 4331 - Guha</h4></Card.Grid>
+                <Card.Grid style={this.gridStyle}><h4>COP 4331 - Gerber</h4></Card.Grid>
+                <Card.Grid style={this.gridStyle}><h4>COP 4331 - Montagne</h4></Card.Grid>
             </Card>
         );
     }
 }
 
 export default Classes;
-
-// Pastel Colors
-// Light Purple #F0DEFD
-// Light Blue #DEF3FD
-// Light Green #DEFDE0
-// Light Yellow #FCF7DE
-// Light Red #FDDFDF
-
-
-// #CCAAFF
-// #CCBBFF
-// #CCCCFF
-// #CCDDFF
-// #CCEEFF
-// #CCFFFF
