@@ -6,32 +6,32 @@ import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
 class ExerciseCount extends React.Component {
   state = {
-    minutes: 0,
+    percent: 0,
   };
 
   increase = () => {
-    let minutes = this.state.minutes + 10;
-    if (minutes > 100) {
-      minutes = 100;
+    let percent = this.state.percent + 10;
+    if (percent > 100) {
+      percent = 100;
     }
-    this.setState({ minutes });
+    this.setState({ percent });
   };
 
   decline = () => {
-    let minutes = this.state.minutes - 10;
-    if (minutes < 0) {
-      minutes = 0;
+    let percent = this.state.percent - 10;
+    if (percent < 0) {
+      percent = 0;
     }
-    this.setState({ minutes });
+    this.setState({ percent });
   };
 
   render() {
     return (
       <>
         <h5 style={{paddingTop: '90px'}}>Daily Exercise Tracker</h5>
-        <Progress strokeColor={{'0%': '#ACC1FF', '100%': '#9CECFF',}} type="circle" minutes={this.state.minutes}/>
+        <Progress strokeColor={{'0%': '#ACC1FF', '100%': '#9CECFF',}} type="circle" percent={this.state.percent}/>
         
-        <Button.Group>
+        <Button.Group style={{margin: 30}}>
           <Button onClick={this.decline} icon={<MinusOutlined />} />
           <Button onClick={this.increase} icon={<PlusOutlined />} />
         </Button.Group>

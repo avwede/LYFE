@@ -29,7 +29,7 @@ export default class RegisterPage extends Component{
 
                 <button type="submit" className="btn btn-dark btn-lg btn-block">Register</button>
                 <p className="forgot-password text-right">
-                    Already registered <a href="#">log in?</a>
+                    Already registered <a href="/Login">log in?</a>
                 </p>
             </form>
         </div>

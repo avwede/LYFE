@@ -5,6 +5,7 @@ import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined } from 
 import { Tooltip, Progress, Button, Card, Row, Col, Form, Input, InputNumber } from 'antd';
 import ReactDOM from 'react-dom';
 import logo from "../logo.png";
+import profilePic from "../profile.png";
 
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
@@ -41,59 +42,52 @@ class DashboardProfile extends React.Component {
                         <Col span={24}>
                         
                         <Card title="Profile" bordered={false}>
-                            <img className="Header" src={logo} alt="Logo" />
-                            
-                            <Form {...layout} name="nest-messages" validateMessages={validateMessages}>
-                                <Form.Item
-                                    name={['user', 'name']}
-                                    label="Name"
-                                    rules={[
-                                    {
-                                        required: true,
-                                    },
-                                    ]}
-                                >
-                                    <Input />
-                                </Form.Item>
-                                <Form.Item
-                                    name={['user', 'email']}
-                                    label="Email"
-                                    rules={[
-                                    {
-                                        type: 'email',
-                                    },
-                                    ]}
-                                >
-                                    <Input />
-                                </Form.Item>
-                                <Form.Item
-                                    name={['user', 'age']}
-                                    label="Age"
-                                    rules={[
-                                    {
-                                        type: 'number',
-                                        min: 0,
-                                        max: 99,
-                                    },
-                                    ]}
-                                >
-                                    <InputNumber />
-                                </Form.Item>
-                                <Form.Item name={['user', 'website']} label="Website">
-                                    <Input />
-                                </Form.Item>
-                                <Form.Item name={['user', 'introduction']} label="Introduction">
-                                    <Input.TextArea />
-                                </Form.Item>
-                                <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-                                    <Button type="primary" htmlType="submit">
-                                    Submit
-                                    </Button>
-                                </Form.Item>
-                            </Form>
+                            <Row gutter={[16, 16]}>
+                                <Col span={4}>
+                                    <img className="Header" src={profilePic} style={{margin: '50px', width: '322px', height: '216px'}} alt="Logo" />
+                                </Col>
+                                
+                                <Col span={20}>
+                                    <Form {...layout} name="nest-messages" validateMessages={validateMessages} style={{paddingTop:'85px'}}>
+                                        <Form.Item
+                                            name={['user', 'name']}
+                                            label="Name"
+                                            rules={[
+                                            {
+                                                required: true,
+                                            },
+                                            ]}
+                                        >
+                                            <Input />
+                                        </Form.Item>
+                                        <Form.Item
+                                            name={['user', 'email']}
+                                            label="Email"
+                                            rules={[
+                                            {
+                                                type: 'email',
+                                            },
+                                            ]}
+                                        >
+                                            <Input />
+                                        </Form.Item>
+                                        <Form.Item name={['user', 'password']} label="Password">
+                                            <Input />
+                                        </Form.Item>
+                                    
+                                        <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }} style={{paddingBottom:'85px'}}>
+                                            <Button type="primary" htmlType="submit">
+                                            Submit
+                                            </Button>
+                                        </Form.Item>
+                                    </Form>
+                                </Col>
+                            </Row>
                             
                         </Card>
+                        
                         </Col>
+                        
                     </Row>
                     
                 </div>
