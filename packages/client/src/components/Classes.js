@@ -20,15 +20,15 @@ class Classes extends React.Component {
             <Card title="Classes">
                 <a href='https://ucf.zoom.us/j/91549966557' target='_blank'>
                     <Card.Grid style={this.gridStyle}>
-                        <h4>COP 4331 - Leinecker</h4>
+                        <h5>COP 4331 - Leinecker</h5>
                     </Card.Grid>
                 </a>
 
-                <Card.Grid style={this.gridStyle}><h4>COP 3503 - Szumlanski</h4></Card.Grid>
-                <Card.Grid style={this.gridStyle}><h4>COP 4331 - Angell</h4></Card.Grid>
-                <Card.Grid style={this.gridStyle}><h4>COP 4331 - Guha</h4></Card.Grid>
-                <Card.Grid style={this.gridStyle}><h4>COP 4331 - Gerber</h4></Card.Grid>
-                <Card.Grid style={this.gridStyle}><h4>COP 4331 - Montagne</h4></Card.Grid>
+                <Card.Grid style={this.gridStyle}><h5>COP 3503 - Szumlanski</h5></Card.Grid>
+                <Card.Grid style={this.gridStyle}><h5>COP 4331 - Angell</h5></Card.Grid>
+                <Card.Grid style={this.gridStyle}><h5>COP 4331 - Guha</h5></Card.Grid>
+                <Card.Grid style={this.gridStyle}><h5>COP 4331 - Gerber</h5></Card.Grid>
+                <Card.Grid style={this.gridStyle}><h5>COP 4331 - Montagne</h5></Card.Grid>
             </Card>
         );
     }
