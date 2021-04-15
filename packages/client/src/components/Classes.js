@@ -14,12 +14,12 @@ class Classes extends React.Component {
     render() {
         return (
             <Card title="Classes">
-                <Card.Grid style={this.gridStyle, {background: '#CCAAFF', textAlign: 'center'}}>COP 4331 - Leiniker</Card.Grid>
-                <Card.Grid style={this.gridStyle, {background: '#CCCCFF', textAlign: 'center'}}>COP 3402</Card.Grid>
-                <Card.Grid style={this.gridStyle, {background: '#CCEEFF', textAlign: 'center'}}>CDA 3103</Card.Grid>
-                <Card.Grid style={this.gridStyle, {background: '#CCBBFF', textAlign: 'center'}}>COP 3503</Card.Grid>
-                <Card.Grid style={this.gridStyle, {background: '#CCDDFF', textAlign: 'center'}}>FIL 1000</Card.Grid>
-                <Card.Grid style={this.gridStyle, {background: '#CCFFFF', textAlign: 'center'}}>CHM 2500</Card.Grid>
+                <Card.Grid style={this.gridStyle, {background: '#fff1f0', textAlign: 'center'}}>COP 4331 - Leiniker</Card.Grid>
+                <Card.Grid style={this.gridStyle, {background: '#f6ffed', textAlign: 'center'}}>COP 3402</Card.Grid>
+                <Card.Grid style={this.gridStyle, {background: '#e6f7ff', textAlign: 'center'}}>CDA 3103</Card.Grid>
+                <Card.Grid style={this.gridStyle, {background: '#f9f0ff', textAlign: 'center'}}>COP 3503</Card.Grid>
+                <Card.Grid style={this.gridStyle, {background: '#fff0f6', textAlign: 'center'}}>FIL 1000</Card.Grid>
+                <Card.Grid style={this.gridStyle, {background: '#feffe6', textAlign: 'center'}}>CHM 2500</Card.Grid>
             </Card>
         );
     }

@@ -2,6 +2,8 @@ import ReactDOM from 'react-dom';
 import { Table, Button, Tag, Space, Pagination } from 'antd';
 import React, { Component, useState } from "react";
 import 'antd/dist/antd.css';
+import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined, PlusOutlined } from '@ant-design/icons';
+import { Layout, Menu, Breadcrumb, Tooltip, Progress, Card, Row, Col, Drawer, Form, Input, Select, DatePicker} from 'antd';
 
 function TasksTable() {
   const columns = [
@@ -123,6 +125,8 @@ function TasksTable() {
 
   return (
     <>
+      <TasksForm/>
+     
       <Table columns={columns} dataSource={data} pagination={{defaultPageSize: 5}}/>
     </>
   );
@@ -130,93 +134,164 @@ function TasksTable() {
 
 export default TasksTable;
 
-/*
+const options = [{ value: 'School' }, { value: 'Health' }, { value: 'Exercise' }, { value: 'Medication' }];
+const { Option } = Select;
 
-const columns = [
-  {
-    title: 'Task',
-    dataIndex: 'task',
-  },
-  {
-    title: 'Tags',
-    dataIndex: 'tags',
-    render: tags => (
-      <span>
-        {tags.map(tag => {
-          let color = tag.length > 5 ? 'geekblue' : 'green';
-          if (tag === 'loser') {
-            color = 'volcano';
-          }
-          return (
-            <Tag color={color} key={tag}>
-              {tag.toUpperCase()}
-            </Tag>
-          );
-        })}
-      </span>
-    ),
-  },
-  {
-    title: 'Date',
-    dataIndex: 'date',
-  },
-];
+class TasksForm extends React.Component {
+  state = { visible: false };
 
-const data = [];
-for (let i = 0; i < 20; i++) {
-  data.push({
-    key: i,
-    task: `homework ${i}`,
-    age: 32,
-    date: `4/7/2021 ${i}`,
-  });
-}
-
-class TasksTable extends React.Component {
-  state = {
-    selectedRowKeys: [], // Check here to configure the default column
-    loading: false,
+  showDrawer = () => {
+    this.setState({
+      visible: true,
+    });
   };
 
-  start = () => {
-    this.setState({ loading: true });
-    // ajax request after empty completing
-    setTimeout(() => {
-      this.setState({
-        selectedRowKeys: [],
-        loading: false,
-      });
-    }, 1000);
-  };
-
-  onSelectChange = selectedRowKeys => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
-    this.setState({ selectedRowKeys });
+  onClose = () => {
+    this.setState({
+      visible: false,
+    });
   };
 
   render() {
-    const { loading, selectedRowKeys } = this.state;
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange,
-    };
-    const hasSelected = selectedRowKeys.length > 0;
     return (
-      <div>
-        <div style={{ marginBottom: 16 }}>
-          <Button type="primary" onClick={this.start} disabled={!hasSelected} loading={loading}>
-            Reload
-          </Button>
-          <span style={{ marginLeft: 8 }}>
-            {hasSelected ? `Selected ${selectedRowKeys.length} tasks` : ''}
-          </span>
+      <>
+      <div className='site-form-in-drawer-wrapper'>
+
+        <Button type="primary" onClick={this.showDrawer}>
+          <PlusOutlined /> New task
+        </Button>
+
+        <Drawer
+          title="Create a new task"
+          width={720}
+          onClose={this.onClose}
+          visible={this.state.visible}
+          bodyStyle={{ paddingBottom: 80 }}
+          footer={
+            <div
+              style={{
+                textAlign: 'right',
+              }}
+            >
+              <Button onClick={this.onClose} style={{ marginRight: 8 }}>
+                Cancel
+              </Button>
+              <Button onClick={this.onClose} type="primary">
+                Submit
+              </Button>
+            </div>
+          }
+        >
+          <Form layout="vertical" hideRequiredMark>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="Task"
+                  label="Task"
+                  rules={[{ required: true, message: 'Please enter task' }]}
+                >
+                  <Input placeholder="Please enter task" />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+              <Form.Item
+                  name="dateTime"
+                  label="DateTime"
+                  rules={[{ required: true, message: 'Please choose the dateTime' }]}
+                >
+                  <DatePicker
+                    style={{ width: '100%' }}
+                    getPopupContainer={trigger => trigger.parentElement}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="owner"
+                  label="Owner"
+                  rules={[{ required: true, message: 'Please select an owner' }]}
+                >
+                  <Select
+                      mode="multiple"
+                      showArrow
+                      tagRender={tagRender}
+                      style={{ width: '100%' }}
+                      options={options}
+                    />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  name="type"
+                  label="Type"
+                  rules={[{ required: true, message: 'Please choose the type' }]}
+                >
+                  <Select placeholder="Please choose the type">
+                    <Option value="private">Private</Option>
+                    <Option value="public">Public</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="approver"
+                  label="Approver"
+                  rules={[{ required: true, message: 'Please choose the approver' }]}
+                >
+                  <Select placeholder="Please choose the approver">
+                    <Option value="jack">Jack Ma</Option>
+                    <Option value="tom">Tom Liu</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  name="dateTime"
+                  label="DateTime"
+                  rules={[{ required: true, message: 'Please choose the dateTime' }]}
+                >
+                  <DatePicker
+                    style={{ width: '100%' }}
+                    getPopupContainer={trigger => trigger.parentElement}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={24}>
+                <Form.Item
+                  name="description"
+                  label="Description"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'please enter url description',
+                    },
+                  ]}
+                >
+                  <Input.TextArea rows={4} placeholder="please enter url description" />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </Drawer>
         </div>
-        <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
-      </div>
+      </>
     );
   }
 }
 
-ReactDOM.render(<TasksTable/>, document.getElementById('root'));
+function tagRender(props) {
+  const { label, value, closable, onClose } = props;
 
-export default TasksTable;*/
+  return (
+    <Tag color={'gold'} closable={closable} onClose={onClose} style={{ marginRight: 3 }}>
+      {label}
+    </Tag>
+  );
+}
+

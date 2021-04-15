@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import logo from '../logo2.png';
+import logo from '../logoWhite.png';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import { Layout, Menu, Breadcrumb } from 'antd';
 
 import {
     BrowserRouter as Router,
@@ -10,16 +11,16 @@ import {
     Redirect
   } from "react-router-dom";
 
-export default class Header extends Component{
+const { Header, Content, Footer } = Layout;
+
+export default class HeaderDashboard extends Component{
     render() {
         return(
-            <nav className="navbar navbar-expand-lg navbar-light fixed-top">
-            <div className="container" style={{justifyContent: 'center'}}>
-            <Link className="navbar-brand" to={"/Dashboard"}>
-                <img className="Header" src={logo} style={{width: '70%', height: '70%'}} alt="Logo" />
-            </Link>
-            </div>
-        </nav>
+            <Header theme='dark' style={{ width: '100%', height: '100%', textAlign: 'center'}}>
+                <Link className="navbar-brand" to={"/Dashboard"}>
+                    <img className="Header" src={logo} style={{width: '70%', height: '70%'}} alt="Logo" />
+                </Link>
+            </Header>
         );
     }
 }

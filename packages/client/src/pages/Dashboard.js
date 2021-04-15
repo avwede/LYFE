@@ -27,12 +27,7 @@ const DashboardPage = () => {
     <Layout>
         <HeaderDashboard />
         <Content style={{ padding: '0 50px' }}>
-        <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>List</Breadcrumb.Item>
-            <Breadcrumb.Item>App</Breadcrumb.Item>
-        </Breadcrumb>
-        
+
         <Router>
             <Layout className="site-layout-background" style={{ padding: '24px 0' }}>
                 <Sider className="site-layout-background" width={200}>
@@ -43,7 +38,7 @@ const DashboardPage = () => {
                     style={{ height: '100%' }}
                 >   
                     <Menu.Item key="sub0" icon={<HomeOutlined />}>Home
-                    <Link to="/Dashboard/Home" />
+                    <Link to="/Dashboard" />
                     </Menu.Item>
 
                     <Menu.Item key="sub1" icon={<MedicineBoxOutlined />}>Health
@@ -61,17 +56,16 @@ const DashboardPage = () => {
 
                 </Menu>
                 </Sider>        
-                <DashboardHome />
+                
+                <Content style={{ padding: '0 50px' }}>
+                    <Route exact path='/' component={DashboardHome} />
+                    <Route exact path='/Dashboard' component={DashboardHome} />
+                    <Route exact path='/Dashboard/Health' component={DashboardHealth} />
+                    <Route exact path='/Dashboard/School' component={DashboardSchool} />
+                    <Route exact path='/Dashboard/Profile' component={DashboardProfile} />
+                </Content>
+                
             </Layout>
-            <Layout>
-                    <Content style={{ padding: '0 50px' }}>
-                        <Route exact path='/' component={DashboardHome} />
-                        <Route exact path='/Dashboard/Home' component={DashboardHome} />
-                        <Route exact path='/Dashboard/Health' component={DashboardHealth} />
-                        <Route exact path='/Dashboard/School' component={DashboardSchool} />
-                        <Route exact path='/Dashboard/Profile' component={DashboardProfile} />
-                    </Content>
-                </Layout>
         </Router>
 
 
