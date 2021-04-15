@@ -1,11 +1,8 @@
 import React, { useState, useContext, Component} from 'react';
 import { StyleSheet, Text, View, Image, KeyboardAvoidingView, TextInput, TouchableOpacity, Dimensions, ScrollView} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-//import { useNavigation } from '@react-navigation/native';
 
 const {width: WIDTH} = Dimensions.get('window');
-//const navigation = useNavigation();
 
 class Login extends Component{
     constructor(props) {
@@ -14,10 +11,38 @@ class Login extends Component{
         this.focusNextField = this.focusNextField.bind(this);
         this.inputs = {};
       }
-    
-      focusNextField(id) {
+
+    focusNextField(id) {
         this.inputs[id].focus();
-      }
+    }
+    state = {
+        email: "",
+        password: ""
+    }
+    updateEmail = (text) => {
+        this.setState({
+            email: text
+        })
+        console.log(text);
+    }
+    updatePassword = (text) => {
+        this.setState({
+            password: text
+        })
+        console.log(text);
+    }
+    loginUser = () => {
+        axios.post("https://test-lyfe-deployment-v2.herokuapp.com/api/users/login", {
+            email: this.state.email,
+            password: this.state.password,
+    })
+    .then(function(response) {
+        console.log(response.data);
+    })
+    .catch(function(error){
+        console.log(error);
+    })        
+    }
         render(){
             return(
                 <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
@@ -34,6 +59,7 @@ class Login extends Component{
                         blurOnSubmit={false}
                         onSubmitEditing = {() => this.focusNextField('two')}
                         ref={ input => {this.inputs['one'] = input;}}
+                        onChangeText={this.updateEmail}
                         ></TextInput>
                     </View>
                     <View style={{alignItems:'center'}}>
@@ -45,6 +71,7 @@ class Login extends Component{
                         secureTextEntry={true}
                         blurOnSubmit={true}
                         ref={ input => {this.inputs['two'] = input;}}
+                        onChangeText={this.updatePassword}
                         ></TextInput>
                         <TouchableOpacity style={styles.forgotPos} 
                         onPress={() => this.props.navigation.navigate('Forgot Password')}>
