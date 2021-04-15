@@ -18,7 +18,9 @@ class Register extends Component{
         firstName: "",
         lastName: "",
         email: "",
-        password: ""
+        password: "",
+        errorCheck: false,
+        errorMsg: ""
     }
     updateFirstName = (text) => {
         this.setState({
@@ -45,17 +47,22 @@ class Register extends Component{
         console.log(text);
     }
     registerUser = () => {
+        console.log(this.state);
         axios.post("https://test-lyfe-deployment-v2.herokuapp.com/api/users/register", {
-            firstName: this.state.firstName,
-            lastName: this.state.lastName,
-            email: this.state.email,
-            password: this.state.password,
+            "firstName": this.state.firstName,
+            "lastName": this.state.lastName,
+            "email": this.state.email,
+            "password": this.state.password
     })
     .then(function(response) {
         console.log(response);
     })
-    .catch(function(error){
-        console.log(error);
+    .catch((error) => {
+        console.log(error.response.data.error);
+        this.setState({
+            errorCheck: true,
+            errorMsg: error.response.data.error
+        });
     })
     }    
     focusNextField(id) {
@@ -119,6 +126,9 @@ class Register extends Component{
                     onChangeText={this.updatePassword}
                     ></TextInput>
                 </View>
+                {this.state.errorCheck && <View>
+                    <Text>Error! {this.state.errorMsg}</Text>
+                </View>}
                 <TouchableOpacity style={styles.loginBtn}
                 onPress={() => this.registerUser()}>
                     <Text style={styles.signUp} >Create Account</Text>

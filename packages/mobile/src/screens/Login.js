@@ -1,6 +1,7 @@
 import React, { useState, useContext, Component} from 'react';
 import { StyleSheet, Text, View, Image, KeyboardAvoidingView, TextInput, TouchableOpacity, Dimensions, ScrollView} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import axios from 'axios';
 
 const {width: WIDTH} = Dimensions.get('window');
 
@@ -17,7 +18,9 @@ class Login extends Component{
     }
     state = {
         email: "",
-        password: ""
+        password: "",
+        errorCheck: false,
+        errorMsg: ""
     }
     updateEmail = (text) => {
         this.setState({
@@ -39,8 +42,12 @@ class Login extends Component{
     .then(function(response) {
         console.log(response.data);
     })
-    .catch(function(error){
-        console.log(error);
+    .catch((error) => {
+        console.log(error.response.data.error);
+        this.setState({
+            errorCheck: true,
+            errorMsg: error.response.data.error
+        });
     })        
     }
         render(){
@@ -73,13 +80,16 @@ class Login extends Component{
                         ref={ input => {this.inputs['two'] = input;}}
                         onChangeText={this.updatePassword}
                         ></TextInput>
+                        {this.state.errorCheck && <View>
+                            <Text>Error! {this.state.errorMsg}</Text>
+                        </View>}
                         <TouchableOpacity style={styles.forgotPos} 
                         onPress={() => this.props.navigation.navigate('Forgot Password')}>
                             <Text style={styles.forgotText}>
                                 Forgot Password?
                             </Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.loginBtn}>
+                        <TouchableOpacity style={styles.loginBtn} onPress={() => this.loginUser()}>
                             <Text style={styles.loginText}>
                                 Sign In
                             </Text>
