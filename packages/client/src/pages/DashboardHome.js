@@ -21,7 +21,7 @@ class DashboardHome extends React.Component {
                 <div className="site-card-wrapper">
                     <Row gutter={[16, 16]}>
                         <Col span={24}>
-                        <Card title="Progress Bar" bordered={false}>
+                        <Card title="Daily Progress Bar" bordered={false}>
                             <ProgressBar />
                         </Card>
                         </Col>

@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import 'antd/dist/antd.css';
-import { Layout, Menu, Breadcrumb } from 'antd';
 import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined } from '@ant-design/icons';
-import { Tooltip, Progress, Button, Card, Row, Col, Carousel, List  } from 'antd';
+import { Tooltip, Progress, Button, Card, Row, Col, Carousel, List, Statistic, Layout, Menu } from 'antd';
 import ReactDOM from 'react-dom';
 import classesPic from '../classes.png';
+
+
 
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
@@ -17,6 +18,13 @@ const contentStyle = {
     background: 'linear-gradient(to right, #ACC1FF, #9CECFF)',
   };
 
+const { Countdown } = Statistic;
+const deadline = Date.now() + 1000 * 60 * 60 * 24 * 2 + 1000 * 30; // Moment is also OK
+
+function onFinish() {
+    console.log('finished!');
+  }
+
 
 class DashboardSchool extends React.Component {
     render () {
@@ -26,22 +34,20 @@ class DashboardSchool extends React.Component {
                 <div className="site-card-wrapper">
                     <Row gutter={[16, 16]}>
                         <Col span={24}>
-                        <Card title="Motivation" bordered={false}>
-                        <Carousel autoplay>
-                            <div  >
-                            <h3 style={contentStyle}>"JUST DO IT" - Shia Labeouf</h3>
-                            </div>
-                            <div>
-                            <h3 style={contentStyle}>"How can mirrors be real if our eyes aren't real?"" - Jayden Smith</h3>
-                            </div>
-                            <div>
-                            <h5 style={contentStyle}>"It matters not what you've done but what you do with what you've done.. for others" - Noah Centineo</h5>
-                            </div>
-                            <div>
-                            <h3 style={contentStyle}>"NO RAGRETS" - Scotty P</h3>
-                            </div>
-                        </Carousel>
-                        </Card>
+                            <Carousel autoplay>
+                                <div  >
+                                <h3 style={contentStyle}>"JUST DO IT" - Shia Labeouf</h3>
+                                </div>
+                                <div>
+                                <h3 style={contentStyle}>"How can mirrors be real if our eyes aren't real?"" - Jayden Smith</h3>
+                                </div>
+                                <div>
+                                <h5 style={contentStyle}>"It matters not what you've done but what you do with what you've done.. for others" - Noah Centineo</h5>
+                                </div>
+                                <div>
+                                <h3 style={contentStyle}>"NO RAGRETS" - Scotty P</h3>
+                                </div>
+                            </Carousel>
                         </Col>
                     </Row>
                     
@@ -97,6 +103,13 @@ class DashboardSchool extends React.Component {
                         </Col>
                     </Row>
 
+                    <Row gutter={[16, 16]} >
+                        <Col span={24}>
+                            <Card title="Study Timer" bordered={false} >
+                                <Countdown title="Countdown" value={deadline} onFinish={onFinish} />
+                            </Card>
+                        </Col>
+                    </Row>
                 </div>
             </Content>
 
