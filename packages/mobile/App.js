@@ -13,6 +13,7 @@ import Classes from './src/screens/Classes.js';
 import Profile from './src/screens/Profile.js';
 import {JWTProvider, JWTContext} from './src/contexts/JWTContext.js'
 import { LoginContext } from './src/contexts/LoginContext.js'
+import { Provider as PaperProvider} from 'react-native-paper';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -23,12 +24,13 @@ LogBox.ignoreLogs(['Warning: Possible Unhandled Promise Rejection']);
 */
 
 export default function App() {  
-  const [loggedIn, toggleLoggedIn] = useState(true);
+  const [loggedIn, toggleLoggedIn] = useState(false);
   const state = {loggedIn, toggleLoggedIn};
 
   // https://reactjs.org/docs/context.html
   return (
     <NavigationContainer>
+    <PaperProvider>
     <JWTProvider>
     <LoginContext.Provider value={state}>
       {!loggedIn ?
@@ -46,6 +48,7 @@ export default function App() {
       </Tab.Navigator>)}
     </LoginContext.Provider>
     </JWTProvider>
+    </PaperProvider>
     </NavigationContainer>
   );
 }

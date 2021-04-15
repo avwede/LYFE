@@ -1,23 +1,67 @@
 import React, { useState, useContext, Component} from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Dimensions} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import axios from 'axios';
+import { JWTProvider } from '../contexts/JWTContext';
 //import { useNavigation } from '@react-navigation/native';
 
 
 const {width: WIDTH} = Dimensions.get('window');
-//const navigation = useNavigation();
 
 class Register extends Component{
     constructor(props) {
         super(props);
-    
         this.focusNextField = this.focusNextField.bind(this);
         this.inputs = {};
       }
-    
-      focusNextField(id) {
-        this.inputs[id].focus();
-      }
+    state = {
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: ""
+    }
+    updateFirstName = (text) => {
+        this.setState({
+            firstName: text
+        })
+        console.log(text);
+    }
+    updateLastName = (text) => {
+        this.setState({
+            lastName: text
+        })
+        console.log(text);
+    }
+    updateEmail = (text) => {
+        this.setState({
+            email: text
+        })
+        console.log(text);
+    }
+    updatePassword = (text) => {
+        this.setState({
+            password: text
+        })
+        console.log(text);
+    }
+    registerUser = () => {
+        axios.post("https://test-lyfe-deployment-v2.herokuapp.com/api/users/register", {
+            firstName: this.state.firstName,
+            lastName: this.state.lastName,
+            email: this.state.email,
+            password: this.state.password,
+    })
+    .then(function(response) {
+        console.log(response);
+    })
+    .catch(function(error){
+        console.log(error);
+    })
+    }    
+    focusNextField(id) {
+    this.inputs[id].focus();
+    }
+
     render(){
         return(
             <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
@@ -34,6 +78,7 @@ class Register extends Component{
                     blurOnSubmit={false}
                     onSubmitEditing = {() => this.focusNextField('two')}
                     ref={ input => {this.inputs['one'] = input;}}
+                    onChangeText={this.updateFirstName}
                     ></TextInput>
                 </View>
                 <View style={{alignItems:'center'}}>
@@ -46,6 +91,7 @@ class Register extends Component{
                     blurOnSubmit={false}
                     onSubmitEditing = {() => this.focusNextField('three')}
                     ref={ input => {this.inputs['two'] = input;}}
+                    onChangeText={this.updateLastName}
                     ></TextInput>
                 </View>
                 <View style={{alignItems:'center'}}>
@@ -58,6 +104,7 @@ class Register extends Component{
                     blurOnSubmit={false}
                     onSubmitEditing = {() => this.focusNextField('four')}
                     ref={ input => {this.inputs['three'] = input;}}
+                    onChangeText={this.updateEmail}
                     ></TextInput>
                 </View>
                 <View style={{alignItems:'center'}}>
@@ -69,18 +116,12 @@ class Register extends Component{
                     secureTextEntry={true}
                     blurOnSubmit={true}
                     ref={ input => {this.inputs['four'] = input;}}
+                    onChangeText={this.updatePassword}
                     ></TextInput>
                 </View>
-                <TouchableOpacity style={styles.loginBtn}>
+                <TouchableOpacity style={styles.loginBtn}
+                onPress={() => this.registerUser()}>
                     <Text style={styles.signUp} >Create Account</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.toLogin}
-                onPress={() => this.props.navigation.navigate('Login')}>
-                <View style={{alignContent:'center', marginTop:30}}>
-                    <Text style={styles.loginText} >
-                        Already have an account? Tap here.
-                    </Text>
-                </View>
                 </TouchableOpacity>
             </LinearGradient>
         );
@@ -93,6 +134,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
+        paddingBottom:60
     },
     logoContainer: {
         alignItems:'center',

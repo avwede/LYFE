@@ -186,6 +186,7 @@ const Classes = (props) => {
        getClasses();
     }, [data]); */
     
+    // TODO: Add motivational quotes
     return(
         <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
             <View style={{alignItems:'center', marginTop: 150, flexDirection:'row', 
