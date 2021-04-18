@@ -1,30 +1,50 @@
+const { urlencoded } = require('express');
 const mongoose = require('mongoose');
-const locationSchema = require('./Location');
+const locationSchema = require('./Location.embeddedModel');
+
+/**
+ * @openapi
+ * 
+ * components:
+ *  schemas:
+ *    Courses:
+ *      title: Courses
+ *      type: object
+ *      required:
+ *        - courseCode
+ *        - professor
+ *        - location
+ *        - day
+ *        - start
+ *        - end
+ *      properties: 
+ *        courseCode:
+ *          type: string
+ *          example: COP 4331
+ *        professor:
+ *          type: string
+ *          example: Professor Szumlanski
+ *        location:
+ *          type: object
+ *          $ref: '#/components/schemas/Location'
+ *        day:
+ *          type: [String]
+ *          example: [Monday, Wednesday, Friday]
+ *        start:
+ *          type: Date
+ *          example: 2013-04-03T12:56:26.009Z
+ *        end:
+ *          type: Date
+ *          example: 2013-04-03T12:56:26.009Z
+ */
 
 const courseSchema = new mongoose.Schema({
-  subject: {
+  courseCode: {
     type: String,
-    required: [true, 'Subject is required for Course.'],
+    required: [true, 'Course code is required for Course.'],
   },
-  courseNumber: {
-    type: Number,
-    required: [true, 'Course number is required for Course.'],
-  },
-  classNumber: {
-    type: Number,
-    required: [true, 'Class number is required for Course.'],
-  },
-  section: {
-    type: String,
-    required: [true, 'Section is required for Course.'],
-  },
-  name: {
-    type: String,
-    required: [true, 'Name is required for Course.'],
-  },
-  description: String,
   professor: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'ReminderType',
     required: [true, 'Professor is required for Course.'],
   },
@@ -43,4 +63,4 @@ const courseSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('Course', courseSchema);
+module.exports = courseSchema;

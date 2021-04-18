@@ -5,6 +5,8 @@ const { healthRouter } = require('./health');
 const { reminderRouter } = require('./reminders');
 const { reminderTypeRouter } = require('./reminderTypes');
 const { userRouter } = require('./users');
+const { coursesRouter } = require('./courses');
+const { contactsRouter } = require('./contacts');
 const { NODE_ENV } = process.env;
 
 module.exports = {
@@ -13,6 +15,8 @@ module.exports = {
     server.use('/api/reminders', reminderRouter);
     server.use('/api/reminder-types', reminderTypeRouter);
     server.use('/api/users', userRouter);
+    server.use('/api/courses', coursesRouter);
+    server.use('/api/contacts', contactsRouter);
 
     server.get('/api', (req, res) => {
       res.set('Content-Type', 'application/json');

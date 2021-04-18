@@ -1,5 +1,4 @@
 /**
- * @todo: complete openapi specs for login
  * @todo: Email Verification: if unverified user logs in, remind them to verify, do not issue JWT
  */
 require('dotenv').config();
@@ -64,6 +63,8 @@ const { APP_URL } = process.env;
  *          $ref: '#/components/responses/400BadRequest'
  *        500:
  *          $ref: '#/components/responses/500InternalServerError'
+ *        201:
+ *          description: New user created.
  */
 router.post('/register', (req, res) => {
   const newUser = req.body;
@@ -238,6 +239,68 @@ router.post('/verify/:token', async (req, res) => {
   }
 });
 
+/**
+ * @openapi
+ * 
+ * paths:
+ *  api/users/login:
+ *    post:
+ *      tags: [users]
+ *      summary: Log in.
+ *      description: Logs in to the user's account.
+ *      operationId: loginUser
+ *      requestBody:
+ *        description: User's credentials.
+ *        required: true
+ *        content: 
+ *          application/json:
+ *            schema: 
+ *              title: User's credentials
+ *              type: object
+ *              required:
+ *                - email
+ *                - password
+ *              properties:
+ *                email:
+ *                  type: string
+ *                  example: user@example.com
+ *                password:
+ *                  type: string 
+ *                  example: Password123#
+ *      responses:
+ *        200:
+ *          description: User successfully logged in.
+ *          content: 
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  token: 
+ *                    type: string
+ *                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+ *        400:
+ *          description: Bad request.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  message:
+ *                    type: string
+ *                    example: Email and password are required.
+ *        401:
+ *          description: Unauthorized.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  message:
+ *                    type: string
+ *                    example: Email and/or password is incorrect.
+ *        500:
+ *          $ref: '#/components/responses/500InternalServerError'
+ */
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
 
@@ -712,7 +775,7 @@ const validatePassword = (user, password, res) => {
         return sendError(res, 401, 'Email and/or password is incorrect.');
       
       const token = user.generateJWT();
-      sendResponse(res, 201, { token });
+      sendResponse(res, 200, { token });
     });
 };
 

@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const randomBytes = require('randombytes');
 const healthSchema = require('./Health.embeddedModel');
 const reminderSchema = require('./Reminder.embeddedModel');
+const courseSchema = require('./Course');
 const saltRounds = 12;
 const { JWT_SECRET } = process.env;
 
@@ -55,11 +56,11 @@ const { JWT_SECRET } = process.env;
  *        courses:
  *          type: array
  *          items:
- *            type: objectId
- *          example: ['5b1ed13e8cea93c6ba72b1da', '5b1ed13e8cea93c6ba72b1db']
+ *            $ref: '#/components/schemas/Courses'
  *        health:
  *          $ref: '#/components/schemas/Health' 
  */
+
 const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
@@ -108,8 +109,8 @@ const userSchema = new mongoose.Schema({
     type: String,
   },
   reminders: [reminderSchema],
-  courses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],
-  health: healthSchema,
+  courses: [courseSchema],
+  health: healthSchema
 });
 
 /**
@@ -187,5 +188,17 @@ userSchema.methods.resetPassword = function (password) {
   this.passwordResetExpiration = null;
   return this.save();
 };
+
+userSchema.methods.updateContacts = function(id, updatedContact){
+  const index = this.emergencyContacts.findIndex(obj => obj._id == id);
+  this.emergencyContacts[index] = updatedContact;
+  return this.save();
+}
+
+userSchema.methods.updateCourses = function(id, updatedCourse){
+  const index = this.courses.findIndex(obj => obj._id == id);
+  this.courses[index] = updatedCourse;
+  return this.save();
+}
 
 module.exports = mongoose.model('User', userSchema);
