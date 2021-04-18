@@ -58,7 +58,7 @@ const { JWT_SECRET } = process.env;
  *            type: objectId
  *          example: ['5b1ed13e8cea93c6ba72b1da', '5b1ed13e8cea93c6ba72b1db']
  *        health:
- *          $ref: '#/components/schemas/Ice' 
+ *          $ref: '#/components/schemas/Health' 
  */
 const userSchema = new mongoose.Schema({
   firstName: {
