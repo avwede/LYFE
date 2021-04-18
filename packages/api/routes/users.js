@@ -6,6 +6,7 @@ require('dotenv').config();
 
 const router = require('express').Router();
 const User = require('../models/User');
+const { partialUpdate } = require('../util/queries');
 const { sendResponse, sendError } = require('../util/responses');
 const { authenticateJWT } = require('../middleware/routerMiddleware');
 const { sendEmail } = require('../util/mailer');
@@ -436,6 +437,128 @@ router.get('/reset/:token', (req, res) => {
     .catch(err => {
       sendError(res, err, err.message);
     });
+});
+
+/**
+ * @openapi
+ * 
+ * paths:
+ *  /api/users:
+ *    get:
+ *      security:
+ *        - BearerAuth: []
+ *      tags: [users]
+ *      summary: Get all user information.
+ *      description:  Get all information for the user contained in the required JSON Web Token. This 
+ *        action can only be performed by an authenticated user.
+ *      operationId: getUser
+ *      responses:
+ *        200:
+ *          description: User successfully retrieved.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/User'
+ *        401:
+ *          $ref: '#/components/responses/401Unauthorized'
+ *        500:
+ *          $ref: '#/components/responses/500InternalServerError'
+ */
+router.get('/', authenticateJWT, (req, res) => {
+  const userId = req.tokenPayload.id;
+
+  User.findById(userId)
+    .then((user) => {
+      sendResponse(res, 200, user);
+    })
+    .catch((err) => {
+      sendError(res, err, err.message);
+    });
+});
+
+/**
+ * @openapi
+ * 
+ * paths:
+ *  /api/users:
+ *    put:
+ *      security:
+ *        - BearerAuth: []
+ *      tags: [users]
+ *      summary: Update user profile.
+ *      description:  Update the profile for the user contained in the required JSON Web Token. This 
+ *        action can only be performed by an authenticated user.
+ *      operationId: updateUserProfile
+ *      requestBody:
+ *        description: User profile fields to update.
+ *        required: true
+ *        content: 
+ *          application/json:
+ *            schema: 
+ *              title: User Profile
+ *              type: object
+ *              properties:
+ *                firstName:
+ *                  type: string
+ *                  example: John
+ *                lastName:
+ *                  type: string
+ *                  example: Smith
+ *                email:
+ *                  type: string
+ *                  format: email
+ *                password:
+ *                  type: string
+ *                  format: password
+ *                  example: Password123#
+ *      responses:
+ *        200:
+ *          description: User profile successfully updated.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  firstName:
+ *                    type: string
+ *                    example: John
+ *                  lastName:
+ *                    type: string
+ *                    example: Smith
+ *        400:
+ *          $ref: '#/components/responses/400BadRequest'
+ *        401:
+ *          $ref: '#/components/responses/401Unauthorized'
+ *        500:
+ *          $ref: '#/components/responses/500InternalServerError'
+ */
+router.put('/', authenticateJWT, async (req, res) => {
+  const updatedFields = req.body;
+  const userId = req.tokenPayload.id;
+  const user = await User.findById(userId);
+
+  if (user) {
+    if (updatedFields['email'])
+      updatedFields['verified'] = false;
+
+    const updatedProfile = partialUpdate(user, updatedFields);
+    user.save()
+      .then(result => {
+        // if fields contain email send verification email request
+        sendResponse(res, 200, {
+          firstName: updatedProfile['firstName'],
+          lastName: updatedProfile['lastName'],
+          email: updatedProfile['email'],
+        });
+      })
+      .catch((err) => {
+        sendError(res, err, err.message);
+      });
+  } else {
+    sendError(res, 500, 'Server failed to fetch this user.');
+  }
 });
 
 /**
