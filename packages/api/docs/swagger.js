@@ -32,12 +32,20 @@ const swaggerJSDocOptions = {
         description: 'Create and manage users and user sessions.',
       },
       {
-        name: 'reminders',
-        description: 'Create and manage reminders and reminder types.'
+        name: 'contacts',
+        description: 'Manage emergency contacts.'
+      },
+      {
+        name: 'courses',
+        description: 'Create and manage course reminders.'
       },
       {
         name: 'health',
         description: 'Manage health profile.'
+      },
+      {
+        name: 'reminders',
+        description: 'Create and manage reminders and reminder types.'
       },
     ],
   },
