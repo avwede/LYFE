@@ -77,7 +77,7 @@ class DashboardProfile extends React.Component {
                                     
                                         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }} style={{paddingBottom:'85px'}}>
                                             <Button type="primary" htmlType="submit">
-                                            Submit
+                                                Submit
                                             </Button>
                                         </Form.Item>
                                     </Form>
