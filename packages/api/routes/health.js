@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const User = require('../models/User');
+const { partialUpdate } = require('../util/queries');
 const { sendResponse, sendError } = require('../util/responses');
 const { authenticateJWT } = require('../middleware/routerMiddleware');
 
@@ -35,7 +36,7 @@ router.get('/', authenticateJWT, (req, res) => {
 
   User.findById(userId, 'health')
     .then((results) => {
-      sendResponse(res, 200, results.health);
+      sendResponse(res, 200, results.health ? results.health : {});
     })
     .catch((err) => {
       sendError(res, err, err.message);
@@ -137,8 +138,14 @@ router.put('/', authenticateJWT, async (req, res) => {
   const user = await User.findById(userId);
 
   if (user) {
-    const updatedHealth = updateHealthFields(user.health, updatedFields);
-    save(user, res, updatedHealth);
+    const updatedHealth = partialUpdate(user.health, updatedFields);
+    user.save()
+      .then(() => {
+        sendResponse(res, 200, updatedHealth);
+      })
+      .catch((err) => {
+        sendError(res, err, err.message);
+      });
   } else {
     sendError(res, 500, 'Server failed to fetch this user.');
   }
@@ -183,39 +190,6 @@ router.delete('/', authenticateJWT, async (req, res) => {
     sendError(res, 500, 'Server failed to fetch this user.');
   }
 });
-
-/**
- * Save the document and send an OK response. If the document does not validate, abort and send
- * error HTTP response.
- * 
- * @param {Document} doc Mongoose document.
- * @param {Object} res Express response object.
- * @param {Object} respBody Response body for the OK HTTP response.
- */
-const save = (doc, res, respBody) => {
-  doc.save()
-    .then(() => {
-      sendResponse(res, 200, respBody);
-    })
-    .catch(err => {
-      sendError(res, err, err.message);
-    });
-};
-
-/**
- * Use the update fields to perform a partial update on the given health subdocument.
- * 
- * @param {Subdocument} health Mongoose health subdocument.
- * @param {Object} updatedFields The collection of updated fields for this health profile.
- * @returns {Subdocument} The updated health subdocument.
- */
-const updateHealthFields = (health, updatedFields) => {
-  Object.keys(updatedFields).forEach((key) => {
-    health[key] = updatedFields[key];
-  });
-
-  return health;
-};
 
 module.exports = {
   healthRouter: router,

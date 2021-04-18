@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const ReminderType = require('../models/ReminderType');
-const User = require('../models/User');
+const { partialUpdate } = require('../util/queries');
 const { sendResponse, sendError } = require('../util/responses');
 const { authenticateJWT } = require('../middleware/routerMiddleware');
 
@@ -228,8 +228,14 @@ router.put('/:id', authenticateJWT, async (req, res) => {
 
   if (reminderType) {
     if (reminderType.user == userId) {
-      const updatedReminderType = updateReminderTypeFields(reminderType, updatedFields);
-      save(reminderType, res, updatedReminderType);
+      const updatedReminderType = partialUpdate(reminderType, updatedFields);
+      reminderType.save()
+        .then(() => {
+          sendResponse(res, 200, updatedReminderType);
+        })
+        .catch(err => {
+          sendError(res, err, err.message);
+        });
     }
     else {
       sendError(res, 403, 'This user is not authorized to perform this action.');
@@ -311,39 +317,6 @@ const deleteReminderType = (id, res) => {
     .catch(err => {
       sendError(res, err, `The reminder type with id ${id} could not be removed.`);
     });
-};
-
-/**
- * Save the document and send an OK response. If the document does not validate, abort and send
- * error HTTP response.
- * 
- * @param {Document} doc Mongoose document.
- * @param {Object} res Express response object.
- * @param {Object} respBody Response body for the OK HTTP response.
- */
-const save = (doc, res, respBody) => {
-  doc.save()
-    .then(() => {
-      sendResponse(res, 200, respBody);
-    })
-    .catch(err => {
-      sendError(res, err, err.message);
-    });
-};
-
-/**
- * Use the update fields to perform a partial update on the given reminder type subdocument.
- * 
- * @param {Subdocument} reminderType Mongoose reminder type subdocument.
- * @param {Object} updatedFields The collection of updated fields for this reminder type.
- * @returns {Subdocument} The updated reminder type subdocument.
- */
-const updateReminderTypeFields = (reminderType, updatedFields) => {
-  Object.keys(updatedFields).forEach((key) => {
-    reminderType[key] = updatedFields[key];
-  });
-
-  return reminderType;
 };
 
 module.exports = {

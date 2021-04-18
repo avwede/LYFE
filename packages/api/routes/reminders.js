@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const User = require('../models/User');
+const { partialUpdate } = require('../util/queries');
 const { sendResponse, sendError } = require('../util/responses');
 const { authenticateJWT } = require('../middleware/routerMiddleware');
 
@@ -220,8 +221,14 @@ router.put('/:id', authenticateJWT, async (req, res) => {
     const reminder = user.reminders.id(id);
 
     if (reminder) {
-      const updatedReminder = updateReminderFields(reminder, updatedFields);
-      save(user, res, updatedReminder);
+      const updatedReminder = partialUpdate(reminder, updatedFields);
+      user.save()
+        .then(() => {
+          sendResponse(res, 200, updatedReminder);
+        })
+        .catch(err => {
+          sendError(res, err, err.message);
+        });
     } else {
       sendError(res, 404, `Reminder with id ${id} does not exist.`);
     }
@@ -306,39 +313,6 @@ const deleteReminder = (user, reminderId, resp) => {
   } else {
     sendError(res, 404, `Reminder with id ${reminderId} does not exist.`);
   }
-};
-
-/**
- * Use the update fields to perform a partial update on the given reminder subdocument.
- * 
- * @param {Subdocument} reminder Mongoose reminder subdocument.
- * @param {Object} updatedFields The collection of updated fields for this reminder.
- * @returns {Subdocument} The updated reminder subdocument.
- */
-const updateReminderFields = (reminder, updatedFields) => {
-  Object.keys(updatedFields).forEach((key) => {
-    reminder[key] = updatedFields[key];
-  });
-
-  return reminder;
-};
-
-/**
- * Save the document and send an OK response. If the document does not validate, abort and send
- * error HTTP response.
- * 
- * @param {Document} doc Mongoose document.
- * @param {Object} res Express response object.
- * @param {Object} respBody Response body for the OK HTTP response.
- */
-const save = (doc, res, respBody) => {
-  doc.save()
-    .then(() => {
-      sendResponse(res, 200, respBody);
-    })
-    .catch(err => {
-      sendError(res, err, err.message);
-    });
 };
 
 module.exports = {
