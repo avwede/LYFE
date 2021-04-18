@@ -12,7 +12,7 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
  * paths:
  *  /api/contacts/addContact:
  *    post:
- *      tags: [users]
+ *      tags: [contacts]
  *      description: Creates a new emergency contact and returns a signed JSON Web Token.
  *      operationId: createEmergencyContact
  *      requestBody:
@@ -53,7 +53,7 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
    * paths:
    *  /api/contacts/editContact:
    *    post:
-   *      tags: [users]
+   *      tags: [contacts]
    *      description: Edits an emergency contact and returns a signed JSON Web Token.
    *      operationId: editEmergencyContact
    *      requestBody:
@@ -96,7 +96,7 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
  * paths:
  *  /api/contacts/deleteContact:
  *    post:
- *      tags: [users]
+ *      tags: [contacts]
  *      description: Deletes an emergency contact and returns a signed JSON Web Token.
  *      operationId: deleteEmergencyContact
  *      requestBody:
