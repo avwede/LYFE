@@ -18,7 +18,8 @@ An all in one life manager.
 ## Technologies Used
 
 ## Getting Started
-Clone the LYFE repository and cd into its root directory
-Run npm install to install dependencies
-Run npm start from the client directory to run in development mode
-The application is served at http://localhost:3000 by default
+Clone the LYFE repository and cd into its root directory   
+Run npm install to install dependencies   
+Run npm start from the client directory to run in development mode   
+The application is served at http://localhost:3000 by default   
+  
