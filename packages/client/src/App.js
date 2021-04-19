@@ -2,12 +2,11 @@ import './index.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 // React Router for pages
-import React, { Component, Fragment } from "react";
+import React, {Fragment } from "react";
 import {
   BrowserRouter as Router,
   Route,
   Switch,
-  Link,
   Redirect
 } from "react-router-dom";
 
@@ -17,17 +16,16 @@ import ErrorPage from "./pages/Error";
 import HomePage from "./pages/Home";
 import Header from "./components/Header";
 import Dashboard from "./pages/Dashboard";
-import DashboardHome from "./pages/DashboardHome";
-import DashboardHealth from "./pages/DashboardHealth";
-import DashboardSchool from "./pages/DashboardSchool";
-import DashboardProfile from "./pages/DashboardProfile";
-
 
 function App(){
   return (
       <Router>
             <Switch>      
             <Route exact path = "/Dashboard" component={Dashboard} />
+            <Route exact path = "/Dashboard/Health" component={Dashboard} />
+            <Route exact path = "/Dashboard/Home" component={Dashboard} />
+            <Route exact path = "/Dashboard/School" component={Dashboard} />
+            <Route exact path = "/Dashboard/Profile" component={Dashboard} />
 
             <Fragment>
                 <Header />

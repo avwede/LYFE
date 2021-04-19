@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 import 'antd/dist/antd.css';
 import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined } from '@ant-design/icons';
-import { Tooltip, Progress, Button, Card, Row, Col, Carousel, List, Statistic, Layout, Menu } from 'antd';
+import { Tooltip, Progress, Button, Card, Row, Col, Carousel, List, Statistic, Layout, Menu, TimePicker } from 'antd';
 import ReactDOM from 'react-dom';
 import classesPic from '../classes.png';
-
-
+import moment from 'moment';
 
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
@@ -19,11 +18,13 @@ const contentStyle = {
   };
 
 const { Countdown } = Statistic;
-const deadline = Date.now() + 1000 * 60 * 60 * 24 * 2 + 1000 * 30; // Moment is also OK
+var deadline = Date.now();// + 1000 * 60 * 60 * 24 * 2 + 1000 * 30; // Moment is also OK
 
 function onFinish() {
     console.log('finished!');
-  }
+}
+
+const now = moment();
 
 
 class DashboardSchool extends React.Component {
@@ -106,7 +107,16 @@ class DashboardSchool extends React.Component {
                     <Row gutter={[16, 16]} >
                         <Col span={24}>
                             <Card title="Study Timer" bordered={false} >
-                                <Countdown title="Countdown" value={deadline} onFinish={onFinish} />
+                            <Row gutter={[16, 16]} >
+
+                                <Col span={22}>
+                                    <TimePicker minuteStep={15} secondStep={10}/>
+                                </Col>   
+
+                                <Col span={2}>
+                                    <Countdown value={deadline} onFinish={onFinish} />
+                                </Col>
+                            </Row>
                             </Card>
                         </Col>
                     </Row>
