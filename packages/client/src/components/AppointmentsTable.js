@@ -1,9 +1,8 @@
-import ReactDOM from 'react-dom';
-import { Table, Button, Tag, Space, Pagination } from 'antd';
-import React, { Component, useState } from "react";
+import { Table, Button, Tag, Space } from 'antd';
+import React from "react";
 import 'antd/dist/antd.css';
-import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined, PlusOutlined } from '@ant-design/icons';
-import { Layout, Menu, Breadcrumb, Tooltip, Progress, Card, Row, Col, Drawer, Form, Input, Select, DatePicker} from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Row, Col, Drawer, Form, Input, Select, DatePicker} from 'antd';
 
 function AppointmentsTable() {
   const columns = [

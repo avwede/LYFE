@@ -1,8 +1,7 @@
-import React, { Component } from "react";
+import React from "react";
 import 'antd/dist/antd.css';
-import { Table, } from 'antd';
-import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined, PlusOutlined } from '@ant-design/icons';
-import { Layout, Menu, Breadcrumb, Tooltip, Progress, Button, Card, Row, Col, Drawer, Form, Input, Select, DatePicker } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Card, Row, Col, Drawer, Form, Input } from 'antd';
 
 class AllergiesCards extends React.Component {
     render () {

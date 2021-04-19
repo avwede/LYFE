@@ -11,7 +11,7 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
  * paths:
  *  /api/courses/addCourse:
  *    post:
- *      tags: [users]
+ *      tags: [courses]
  *      description: Adds a course to the users account.
  *      operationId: addCourse
  *      requestBody:
@@ -51,7 +51,7 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
  * paths:
  *  /api/courses/editCourse:
  *    post:
- *      tags: [users]
+ *      tags: [courses]
  *      description: Edits a course within the users account.
  *      operationId: editCourse
  *      requestBody:
@@ -93,7 +93,7 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
  * paths:
  *  /api/courses/deleteCourse:
  *    post:
- *      tags: [users]
+ *      tags: [courses]
  *      description: Deletes a course to the users account.
  *      operationId: deleteCourse
  *      requestBody:

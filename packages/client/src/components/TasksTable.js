@@ -4,135 +4,158 @@ import React, { Component, useState } from "react";
 import 'antd/dist/antd.css';
 import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined, PlusOutlined } from '@ant-design/icons';
 import { Layout, Menu, Breadcrumb, Tooltip, Progress, Card, Row, Col, Drawer, Form, Input, Select, DatePicker} from 'antd';
+import axios from 'axios';
 
-function TasksTable() {
-  const columns = [
-    {
-      title: 'Task',
-      dataIndex: 'task',
-      key: 'task',
-      render: text => <a>{text}</a>,
-    },
-    {
-      title: 'Date',
-      dataIndex: 'date',
-      key: 'date',
-    },
-    {
-      title: 'Tags',
-      key: 'tags',
-      dataIndex: 'tags',
-      render: tags => (
-        <>
-          {tags.map(tag => {
-            let color = tag.length > 5 ? 'geekblue' : 'green';
-            if (tag === 'School') {
-              color = 'geekblue';
-            }
-            else if (tag == 'Health'){
-              color = 'green';
-            }
-            else if (tag == 'Medication'){
-              color = 'volcano';
-            }
-            else if (tag == 'Exercise'){
-              color = 'purple';
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (text, record) => (
-        <Space size="middle">
-          <a>Edit</a>
-          <a>Delete</a>
-        </Space>
-      ),
-    },
-  ];
+const api = axios.create({
+  baseURL : 'http://localhost:3000/'
+})
 
-  const data = [
-    {
-      key: '1',
-      task: 'Finish essay',
-      date: '10/3/21',
-      tags: ['School'],
-    },
-    {
-      key: '2',
-      task: 'Take tylenol',
-      date: '11/11/11',
-      tags: ['Medication', 'Health'],
-    },
-    {
-      key: '3',
-      task: 'Take a walk in the arboretum',
-      date: '11/11/11',
-      tags: ['Exercise', 'Health'],
-    },
-    {
-      key: '4',
-      task: 'print out homework',
-      date: '11/11/11',
-      tags: ['School'],
-    },
-    {
-      key: '5',
-      task: 'Go to gym',
-      date: '11/11/11',
-      tags: ['Exercise', 'Health'],
-    },
-    {
-      key: '6',
-      task: 'Finish programming assignment',
-      date: '10/3/21',
-      tags: ['School'],
-    },
-    {
-      key: '7',
-      task: 'Take meds',
-      date: '11/14/11',
-      tags: ['Medication', 'Health'],
-    },
-    {
-      key: '8',
-      task: 'Take a bike ride',
-      date: '12/27/11',
-      tags: ['Exercise', 'Health'],
-    },
-    {
-      key: '9',
-      task: 'print out paper',
-      date: '11/11/11',
-      tags: ['School'],
-    },
-    {
-      key: '10',
-      task: 'Go to office hours',
-      date: '11/11/11',
-      tags: ['School'],
-    },
-  ];
+const columns = [
+  {
+    title: 'Task',
+    dataIndex: 'task',
+    key: 'task',
+    render: text => <a>{text}</a>,
+  },
+  {
+    title: 'Date',
+    dataIndex: 'date',
+    key: 'date',
+  },
+  {
+    title: 'Tags',
+    key: 'tags',
+    dataIndex: 'tags',
+    render: tags => (
+      <>
+        {tags.map(tag => {
+          let color = tag.length > 5 ? 'geekblue' : 'green';
+          if (tag === 'School') {
+            color = 'geekblue';
+          }
+          else if (tag == 'Health'){
+            color = 'green';
+          }
+          else if (tag == 'Medication'){
+            color = 'volcano';
+          }
+          else if (tag == 'Exercise'){
+            color = 'purple';
+          }
+          return (
+            <Tag color={color} key={tag}>
+              {tag.toUpperCase()}
+            </Tag>
+          );
+        })}
+      </>
+    ),
+  },
+  {
+    title: 'Action',
+    key: 'action',
+    render: (text, record) => (
+      <Space size="middle">
+        <a>Edit</a>
+        <a>Delete</a>
+      </Space>
+    ),
+  },
+];
 
+const data = [
+  {
+    key: '1',
+    task: 'Finish essay',
+    date: '10/3/21',
+    tags: ['School'],
+  },
+  {
+    key: '2',
+    task: 'Take tylenol',
+    date: '11/11/11',
+    tags: ['Medication', 'Health'],
+  },
+  {
+    key: '3',
+    task: 'Take a walk in the arboretum',
+    date: '11/11/11',
+    tags: ['Exercise', 'Health'],
+  },
+  {
+    key: '4',
+    task: 'print out homework',
+    date: '11/11/11',
+    tags: ['School'],
+  },
+  {
+    key: '5',
+    task: 'Go to gym',
+    date: '11/11/11',
+    tags: ['Exercise', 'Health'],
+  },
+  {
+    key: '6',
+    task: 'Finish programming assignment',
+    date: '10/3/21',
+    tags: ['School'],
+  },
+  {
+    key: '7',
+    task: 'Take meds',
+    date: '11/14/11',
+    tags: ['Medication', 'Health'],
+  },
+  {
+    key: '8',
+    task: 'Take a bike ride',
+    date: '12/27/11',
+    tags: ['Exercise', 'Health'],
+  },
+  {
+    key: '9',
+    task: 'print out paper',
+    date: '11/11/11',
+    tags: ['School'],
+  },
+  {
+    key: '10',
+    task: 'Go to office hours',
+    date: '11/11/11',
+    tags: ['School'],
+  },
+];
 
-  return (
-    <>
-      <TasksForm/>
-     
-      <Table columns={columns} dataSource={data} pagination={{defaultPageSize: 5}}/>
-    </>
-  );
+class TasksTable extends React.Component {
+
+  state = {
+    tasks: []
+  }
+
+  constructor(){
+    super();
+    api.get('/').then(res =>{
+      console.log(res.data)
+      this.setState({ tasks: res.data['reminders']})
+    })
+  }
+  
+  render () {
+    return (
+      <>
+        <TasksForm/>
+        <Table columns={columns} dataSource={data} pagination={{defaultPageSize: 5}} />
+      </>
+    );
+
+  }
+  
 }
 
 export default TasksTable;
+
+
+
 
 const options = [{ value: 'School' }, { value: 'Health' }, { value: 'Exercise' }, { value: 'Medication' }];
 const { Option } = Select;

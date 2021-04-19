@@ -25,11 +25,12 @@ const { Content, Footer, Sider } = Layout;
 const DashboardPage = () => {
   return (
     <Layout>
-        <HeaderDashboard />
-        <Content style={{ padding: '0 50px' }}>
-
         <Router>
+        <HeaderDashboard />
+
+        <Content style={{ padding: '0 20px' }}>
             <Layout className="site-layout-background" style={{ padding: '24px 0' }}>
+                
                 <Sider className="site-layout-background" width={200}>
                 <Menu
                     mode="inline"
@@ -66,10 +67,11 @@ const DashboardPage = () => {
                 </Content>
                 
             </Layout>
+        </Content>
         </Router>
 
 
-        </Content>
+        
         <Footer style={{ textAlign: 'center' }}>LYFE ©2021</Footer>
     </Layout>
     );
