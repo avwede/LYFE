@@ -1,14 +1,10 @@
-import React, { Component } from "react";
+import React from "react";
 import 'antd/dist/antd.css';
-import { Layout, Menu, Breadcrumb } from 'antd';
-import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined } from '@ant-design/icons';
-import { Tooltip, Progress, Button, Card, Row, Col, Form, Input, InputNumber } from 'antd';
-import ReactDOM from 'react-dom';
-import logo from "../logo.png";
+import { Layout } from 'antd';
+import { Button, Card, Row, Col, Form, Input } from 'antd';
 import profilePic from "../profile.png";
 
-const { SubMenu } = Menu;
-const { Header, Content, Footer, Sider } = Layout;
+const { Content } = Layout;
 
 const layout = {
     labelCol: {
@@ -18,7 +14,7 @@ const layout = {
       span: 16,
     },
   };
-
+  
 const validateMessages = {
     required: '${label} is required!',
     types: {

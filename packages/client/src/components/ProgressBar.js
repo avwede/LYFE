@@ -1,7 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
-import { Tooltip, Progress, Button, Card, Row, Col } from 'antd';
+import { Tooltip, Progress } from 'antd';
 
 class ProgressBar extends React.Component {
     render () { 

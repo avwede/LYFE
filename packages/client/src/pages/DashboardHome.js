@@ -1,8 +1,6 @@
-import React, { Component } from "react";
+import React from "react";
 import 'antd/dist/antd.css';
-import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined, PlusOutlined } from '@ant-design/icons';
-import ReactDOM from 'react-dom';
-import { Space, Layout, Menu, Breadcrumb, Tooltip, Progress, Button, Card, Row, Col, Drawer, Form, Input, Select, DatePicker } from 'antd';
+import { Layout, Card, Row, Col,  } from 'antd';
 
 import WaterCount from "../components/WaterCount";
 import ExerciseCount from "../components/ExerciseCount";
@@ -10,8 +8,7 @@ import TasksTable from "../components/TasksTable";
 import ProgressBar from "../components/ProgressBar";
 import Classes from "../components/Classes";
 
-const { SubMenu } = Menu;
-const { Header, Content, Footer, Sider } = Layout;
+const { Content } = Layout;
 
 class DashboardHome extends React.Component {
     render () {

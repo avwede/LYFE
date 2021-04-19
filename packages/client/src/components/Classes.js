@@ -1,6 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { Space, Card} from 'antd';
+import { Card } from 'antd';
 
 
 class Classes extends React.Component {

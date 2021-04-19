@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import { Progress, Button } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';

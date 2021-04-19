@@ -1,13 +1,10 @@
-import React, { Component } from "react";
+import React from "react";
 import 'antd/dist/antd.css';
-import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined } from '@ant-design/icons';
-import { Tooltip, Progress, Button, Card, Row, Col, Carousel, List, Statistic, Layout, Menu, TimePicker } from 'antd';
-import ReactDOM from 'react-dom';
+import { Card, Row, Col, Carousel, Statistic, Layout, TimePicker } from 'antd';
 import classesPic from '../classes.png';
 import moment from 'moment';
 
-const { SubMenu } = Menu;
-const { Header, Content, Footer, Sider } = Layout;
+const { Content } = Layout;
 
 const contentStyle = {
     height: '160px',
@@ -18,7 +15,7 @@ const contentStyle = {
   };
 
 const { Countdown } = Statistic;
-var deadline = Date.now();// + 1000 * 60 * 60 * 24 * 2 + 1000 * 30; // Moment is also OK
+var deadline = Date.now(); // + 1000 * 60 * 60 * 24 * 2 + 1000 * 30; // Moment is also OK
 
 function onFinish() {
     console.log('finished!');

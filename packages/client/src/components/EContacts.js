@@ -1,8 +1,7 @@
 import { Table, Button } from 'antd';
-import ReactDOM from 'react-dom';
-import React, { Component } from "react";
-import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined, PlusOutlined } from '@ant-design/icons';
-import { Layout, Menu, Breadcrumb, Tooltip, Progress, Card, Row, Col, Drawer, Form, Input, Select, DatePicker} from 'antd';
+import React from "react";
+import { PlusOutlined } from '@ant-design/icons';
+import {  Row, Col, Drawer, Form, Input } from 'antd';
 
 const columns = [
   {

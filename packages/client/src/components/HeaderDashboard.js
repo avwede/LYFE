@@ -1,17 +1,11 @@
 import React, { Component } from "react";
 import logo from '../logoWhite.png';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
-import { Layout, Menu, Breadcrumb } from 'antd';
+import { Layout } from 'antd';
 
-import {
-    BrowserRouter as Router,
-    Route,
-    Switch,
-    Link,
-    Redirect
-  } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-const { Header, Content, Footer } = Layout;
+const { Header } = Layout;
 
 export default class HeaderDashboard extends Component{
     render() {

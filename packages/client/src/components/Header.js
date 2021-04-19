@@ -3,13 +3,7 @@ import logo from '../logo2.png';
 import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 
-import {
-    BrowserRouter as Router,
-    Route,
-    Switch,
-    Link,
-    Redirect
-  } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default class Header extends Component{
     render() {
