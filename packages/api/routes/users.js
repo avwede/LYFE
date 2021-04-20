@@ -68,6 +68,7 @@ const { APP_URL } = process.env;
  */
 router.post('/register', (req, res) => {
   const newUser = req.body;
+  console.log(newUser);
 
   User.create(newUser)
     .then(user => {
