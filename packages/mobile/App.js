@@ -9,6 +9,7 @@ import ForgotPassword from './src/screens/ForgotPassword.js';
 import Dashboard from './src/screens/Dashboard.js';
 import Reminders from './src/screens/Reminders.js';
 import Health from './src/screens/Health.js';
+import EditHealth from './src/screens/EditHealth';
 import School from './src/screens/School.js';
 import Profile from './src/screens/Profile.js';
 import {JWTProvider, JWTContext} from './src/contexts/JWTContext.js'
@@ -23,7 +24,7 @@ const Tab = createBottomTabNavigator();
 LogBox.ignoreLogs(['Warning: Possible Unhandled Promise Rejection ']);
 
 export default function App() {  
-  const [loggedIn, toggleLoggedIn] = useState(false);
+  const [loggedIn, toggleLoggedIn] = useState(true);
   const state = {loggedIn, toggleLoggedIn};
 
   // https://reactjs.org/docs/context.html
@@ -41,7 +42,7 @@ export default function App() {
       (<Tab.Navigator initialRouteName="Dashboard">
         <Tab.Screen name="Dashboard" component={Dashboard}  />
         <Tab.Screen name="Reminders" component={Reminders}  />
-        <Tab.Screen name="Health" component={Health} />
+        <Tab.Screen name="Health" component={EditHealth} />
         <Tab.Screen name="School" component={School} />
         <Tab.Screen name="Profile" component={Profile} />
       </Tab.Navigator>)}
