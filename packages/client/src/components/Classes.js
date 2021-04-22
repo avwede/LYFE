@@ -25,7 +25,7 @@ class Classes extends React.Component {
         axios.get('http://localhost:3001/api/courses/', { headers: {"Authorization" : `Bearer ${token}`} })
             .then(res => {
                 console.log(res.data);
-                this.setState({ courses: res.data });
+                this.setState({ courses: JSON.stringify(res.data) });
                 data = res.data;
                 console.log(data);
             })
