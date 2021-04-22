@@ -533,7 +533,9 @@ router.get('/reset/:token', (req, res) => {
 router.get('/', authenticateJWT, (req, res) => {
   const userId = req.tokenPayload.id;
 
-  User.findById(userId)
+  User
+    .findById(userId)
+    .populate('reminders.type')
     .then((user) => {
       sendResponse(res, 200, user);
     })
