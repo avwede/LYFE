@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const randomBytes = require('randombytes');
+const emergencyContactSchema = require('./EmergencyContact.embeddedModel');
 const healthSchema = require('./Health.embeddedModel');
 const reminderSchema = require('./Reminder.embeddedModel');
 const courseSchema = require('./Course');
@@ -57,6 +58,10 @@ const { JWT_SECRET } = process.env;
  *          type: array
  *          items:
  *            $ref: '#/components/schemas/Courses'
+ *        emergencyContacts:
+ *          type: array
+ *          items:
+ *            $ref: '#/components/schemas/EmergencyContact'
  *        health:
  *          $ref: '#/components/schemas/Health' 
  */
@@ -110,7 +115,8 @@ const userSchema = new mongoose.Schema({
   },
   reminders: [reminderSchema],
   courses: [courseSchema],
-  health: healthSchema
+  emergencyContacts: [emergencyContactSchema],
+  health: healthSchema,
 });
 
 /**
