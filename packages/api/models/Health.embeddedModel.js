@@ -44,10 +44,6 @@ const medicationSchema = require('./Medication.embeddedModel');
  *          type: array
  *          items:
  *            $ref: '#/components/schemas/Medication'
- *        emergencyContacts:
- *          type: array
- *          items:
- *            $ref: '#/components/schemas/EmergencyContact'
  *        additionalInformation:
  *          type: string
  */
@@ -70,7 +66,6 @@ const healthSchema = new mongoose.Schema({
   allergies: [String],
   healthConditions: [String],
   medications: [medicationSchema],
-  emergencyContacts: [emergencyContactSchema],
   additionalInformation: {
     type: String,
   },

@@ -19,9 +19,7 @@ const locationSchema = require('./Location.embeddedModel');
  *        description:
  *          type: string
  *        type:
- *          type: string
- *          format: objectId
- *          example: 5b1ed13e8cea93c6ba72b1da
+ *          $ref: '#/components/schemas/ReminderType'
  *        location:
  *          $ref: '#/components/schemas/Location'
  *        startDate:
