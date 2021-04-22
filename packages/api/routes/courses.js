@@ -1,8 +1,47 @@
 const router = require('express').Router();
-const Course = require('../models/Course');
+const User = require('../models/User');
 const courseUser = require('../models/User');
 const { sendResponse, sendError } = require('../util/responses');
 const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware');
+
+/**
+ * @openapi
+ * 
+ * paths:
+ *  /api/courses:
+ *    get:
+ *      security:
+ *        - BearerAuth: []
+ *      tags: [reminders]
+ *      summary: Get all courses.
+ *      description:  Get all courses for the user contained in the required JSON Web Token. This 
+ *        action can only be performed by an authenticated user.
+ *      operationId: getCourses
+ *      responses:
+ *        200:
+ *          description: List of courses successfully retrieved.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/Course'
+ *        401:
+ *          $ref: '#/components/responses/401Unauthorized'
+ *        500:
+ *          $ref: '#/components/responses/500InternalServerError'
+ */
+ router.get('/', authenticateJWT, (req, res) => {
+  const userId = req.tokenPayload.id;
+
+  User.findById(userId, 'courses')
+    .then(results => {
+      sendResponse(res, 200, results.courses);
+    })
+    .catch(err => {
+      sendError(res, err, err.message);
+    });
+});
 
 
 /**

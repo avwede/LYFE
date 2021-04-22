@@ -1,7 +1,5 @@
 const router = require('express').Router();
-//const Contact = require('./EmergencyContact.embeddedModel');
 const { sendResponse, sendError } = require('../util/responses');
-//const emergencyContactSchema = require('../models/EmergencyContact.embeddedModel');
 const contactUser = require('../models/User');
 const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware');
 // add contact, edit contact, delete contact
@@ -30,9 +28,10 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
 
  router.post('/addContact', authenticateJWT, (req, res) => {
      const newContact = req.body;
-     //console.log(req.body);
-     //console.log(req.tokenPayload);
      const {id} = req.tokenPayload;
+     console.log(newContact);
+     console.log(id);
+
      contactUser.findByIdAndUpdate(id, {"$push": { "emergencyContacts": newContact}}, {new: true, runValidators : true}, function(err, result){
     
     if (err)

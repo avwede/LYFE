@@ -7,7 +7,7 @@ import { Layout, Menu, Breadcrumb, Tooltip, Progress, Card, Row, Col, Drawer, Fo
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL : 'http://localhost:3000/'
+  baseURL : 'http://localhost:3000/api/reminders'
 })
 
 const columns = [
@@ -127,18 +127,6 @@ const data = [
 ];
 
 class TasksTable extends React.Component {
-
-  state = {
-    tasks: []
-  }
-
-  constructor(){
-    super();
-    api.get('/').then(res =>{
-      console.log(res.data)
-      this.setState({ tasks: res.data['reminders']})
-    })
-  }
   
   render () {
     return (

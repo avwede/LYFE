@@ -1,6 +1,6 @@
 exports.storeToken = function (tok) {
 	try {
-		
+		console.log(tok.accessToken);
 		localStorage.setItem('user_data', tok.accessToken);
 	}
 	catch (e) {

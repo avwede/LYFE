@@ -244,7 +244,7 @@ router.post('/verify/:token', async (req, res) => {
  * @openapi
  * 
  * paths:
- *  api/users/login:
+ *  /api/users/login:
  *    post:
  *      tags: [users]
  *      summary: Log in.
