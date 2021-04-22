@@ -6,6 +6,7 @@ import { Container, Header, Content, Icon, Accordion, Text, View, Picker } from 
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {MaterialIcons} from '@expo/vector-icons';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
+import axios from 'axios';
 
 // https://reactnative.dev/docs/flexbox
 
@@ -18,6 +19,9 @@ const Classes = (props) => {
     const [addOrEdit, setAddorEdit] = useState(true);
     const [visible, setVisible] = useState(false);
     const [data, setData] = useState();
+    const [courseCode, setCourseCode] = useState();
+    const [location, setLocation] = useState();
+    const [professor, setProfessor] = useState();
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
     const [repeatDays, setRepeatDays] = useState([]);
@@ -185,6 +189,10 @@ const Classes = (props) => {
     /*useEffect(() => {
        getClasses();
     }, [data]); */
+
+    const getClasses = () => {
+        return;
+    }
     
     // TODO: Add motivational quotes
     return(
@@ -205,6 +213,7 @@ const Classes = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        onChangeText={(text) => setCourseCode(text)}
                         ></TextInput></View>
                         <View><TextInput
                         style={styles.inputView}
@@ -213,6 +222,7 @@ const Classes = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        onChangeText={(text) => setProfessor(text)}
                         ></TextInput></View>
                         <View><TextInput
                         style={styles.inputView}
@@ -221,6 +231,7 @@ const Classes = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        onChangeText={(text) => setLocation(text)}
                         ></TextInput></View>
                         <View style={{width: WIDTH - 100,
                                         height:20,

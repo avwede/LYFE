@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Overlay, Divider, Button, registerCustomIconType } from 'react-native-elements';
 import { Container, Header, Content, Icon, Accordion, Text, View } from 'native-base';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import axios from 'axios';
 
 // https://reactnative.dev/docs/flexbox
 
@@ -16,6 +17,9 @@ const Reminders = (props) => {
     const [addOrEdit, setAddorEdit] = useState(true);
     const [visible, setVisible] = useState(false);
     const [data, setData] = useState();
+    const [name, setName] = useState();
+    const [description, setDescription] = useState();
+    const [location, setLocation] = useState();
     const [date, setDate] = useState(new Date());
     const [time, setTime] = useState(new Date());
     const [mode, setMode] = useState('date');
@@ -70,6 +74,7 @@ const Reminders = (props) => {
     // For the following functions, make a POST request followed
     // by a GET request to fetch the updated data, then update "data" state
     const addReminder = () => {
+
         return;
     }
 
@@ -144,6 +149,10 @@ const Reminders = (props) => {
     /*useEffect(() => {
        getReminders();
     }, [data]); */
+
+    const getReminders = () => {
+        return;
+    }
     
     return(
         <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
@@ -163,6 +172,7 @@ const Reminders = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        onChangeText={(text) => setName(text)}
                         ></TextInput></View>
                         <View><TextInput
                         style={styles.inputView}
@@ -171,6 +181,7 @@ const Reminders = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        onChangeText={(text) => setDescription(text)}
                         ></TextInput></View>
                         <View><TextInput
                         style={styles.inputView}
@@ -179,6 +190,7 @@ const Reminders = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        onChangeText={(text) => setLocation(text)}
                         ></TextInput></View>
                         <View style={styles.inputView}>
                         <TouchableNativeFeedback 
