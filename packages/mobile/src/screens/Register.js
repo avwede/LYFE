@@ -2,7 +2,7 @@ import React, { useState, useContext, Component} from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Dimensions} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
-import { JWTProvider } from '../contexts/JWTContext';
+import {JWTContext} from '../contexts/JWTContext.js'
 //import { useNavigation } from '@react-navigation/native';
 
 

@@ -2,6 +2,7 @@ import React, { useState, useContext, Component} from 'react';
 import { StyleSheet, Text, View, Image, KeyboardAvoidingView, TextInput, TouchableOpacity, Dimensions, ScrollView} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
+import {JWTContext} from '../contexts/JWTContext.js'
 
 const {width: WIDTH} = Dimensions.get('window');
 

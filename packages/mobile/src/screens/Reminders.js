@@ -5,6 +5,7 @@ import { Overlay, Divider, Button, registerCustomIconType } from 'react-native-e
 import { Container, Header, Content, Icon, Accordion, Text, View } from 'native-base';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
+import {JWTContext} from '../contexts/JWTContext.js'
 
 // https://reactnative.dev/docs/flexbox
 
@@ -22,10 +23,14 @@ const Reminders = (props) => {
     const [location, setLocation] = useState();
     const [date, setDate] = useState(new Date());
     const [time, setTime] = useState(new Date());
+    const [type, setType] = useState();
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
     // This holds index in state for the edit and delete overlay. 
     const [activeIndex, setActiveIndex] = useState(Number.MIN_SAFE_INTEGER);
+
+    // jwt.getToken() returns JWT
+    const jwt = useContext(JWTContext);
 
     // https://stackoverflow.com/questions/58925515/using-react-native-community-datetimepicker-how-can-i-display-a-datetime-picker
     const onChangeDate = (event, selectedDate) => {
@@ -73,23 +78,55 @@ const Reminders = (props) => {
 
     // For the following functions, make a POST request followed
     // by a GET request to fetch the updated data, then update "data" state
-    const addReminder = () => {
-
-        return;
+    // Pass params and headers
+    // Wrap in try/catch to get error messages
+    const addReminder = async () => {
+        await axios.post("https://test-lyfe-deployment-v2.herokuapp.com/api/reminders", {
+            "name": name,
+            "description": description,
+            "type": type,
+            "location": {
+                "type": "Address",
+                "location": location
+              },
+            "startDate": time,
+          });
+        await getReminders();
+        toggleOverlay();
     }
 
-    const editReminder = () => {
+    const getReminders = async () => {
+        const resp = await axios.get("https://test-lyfe-deployment-v2.herokuapp.com/api/reminders");
+        setData(resp.reminders);
+    }
 
+    // get ID from data
+    const editReminder = async (activeIndex) => {
+        axios.put(`https://test-lyfe-deployment-v2.herokuapp.com/api/reminders/${data.reminders[activeIndex]}`, {
+            "name": name,
+            "description": description,
+            "type": type,
+            "location": {
+                "type": "Address",
+                "location": location
+              },
+            "startDate": time,
+          });
         setActiveIndex(Number.MIN_SAFE_INTEGER);
         toggleOverlay();
-        return;
     }
     
-    const deleteReminder = () => {
-
+    const deleteReminder = async (activeIndex) => {
+        axios.delete(`https://test-lyfe-deployment-v2.herokuapp.com/api/reminders/${data.reminders[activeIndex]}`, {},
+            {headers: {
+                null: null
+            },
+            params: {
+                null: null
+            }
+        });
         setActiveIndex(Number.MIN_SAFE_INTEGER);
         toggleOverlay();       
-        return;
     }
 
     const renderHeader = () => {
@@ -146,13 +183,9 @@ const Reminders = (props) => {
         {title: "1"}
     ];
 
-    /*useEffect(() => {
+    useEffect(() => {
        getReminders();
-    }, [data]); */
-
-    const getReminders = () => {
-        return;
-    }
+    }, [data]); 
     
     return(
         <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
@@ -214,6 +247,7 @@ const Reminders = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        onChangeText={(text) => setType(text)}
                         ></TextInput></View>
                         {addOrEdit ? (<Button title="Add" onPress={() => addReminder}></Button>) : 
                         (<Button title="Edit" onPress={() => editReminder()}></Button>)}

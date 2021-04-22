@@ -7,14 +7,13 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import {MaterialIcons} from '@expo/vector-icons';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import axios from 'axios';
+import {JWTContext} from '../contexts/JWTContext.js'
 
 // https://reactnative.dev/docs/flexbox
 
 const {width: WIDTH} = Dimensions.get('window')
 const {height: HEIGHT} = Dimensions.get('window')
 const Classes = (props) => {
-    // Fetch tasks after each modal submission. Make sure it's async.
-    // Call setData on response to store in state.
     const [deleteOverlay, setDeleteOverlay] = useState(false);
     const [addOrEdit, setAddorEdit] = useState(true);
     const [visible, setVisible] = useState(false);
@@ -22,6 +21,7 @@ const Classes = (props) => {
     const [courseCode, setCourseCode] = useState();
     const [location, setLocation] = useState();
     const [professor, setProfessor] = useState();
+    const [selectedType, setSelectedType] = useState();
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
     const [repeatDays, setRepeatDays] = useState([]);
@@ -32,7 +32,9 @@ const Classes = (props) => {
     const [showEnd, setShowEnd] = useState(false);
     // This holds index in state for the edit and delete overlay. 
     const [activeIndex, setActiveIndex] = useState(Number.MIN_SAFE_INTEGER);
-    const [selectedType, setSelectedType] = useState();
+
+    // jwt.getToken() returns JWT
+    const jwt = useContext(JWTContext);
 
     // Notification scheduling?
     // Get start date, end date, and weekdays from a picker/selector(checkbox, text, flatlist). 
@@ -49,7 +51,7 @@ const Classes = (props) => {
             const currentDate = selectedDate || startDate;
             setStartDate(currentDate);
             setMode('time');
-            setShowStart(Platform.OS !== 'ios'); 
+            setShowStart(Platform.OS !== 'ios');
         } else {
             const selectedTime = selectedDate || new Date();
             setStartTime(selectedTime);
@@ -73,7 +75,6 @@ const Classes = (props) => {
         }
     };
 
-
     const showMode = (currentMode) => {
         setShow(true);
         setMode(currentMode);
@@ -94,33 +95,65 @@ const Classes = (props) => {
         setAddorEdit(false);
         setDeleteOverlay(false);
         toggleOverlay();
-    }
+    };
 
     const deleteHelper = (index) => {
         setActiveIndex(index);
         setDeleteOverlay(true); 
         toggleOverlay();
-    }
+    };
 
     // For the following functions, make a POST request followed
     // by a GET request to fetch the updated data, then update "data" state
-    const addClass = () => {
-        return;
+    const addClass = async () => {
+        await axios.post("https://test-lyfe-deployment-v2.herokuapp.com/api/courses/addCourse", {
+            "courseCode": courseCode,
+            "professor": professor,
+            "location": {
+              "type": selectedType,
+              "location": location
+            },
+            "day": repeatDays,
+            "start": startTime,
+            "end": endTime
+        });
+        await getClasses();
+        toggleOverlay();
+    };
+
+    const getClasses = async () => {
+        const resp = await axios.get("https://test-lyfe-deployment-v2.herokuapp.com/api/users");
+        setData(resp.courses);
     }
 
-    const editClass = () => {
-
+    const editClass = async (activeIndex) => {
+        axios.post(`https://test-lyfe-deployment-v2.herokuapp.com/api/courses/editCourse/${data.courses[activeIndex]}`, {
+            "courseCode": courseCode,
+            "professor": professor,
+            "location": {
+              "type": selectedType,
+              "location": location
+            },
+            "day": repeatDays,
+            "start": "2013-04-03T12:56:26.009Z",
+            "end": "2013-04-03T12:56:26.009Z"
+        });
         setActiveIndex(Number.MIN_SAFE_INTEGER);
         toggleOverlay();
-        return;
-    }
+    };
     
-    const deleteClass = () => {
-
+    const deleteClass = async (activeIndex) => {
+        axios.delete(`https://test-lyfe-deployment-v2.herokuapp.com/api/courses/deleteCourse/${data.courses[activeIndex]}`, {},
+            {headers: {
+                null: null
+            },
+            params: {
+                null: null
+            }
+        });
         setActiveIndex(Number.MIN_SAFE_INTEGER);
         toggleOverlay();       
-        return;
-    }
+    };
 
     const renderHeader = () => {
         return(<View style={{
@@ -179,22 +212,18 @@ const Classes = (props) => {
     // https://stackoverflow.com/questions/58925515/using-react-native-community-datetimepicker-how-can-i-display-a-datetime-picker
     const formatDate = (date, time) => {
         return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} ${time.getHours()}:${time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes()}`;
-    };
+    }
 
     // For testing purposes
     const dataArray = [
         {title: "1"}
-    ];
+    ]
 
-    /*useEffect(() => {
+    useEffect(() => {
        getClasses();
-    }, [data]); */
-
-    const getClasses = () => {
-        return;
-    }
+    }, [data]);
     
-    // TODO: Add motivational quotes
+    // TODO: Add motivational quotes?
     return(
         <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
             <View style={{alignItems:'center', marginTop: 150, flexDirection:'row', 

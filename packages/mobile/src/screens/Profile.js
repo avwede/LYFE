@@ -1,9 +1,10 @@
 import React, { useState, useContext, Component} from 'react';
-import { StyleSheet, Text, View, Image, TextInput, TouchableNativeFeedback, TouchableOpacity, Dimensions} from 'react-native';
+import { StyleSheet, Image, TextInput, TouchableNativeFeedback, TouchableOpacity, Dimensions} from 'react-native';
+import { Icon, Text, View, Picker } from 'native-base';
 import { Overlay, Divider, Button, registerCustomIconType } from 'react-native-elements';
-import { Icon } from 'native-base';
 import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
+import {JWTContext} from '../contexts/JWTContext.js'
 
 const {width: WIDTH} = Dimensions.get('window');
 const Profile = (props) => {
@@ -15,14 +16,16 @@ const Profile = (props) => {
     const [bloodType, setBloodType] = useState();
     const [visible, setVisible] = useState(false);
 
+    // jwt.getToken() returns JWT
+    const jwt = useContext(JWTContext);
+
     const updateProfile = () => {
         setVisible(false);
-        return;
     }
 
-    /*useEffect(() => {
+    useEffect(() => {
        getClasses();
-    }, [data]); */
+    }, [data]); 
 
     return(
         <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
@@ -36,7 +39,7 @@ const Profile = (props) => {
                 <Icon type="FontAwesome5" name="edit" style={styles.iconStyle}>
                 </Icon>
                 </TouchableNativeFeedback>
-                <Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
+                <Overlay isVisible={visible} onBackdropPress={() => setVisible(false)}>
                         <View><Text>Update Profile</Text></View>
                         <View><TextInput
                         style={styles.inputView}
