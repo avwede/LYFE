@@ -10,6 +10,7 @@ import axios from 'axios';
 const storage = require('../tokenStorage.js');
 const token = storage.retrieveToken();
 console.log(token);
+const bp = require('./bp.js');
 
 class ClassesSchool extends React.Component{
     // constructor(props) {
@@ -132,7 +133,7 @@ class ClassesForm extends React.Component {
   onSubmit = () => {
       const courseObj = {courseCode: this.state.courseCode, professor: this.state.professor, location: { type: this.state.locationType, location: this.state.location} };
       console.log(courseObj);
-      axios.post('http://localhost:3001/api/courses/addCourse', {headers: {'Authorization' : `Bearer ${token}`, 'Content-Type': 'application/json'} }, courseObj)
+      axios.post(bp.buildPath('api/courses/addCourse'), {headers: {'Authorization' : `Bearer ${token}`, 'Content-Type': 'application/json'} }, courseObj)
       .then((res) => {
         console.log(res.data)
     }).catch((error) => {
