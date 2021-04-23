@@ -39,6 +39,7 @@ function LoginPage() {
                         setMessage(res.error);
 
                     } else {
+                        console.log(res);
                         storage.storeToken(res);
                         window.location.href = './Dashboard';
                     }

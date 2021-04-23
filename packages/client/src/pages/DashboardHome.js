@@ -8,7 +8,7 @@ import WaterCount from "../components/WaterCount";
 import ExerciseCount from "../components/ExerciseCount";
 import TasksTable from "../components/TasksTable";
 import ProgressBar from "../components/ProgressBar";
-import Classes from "../components/Classes";
+import ClassesHome from "../components/ClassesHome";
 
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
@@ -43,7 +43,7 @@ class DashboardHome extends React.Component {
 
                     <Row gutter={[16, 16]}>
                         <Col span={24}>
-                            <Classes /> 
+                            <ClassesHome /> 
                         </Col>
                     </Row>
                 </div>

@@ -45,7 +45,6 @@ const courseSchema = new mongoose.Schema({
   },
   professor: {
     type: String,
-    ref: 'ReminderType',
     required: [true, 'Professor is required for Course.'],
   },
   location: locationSchema,
@@ -55,11 +54,11 @@ const courseSchema = new mongoose.Schema({
   },
   start: {
     type: Date,
-    required: [true, 'Start date is required for Course.'],
+    // required: [true, 'Start date is required for Course.'],
   },
   end: {
     type: Date,
-    required: [true, 'End date is required for Course.'],
+    // required: [true, 'End date is required for Course.'],
   },
 });
 

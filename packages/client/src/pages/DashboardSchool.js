@@ -6,6 +6,8 @@ import ReactDOM from 'react-dom';
 import classesPic from '../classes.png';
 import moment from 'moment';
 
+import ClassesSchool from '../components/ClassesSchool';
+
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -54,52 +56,9 @@ class DashboardSchool extends React.Component {
                     
                     <Row gutter={[16, 16]} >
                         <Col span={24}>
-                            <Card title="Courses" bordered={false} >
+                            <Card title="Manage Your Courses" bordered={false} style={{paddingBottom: '20px'}}>
                                 
-                                <Row gutter={[16, 16]}>
-                                    <Col span={8}>
-                                        <img className="Logo" src={classesPic} style={{ width: '345px', height: '220px'}} alt="Logo" />
-                                    </Col>
-                                    
-                                    <Col span={16}>
-                                        <div className="site-card-wrapper">
-                                            <Row gutter={16}>
-                                                <Col span={8}>
-                                                    <Card title="Math" headStyle={{backgroundColor: '#DBF3FA'}} bordered={false}>
-                                                        <a href='https://ucf.zoom.us/j/91549966557'>Zoom Meeting Link</a>
-                                                    </Card>
-                                                </Col>
-                                                <Col span={8}>
-                                                    <Card title="Science" headStyle={{backgroundColor: '#DBF3FA'}} bordered={false}>
-                                                        <a href='https://ucf.zoom.us/j/91549966557'>Zoom Meeting Link</a>
-                                                    </Card>
-                                                </Col>
-                                                <Col span={8}>
-                                                    <Card title="History" headStyle={{backgroundColor: '#DBF3FA'}} bordered={false}>
-                                                        <a href='https://ucf.zoom.us/j/91549966557'>Zoom Meeting Link</a>
-                                                    </Card>
-                                                </Col>
-                                                <Col span={8}>
-                                                    <Card title="Finance" headStyle={{backgroundColor: '#DBF3FA'}} bordered={false}>
-                                                        <a href='https://ucf.zoom.us/j/91549966557'>Zoom Meeting Link</a>
-                                                    </Card>
-                                                </Col>
-                                                <Col span={8}>
-                                                    <Card title="Computer Science" headStyle={{backgroundColor: '#DBF3FA'}} bordered={false}>
-                                                        <a href='https://ucf.zoom.us/j/91549966557'>Zoom Meeting Link</a>
-                                                    </Card>
-                                                </Col>
-                                                <Col span={8}>
-                                                    <Card title="Film" headStyle={{backgroundColor: '#DBF3FA'}} bordered={false}>
-                                                        <a href='https://ucf.zoom.us/j/91549966557'>Zoom Meeting Link</a>
-                                                    </Card>
-                                                </Col>
-                                            </Row>
-                                        </div>
-                        
-                                    </Col>
-
-                                </Row>
+                                <ClassesSchool />
                             </Card>
                         </Col>
                     </Row>
