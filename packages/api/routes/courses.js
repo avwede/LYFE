@@ -65,41 +65,41 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
  *          description: New course added.
  */
 
- router.post('/addCourse', authenticateJWT, (req, res) => {
+ router.post('/addCourse', authenticateJWT, async (req, res) => {
   const userId = req.tokenPayload.id;
-  // const newCourse = req.body;
-  // const user = await User.findById(userId);
+  const newCourse = req.body;
+  const user = await User.findById(userId);
 
-  // if (user) {
-  //   user.courses.push(newCourse);
-  //   user
-  //     .save()
-  //     .then((updatedUser) => {
-  //       sendResponse(res, 201, updatedUser.courses);
-  //     })
-  //     .catch((err) => {
-  //       sendError(res, err, err.message);
-  //     });
-  // } else {
-  //   sendError(res, 500, 'Server failed to fetch this user.');
-  // }
+  if (user) {
+    user.courses.push(newCourse);
+    user
+      .save()
+      .then((updatedUser) => {
+        sendResponse(res, 201, updatedUser.courses);
+      })
+      .catch((err) => {
+        sendError(res, err, err.message);
+      });
+  } else {
+    sendError(res, 500, 'Server failed to fetch this user.');
+  }
 
-    const newCourse = req.body;
-    const {id} = req.tokenPayload;
+  //   const newCourse = req.body;
+  //   const {id} = req.tokenPayload;
   
-    courseUser.findByIdAndUpdate(id, {"$push": { "courses": newCourse}}, {new: true, runValidators : true}, function(err, result){
+  //   courseUser.findByIdAndUpdate(id, {"$push": { "courses": newCourse}}, {new: true, runValidators : true}, function(err, result){
     
-    if (err)
-    {
-      sendError(res, err, 'The course could not be created.');
-    }
-    else
-    {
-      sendResponse(res, 201, {"response": "Course was created."});
-      //res.send(result)
-    }
+  //   if (err)
+  //   {
+  //     sendError(res, err, 'The course could not be created.');
+  //   }
+  //   else
+  //   {
+  //     sendResponse(res, 201, {"response": "Course was created."});
+  //     //res.send(result)
+  //   }
     
-    })
+  //   })
   });
 
 /**

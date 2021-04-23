@@ -130,9 +130,9 @@ class ClassesForm extends React.Component {
    */
 
   onSubmit = () => {
-      const courseObj = {courseCode: this.state.courseCode, professor: this.state.professor, type: this.state.locationType, location: this.state.location};
+      const courseObj = {courseCode: this.state.courseCode, professor: this.state.professor, location: { type: this.state.locationType, location: this.state.location} };
       console.log(courseObj);
-      axios.post('http://localhost:3001/api/courses/addCourse', {headers: {'Authorization' : `Bearer ${token}`}}, courseObj)
+      axios.post('http://localhost:3001/api/courses/addCourse', {headers: {'Authorization' : `Bearer ${token}`, 'Content-Type': 'application/json'} }, courseObj)
       .then((res) => {
         console.log(res.data)
     }).catch((error) => {
