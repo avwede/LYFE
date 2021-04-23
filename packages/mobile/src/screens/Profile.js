@@ -1,4 +1,4 @@
-import React, { useState, useContext, Component} from 'react';
+import React, { useState, useContext, useEffect, Component} from 'react';
 import { StyleSheet, Image, TextInput, TouchableNativeFeedback, TouchableOpacity, Dimensions} from 'react-native';
 import { Icon, Text, View, Picker } from 'native-base';
 import { Overlay, Divider, Button, registerCustomIconType } from 'react-native-elements';
@@ -16,16 +16,21 @@ const Profile = (props) => {
     const [bloodType, setBloodType] = useState();
     const [visible, setVisible] = useState(false);
 
-    // jwt.getToken() returns JWT
     const jwt = useContext(JWTContext);
+    const token = async () => await jwt.getToken();
 
     const updateProfile = () => {
         setVisible(false);
     }
 
-    useEffect(() => {
+    const logOut = async () => {
+        await jwt.deleteToken(); 
+        props.updateLoggedIn("");
+    }
+
+    /*useEffect(() => {
        getClasses();
-    }, [data]); 
+    }, [data]); */
 
     return(
         <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
@@ -34,7 +39,7 @@ const Profile = (props) => {
             </View>
             <View style={{flexDirection: "row", paddingVertical: 20}}>
                 <Text style={{marginRight: 60}}>Your LYFE Info</Text>
-                <TouchableNativeFeedback 
+                <TouchableNativeFeedback
                 onPress = {() => setVisible(true)}>
                 <Icon type="FontAwesome5" name="edit" style={styles.iconStyle}>
                 </Icon>
@@ -73,8 +78,7 @@ const Profile = (props) => {
                                         paddingLeft:12,
                                         paddingBottom: 3,
                                         fontSize: 12}}>
-                        <Picker
-                            mode="dropdown"
+                        <Picker mode="dropdown"
                             placeholder="Gender"
                             selectedValue={gender}
                             onValueChange={(itemValue, itemIndex) =>
@@ -108,8 +112,8 @@ const Profile = (props) => {
                                 <Picker.Item label="Unknown" value="Unknown" />
                         </Picker>
                         </View>
-                        <Button title="Update" onPress={() => updateProfile()}></Button>)
-                        </Overlay>)
+                        <Button title="Update" onPress={() => updateProfile()}></Button>
+                        </Overlay>
             </View>
             <View style={styles.textSpacing}>
                 <Text>Date of Birth:</Text>
@@ -126,7 +130,7 @@ const Profile = (props) => {
             <View style={styles.textSpacing}>
                 <Text>Blood Type:</Text>
             </View>
-            <TouchableOpacity style={styles.loginBtn}>
+            <TouchableOpacity style={styles.loginBtn} onPress={() => logOut()}>
                 <Text style={styles.signUp} >Log Out</Text>
             </TouchableOpacity>
         </LinearGradient>

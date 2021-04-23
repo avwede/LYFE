@@ -14,6 +14,9 @@ class Register extends Component{
         this.focusNextField = this.focusNextField.bind(this);
         this.inputs = {};
       }
+    
+    static contextType = JWTContext;
+    
     state = {
         firstName: "",
         lastName: "",
@@ -46,22 +49,28 @@ class Register extends Component{
         })
         console.log(text);
     }
-    registerUser = () => {
+    registerUser = async () => {
         console.log(this.state);
-        axios.post("https://test-lyfe-deployment-v2.herokuapp.com/api/users/register", {
+        await axios.post("https://test-lyfe-deployment-v2.herokuapp.com/api/users/register", {
             "firstName": this.state.firstName,
             "lastName": this.state.lastName,
             "email": this.state.email,
             "password": this.state.password
     })
-    .then(function(response) {
-        console.log(response);
+    .then((response) => {
+        console.log(response.data);
+        this.setState({
+            errorCheck: true,
+            errorMsg: response.data.message
+        });
+        console.log(this.state);
     })
     .catch((error) => {
+        console.log(error);
         console.log(error.response.data.error);
         this.setState({
             errorCheck: true,
-            errorMsg: error.response.data.error
+            errorMsg: "Error! " + error.response.data.error
         });
     })
     }    
@@ -127,7 +136,7 @@ class Register extends Component{
                     ></TextInput>
                 </View>
                 {this.state.errorCheck && <View>
-                    <Text>Error! {this.state.errorMsg}</Text>
+                    <Text>{this.state.errorMsg}</Text>
                 </View>}
                 <TouchableOpacity style={styles.loginBtn}
                 onPress={() => this.registerUser()}>

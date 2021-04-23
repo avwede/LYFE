@@ -33,8 +33,8 @@ const Classes = (props) => {
     // This holds index in state for the edit and delete overlay. 
     const [activeIndex, setActiveIndex] = useState(Number.MIN_SAFE_INTEGER);
 
-    // jwt.getToken() returns JWT
     const jwt = useContext(JWTContext);
+    const token = jwt.getToken();
 
     // Notification scheduling?
     // Get start date, end date, and weekdays from a picker/selector(checkbox, text, flatlist). 

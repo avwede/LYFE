@@ -29,8 +29,8 @@ const Reminders = (props) => {
     // This holds index in state for the edit and delete overlay. 
     const [activeIndex, setActiveIndex] = useState(Number.MIN_SAFE_INTEGER);
 
-    // jwt.getToken() returns JWT
     const jwt = useContext(JWTContext);
+    const token = jwt.getToken();
 
     // https://stackoverflow.com/questions/58925515/using-react-native-community-datetimepicker-how-can-i-display-a-datetime-picker
     const onChangeDate = (event, selectedDate) => {

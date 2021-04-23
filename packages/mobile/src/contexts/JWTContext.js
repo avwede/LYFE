@@ -12,7 +12,7 @@ const JWTProvider = (props) => {
         getToken: async function() {
             return SecureStore.getItemAsync('jwt');
         },
-        deleteToken: async function(token) {
+        deleteToken: async function() {
             return SecureStore.deleteItemAsync('jwt');
         }
     }
@@ -20,4 +20,4 @@ const JWTProvider = (props) => {
         {props.children}</JWTContext.Provider>;
 }
 
-export { JWTProvider, JWTContext};
+export { JWTProvider, JWTContext };

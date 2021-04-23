@@ -2,11 +2,12 @@ import React, { useState, useContext, Component} from 'react';
 import { StyleSheet, Text, View, Image, KeyboardAvoidingView, TextInput, TouchableOpacity, Dimensions, ScrollView} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import axios from 'axios';
-import {JWTContext} from '../contexts/JWTContext.js'
+import { JWTContext } from '../contexts/JWTContext.js'
 
 const {width: WIDTH} = Dimensions.get('window');
 
 class Login extends Component{
+    static contextType = JWTContext;
     constructor(props) {
         super(props);
     
@@ -35,15 +36,23 @@ class Login extends Component{
         })
         console.log(text);
     }
+    storeJWT = async (token) => {
+        await this.context.setToken(token);
+        console.log(await this.context.getToken());
+        this.props.updateLoggedIn();
+    }
+    // Store token if successful login
     loginUser = () => {
         axios.post("https://test-lyfe-deployment-v2.herokuapp.com/api/users/login", {
             email: this.state.email,
             password: this.state.password,
     })
-    .then(function(response) {
-        console.log(response.data);
+    .then((response) => {
+        console.log(response.data.token);
+        this.storeJWT(response.data.token);
     })
     .catch((error) => {
+        console.log(error);
         console.log(error.response.data.error);
         this.setState({
             errorCheck: true,
