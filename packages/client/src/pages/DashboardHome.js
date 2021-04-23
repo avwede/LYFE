@@ -29,7 +29,7 @@ class DashboardHome extends React.Component {
                     
                     <Row gutter={[16, 16]} >
                     <Col span={16}>
-                        <Card title="Daily Tasks" bordered={false}>
+                        <Card title="Daily Tasks" bordered={false} style={{paddingBottom:'15px'}}>
                             <TasksTable />
                         </Card>
                     </Col>

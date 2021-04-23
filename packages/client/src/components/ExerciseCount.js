@@ -30,7 +30,7 @@ class ExerciseCount extends React.Component {
   render() {
     return (
       <>
-        <h5 style={{paddingTop: '86px'}}>Daily Exercise Tracker</h5>
+        <h5 style={{paddingTop: '101px'}}>Daily Exercise Tracker</h5>
         <Progress strokeColor={{'0%': '#ACC1FF', '100%': '#9CECFF',}} type="circle" percent={this.state.percent} format={percent => `${percent/3.333333333333333333333333} Mins`}/>
         
         <Button.Group style={{margin: 30}}>

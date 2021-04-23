@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const storage = require('../tokenStorage.js');
 const token = storage.retrieveToken();
-console.log(token);
+//console.log(token);
      
 class ClassesHome extends React.Component {
     data = [];

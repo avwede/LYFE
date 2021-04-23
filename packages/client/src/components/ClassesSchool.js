@@ -9,26 +9,27 @@ import axios from 'axios';
 
 const storage = require('../tokenStorage.js');
 const token = storage.retrieveToken();
+console.log(token);
 
 class ClassesSchool extends React.Component{
-    constructor(props) {
-        super(props);
-        this.state = { 
-            courses: [],
-        };
-    }
+    // constructor(props) {
+    //     super(props);
+    //     this.state = { 
+    //         courses: [],
+    //     };
+    // }
 
 
-    componentDidMount() {
-        axios.get('http://localhost:3001/api/courses/addCourse', {headers: {'Authorization' : `Bearer ${token}`, 'Content-Type': 'application/json'} })
-            .then(res => {
-                this.setState({ courses: res.data });
+    // componentDidMount() {
+    //     axios.get('http://localhost:3001/api/courses/addCourse', {headers: {'Authorization' : `Bearer ${token}`, 'Content-Type': 'application/json'} })
+    //         .then(res => {
+    //             this.setState({ courses: res.data });
 
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
-    }
+    //         })
+    //         .catch(function (error) {
+    //             console.log(error);
+    //         })
+    //}
     render(){
         return (
             <>
@@ -98,7 +99,6 @@ class ClassesForm extends React.Component {
         visible: false, 
         courseCode: '',
         professor: '',
-        
         locationType: '',
         location: ''
     };
@@ -131,12 +131,17 @@ class ClassesForm extends React.Component {
 
   onSubmit = () => {
       const courseObj = {courseCode: this.state.courseCode, professor: this.state.professor, type: this.state.locationType, location: this.state.location};
-    //   axios.post('http://localhost:3001/api/courses/addCourse', {headers: {'Authorization' : `Bearer ${token}`, 'Content-Type': 'application/json'} }, courseObj)
-    //   .then((res) => {
-    //     console.log(res.data)
-    // }).catch((error) => {
-    //     console.log(error)
-    // });
+      console.log(courseObj);
+      axios.post('http://localhost:3001/api/courses/addCourse', {headers: {'Authorization' : `Bearer ${token}`}}, courseObj)
+      .then((res) => {
+        console.log(res.data)
+    }).catch((error) => {
+        console.log(error)
+    });
+  }
+
+  onHandleDropdownChange = (event, result) => {
+    this.setState({ locationType: result });
   }
 
   onHandleInputChange = (event) => {
@@ -193,7 +198,7 @@ class ClassesForm extends React.Component {
                       label="Professor"
                       rules={[{ required: true, message: 'Please enter the course code' }]}
                     >
-                      <Input placeholder="Ex. Professor Szumlanski" value={this.state.courseInfo.professor} name="professor"/>
+                      <Input onChange={this.onHandleInputChange} placeholder="Ex. Professor Szumlanski" value={this.state.professor} name="professor"/>
                     </Form.Item>
 
               </Col>
@@ -206,7 +211,7 @@ class ClassesForm extends React.Component {
                       label="Location"
                       rules={[{ required: true, message: 'Please choose the location type' }]}
                     >
-                      <Select placeholder="Ex. Zoom Link" value={this.state.courseInfo.locationType} name="type">
+                      <Select onSelect={this.onHandleDropdownChange} placeholder="Ex. Zoom Link" value={this.state.locationType} name="type">
                         <Option value="Zoom Link">Zoom Link</Option>
                         <Option value="Classroom Location">Classroom Location</Option>
                       </Select>
@@ -221,7 +226,7 @@ class ClassesForm extends React.Component {
                         label="Link/Location"
                         rules={[{ required: true, message: 'Please enter the location' }]}
                     >
-                       <Input placeholder="Ex. https://ucf.zoom.us/j/91549966557" value={this.state.courseInfo.location} name="location"/> 
+                       <Input onChange={this.onHandleInputChange} placeholder="Ex. https://ucf.zoom.us/j/91549966557" value={this.state.location} name="location"/> 
                     </Form.Item>
 
             </Col>

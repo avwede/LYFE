@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom';
-import { Table, Button, Tag, Space, Pagination } from 'antd';
+import { Table, Button, Tag, Space, Pagination, InputNumber, Popconfirm, Typography  } from 'antd';
 import React, { Component, useState } from "react";
 import 'antd/dist/antd.css';
 import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined, PlusOutlined } from '@ant-design/icons';
@@ -10,6 +10,9 @@ const api = axios.create({
   baseURL : 'http://localhost:3000/api/reminders'
 })
 
+
+
+/*
 const columns = [
   {
     title: 'Task',
@@ -139,8 +142,206 @@ class TasksTable extends React.Component {
   }
   
 }
+*/
 
-export default TasksTable;
+
+  const originData = [];
+
+  for (let i = 0; i < 10; i++) {
+    originData.push({
+      key: i.toString(),
+      Task: `Homework ${i}`,
+      Date: '11/11/11',
+      Tag: 'School',
+    });
+  }
+
+  const EditableCell = ({
+    editing,
+    dataIndex,
+    title,
+    inputType,
+    record,
+    index,
+    children,
+    ...restProps
+  }) => {
+    const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
+    return (
+      <td {...restProps}>
+        {editing ? (
+          <Form.Item
+            name={dataIndex}
+            style={{
+              margin: 0,
+            }}
+            rules={[
+              {
+                required: true,
+                message: `Please Input ${title}!`,
+              },
+            ]}
+          >
+            {inputNode}
+          </Form.Item>
+        ) : (
+          children
+        )}
+      </td>
+    );
+  };
+
+  const EditableTable = () => {
+    const [form] = Form.useForm();
+    const [data, setData] = useState(originData);
+    const [editingKey, setEditingKey] = useState('');
+
+    const isEditing = (record) => record.key === editingKey;
+
+    const edit = (record) => {
+      form.setFieldsValue({
+        name: '',
+        age: '',
+        address: '',
+        ...record,
+      });
+      setEditingKey(record.key);
+    };
+
+    const cancel = () => {
+      setEditingKey('');
+    };
+
+    const save = async (key) => {
+      try {
+        const row = await form.validateFields();
+        const newData = [...data];
+        const index = newData.findIndex((item) => key === item.key);
+
+        if (index > -1) {
+          const item = newData[index];
+          newData.splice(index, 1, { ...item, ...row });
+          setData(newData);
+          setEditingKey('');
+        } else {
+          newData.push(row);
+          setData(newData);
+          setEditingKey('');
+        }
+      } catch (errInfo) {
+        console.log('Validate Failed:', errInfo);
+      }
+    };
+
+    const columns = [
+      {
+        title: 'Task',
+        dataIndex: 'Task',
+        width: '25%',
+        editable: true,
+      },
+      {
+        title: 'Date',
+        dataIndex: 'Date',
+        width: '15%',
+        editable: true,
+      },
+      {
+        title: 'Tag',
+        dataIndex: 'Tag',
+        width: '40%',
+        editable: true,
+      },
+      {
+        title: 'Action',
+        dataIndex: 'Action',
+        render: (_, record) => {
+          const editable = isEditing(record);
+          return editable ? (
+            <span>
+              <a
+                href="javascript:;"
+                onClick={() => save(record.key)}
+                style={{
+                  marginRight: 8,
+                }}
+              >
+                Save
+              </a>
+              <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
+                <a>Cancel</a>
+              </Popconfirm>
+            </span>
+          ) : (
+            <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
+              Edit
+            </Typography.Link>
+          );
+        },
+      },
+    ];
+    
+    const mergedColumns = columns.map((col) => {
+      if (!col.editable) {
+        return col;
+      }
+
+      return {
+        ...col,
+        onCell: (record) => ({
+          record,
+          inputType: col.dataIndex === 'age' ? 'number' : 'text',
+          dataIndex: col.dataIndex,
+          title: col.title,
+          editing: isEditing(record),
+        }),
+      };
+    });
+
+
+
+    return (
+      <Form form={form} component={false}>
+        <Table
+          components={{
+            body: {
+              cell: EditableCell,
+            },
+          }}
+          bordered
+          dataSource={data}
+          columns={mergedColumns}
+          rowClassName="editable-row"
+          pagination={{
+            onChange: cancel,
+            defaultPageSize: 5,
+          }}
+        />
+      </Form>
+    );
+  };
+
+
+// .editable-row .ant-form-item-explain {
+//   position: absolute;
+//   top: 100%;
+//   font-size: 12px;
+// }
+
+
+class TasksTable extends React.Component{
+  render(){
+    return(
+      <>
+        <EditableTable />
+        <TasksForm />
+      </>
+    )
+  }
+    
+}
+
+export default TasksTable; 
 
 
 
