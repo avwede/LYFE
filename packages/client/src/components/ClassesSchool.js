@@ -11,7 +11,6 @@ class ClassesSchool extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      action: null,
       courses: [],
     };
     this.classesForm = React.createRef();
