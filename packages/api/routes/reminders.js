@@ -129,7 +129,7 @@ router.get('/:id', authenticateJWT, (req, res) => {
  *              $ref: '#/components/schemas/Reminder'
  *      responses:
  *        201:
- *          description: New reminder successfully created.
+ *          description: List of reminders for this user.
  *          content:
  *            application/json:
  *              schema:

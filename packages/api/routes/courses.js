@@ -25,7 +25,7 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
  *              schema:
  *                type: array
  *                items:
- *                  $ref: '#/components/schemas/Course'
+ *                  $ref: '#/components/schemas/Courses'
  *        401:
  *          $ref: '#/components/responses/401Unauthorized'
  *        500:
@@ -72,7 +72,7 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
  *              schema:
  *                type: array
  *                items:
- *                  $ref: '#/components/schemas/Course'
+ *                  $ref: '#/components/schemas/Courses'
  *        400:
  *          $ref: '#/components/responses/400BadRequest'
  *        401:
@@ -129,7 +129,7 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/Course'
+ *              $ref: '#/components/schemas/Courses'
  *      responses:
  *        200:
  *          description: Updated list of courses belonging to user.
@@ -138,7 +138,7 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
  *              schema:
  *                type: array
  *                items:
- *                  $ref: '#/components/schemas/Course'
+ *                  $ref: '#/components/schemas/Courses'
  *        400:
  *          $ref: '#/components/responses/400BadRequest'
  *        401:
@@ -208,7 +208,7 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
  *              schema:
  *                type: array
  *                items:
- *                  $ref: '#/components/schemas/Course'
+ *                  $ref: '#/components/schemas/Courses'
  *        401:
  *          $ref: '#/components/responses/401Unauthorized'
  *        404:
