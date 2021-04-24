@@ -68,11 +68,11 @@ class DashboardSchool extends React.Component {
                             <Card title="Study Timer" bordered={false} >
                             <Row gutter={[16, 16]} >
 
-                                <Col span={22}>
+                                <Col span={2}>
                                     <TimePicker minuteStep={15} secondStep={10}/>
                                 </Col>   
 
-                                <Col span={2}>
+                                <Col span={22}>
                                     <Countdown value={deadline} onFinish={onFinish} />
                                 </Col>
                             </Row>
