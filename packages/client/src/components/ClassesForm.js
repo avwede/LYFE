@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Row, Col, Drawer, Form, Input, Select } from 'antd';
 import { retrieveToken } from '../tokenStorage';
+import { buildPath } from './bp';
 import axios from 'axios';
 
 const { Option } = Select;
@@ -30,7 +31,7 @@ class ClassesForm extends Component {
     };
 
     axios
-      .post('http://localhost:3001/api/courses', newCourse, {
+      .post(buildPath('api/courses/'), newCourse, {
         headers: {
           Authorization: `Bearer ${retrieveToken()}`,
           'Content-Type': 'application/json',
@@ -57,7 +58,7 @@ class ClassesForm extends Component {
 
     axios
       .put(
-        `http://localhost:3001/api/courses/${this.state.courseId}`,
+        buildPath(`api/courses/${this.state.courseId}`),
         updatedCourse,
         {
           headers: {

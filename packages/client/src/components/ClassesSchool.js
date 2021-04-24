@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Button, Card, Row, Col } from 'antd';
 import { retrieveToken } from '../tokenStorage';
+import { buildPath } from './bp'
 import classesPic from '../classes.png';
 import ClassesForm from './ClassesForm';
 import axios from 'axios';
@@ -18,7 +19,7 @@ class ClassesSchool extends Component {
 
   componentDidMount() {
     axios
-      .get('http://localhost:3001/api/courses/', {
+      .get(buildPath('api/courses/'), {
         headers: {
           Authorization: `Bearer ${retrieveToken()}`,
           'Content-Type': 'application/json',
@@ -34,7 +35,7 @@ class ClassesSchool extends Component {
 
   deleteCourse = (id) => {
     axios
-      .delete(`http://localhost:3001/api/courses/${id}`, {
+      .delete(buildPath(`api/courses/${id}`), {
         headers: {
           Authorization: `Bearer ${retrieveToken()}`,
           'Content-Type': 'application/json',
