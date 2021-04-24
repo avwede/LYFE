@@ -4,8 +4,9 @@ import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined, PlusOu
 import { Table, Tag, Tooltip, Progress, Button, Card, Row, Col, Carousel, List, Statistic, Layout, Menu, TimePicker, DatePicker, Drawer, Form, Input, Select } from 'antd';
 import ReactDOM from 'react-dom';
 import classesPic from '../classes.png';
-import moment from 'moment';
+import ClassesForm from './ClassesForm';
 import axios from 'axios';
+import 'antd/dist/antd.css';
 
 const storage = require('../tokenStorage.js');
 const token = storage.retrieveToken();
@@ -252,25 +253,42 @@ class ClassesForm extends React.Component {
     
   constructor(props) {
     super(props);
-    this.state = { 
-        visible: false, 
-        courseCode: '',
-        professor: '',
-        locationType: '',
-        location: ''
+    this.state = {
+      courses: [],
     };
+    this.classesForm = React.createRef();
   }
 
-  showDrawer = () => {
-    this.setState({
-      visible: true,
-    });
-  };
+  componentDidMount() {
+    axios
+      .get(buildPath('api/courses/'), {
+        headers: {
+          Authorization: `Bearer ${retrieveToken()}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        this.setState({ courses: res.data });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
 
-  onClose = () => {
-    this.setState({
-      visible: false,
-    });
+  deleteCourse = (id) => {
+    axios
+      .delete(buildPath(`api/courses/${id}`), {
+        headers: {
+          Authorization: `Bearer ${retrieveToken()}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        this.setState({ courses: res.data });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   /**
@@ -303,8 +321,8 @@ class ClassesForm extends React.Component {
     this.setState({ locationType: event});
   }
 
-  onHandleInputChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
+  handleEdit = (course) => {
+    this.classesForm.current.showDrawer('edit', course);
   };
 
   render() {
@@ -397,3 +415,5 @@ class ClassesForm extends React.Component {
     );
   }
 }
+
+export default ClassesSchool;
