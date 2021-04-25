@@ -2,39 +2,13 @@ import { Table, Button } from 'antd';
 import ReactDOM from 'react-dom';
 import React, { Component } from "react";
 import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined, PlusOutlined } from '@ant-design/icons';
-import { Layout, Menu, Breadcrumb, Tooltip, Progress, Card, Row, Col, Drawer, Form, Input, Select, DatePicker} from 'antd';
+import { Space, Layout, Menu, Breadcrumb, Tooltip, Progress, Card, Row, Col, Drawer, Form, Input, Select, DatePicker} from 'antd';
 import axios from 'axios';
 import { retrieveToken } from '../tokenStorage';
 import { buildPath } from './bp'
 
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-  },
-  {
-    title: 'Phone Number',
-    dataIndex: 'phonenumber',
-  },
-  {
-    title: 'Email Address',
-    dataIndex: 'emailaddress',
-  },
-  {
-    title: 'Actions',
-    dataIndex: 'actions',
-  },
-];
 
 const data = [];
-// for (let i = 0; i < 3; i++) {
-//   data.push({
-//     key: i,
-//     name: `dababy ${i}`,
-//     phonenumber: '123-456-7890',
-//     emailaddress: `letsgooooo@gmail.com`,
-//   });
-// }
 
 class EContacts extends React.Component {
   constructor(props) {
@@ -42,6 +16,7 @@ class EContacts extends React.Component {
     this.state = {
       contacts: [],
     };
+    this.contactsForm = React.createRef();
   }
 
   componentDidMount() {
@@ -54,27 +29,86 @@ class EContacts extends React.Component {
       })
       .then((res) => {
         this.setState({ contacts: res.data });
-        this.state.contacts.map((contacts) => {
-          return(
-            data.push({
-                  key: contacts._id,
-                  name: contacts.firstName,
-                  phonenumber: contacts.phonenumber,
-                  emailaddress: contacts.email,
-                })
-          )
-        })
       })
       .catch(function (error) {
         console.log(error);
       });
   }
+
+  deleteContact = (id) => {
+    axios
+      .post(buildPath(`api/contacts/deleteContact/${id}`), {
+        headers: {
+          Authorization: `Bearer ${retrieveToken()}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        this.setState({ courses: res.data });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  columns = [
+    {
+      title: 'First Name',
+      dataIndex: 'firstName',
+    },
+    {
+      title: 'Last Name',
+      dataIndex: 'lastName',
+    },
+    {
+      title: 'Phone Number',
+      dataIndex: 'phoneNumber',
+    },
+    {
+      title: 'Email Address',
+      dataIndex: 'email',
+    },
+    {
+      title: 'Relation',
+      dataIndex: 'relation',
+    },
+    {
+      title: 'Actions',
+      render: (text, record) => (
+        <Space size="middle">
+          <a onClick = {this.handleEdit(record)}>Edit</a>
+          <a>Delete</a>
+        </Space>
+      ),
+    },
+  ];
+
+  updateContacts = (contacts) => {
+    this.setState({ contacts: contacts });
+  };
+
+  handleAdd = () => {
+    this.contactsForm.current.showDrawer('add');
+  };
+
+  handleEdit = (contact) => {
+    this.contactsForm.current.showDrawer('edit', contact);
+  };
   
     render() {
       return (
         <div>
-          <EContactsForm/>
-          <Table columns={columns} dataSource={data} pagination={{defaultPageSize: 5}} />
+        
+          <Table columns={this.columns} dataSource={this.state.contacts} pagination={{defaultPageSize: 5}} />
+
+          <Button type="primary" onClick={this.handleAdd}>
+            <PlusOutlined /> New emergency contact
+          </Button>
+
+          <EContactsForm
+          ref={this.contactsForm}
+          updateContacts={this.updateContacts}
+        />
         </div>
       );
     }
@@ -83,7 +117,19 @@ class EContacts extends React.Component {
 export default EContacts;
 
 class EContactsForm extends React.Component {
-  state = { visible: false };
+  constructor(props) {
+    super(props);
+    this.state = { 
+      visible: false,
+      action: '',
+      contactId: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      phoneNumber: '',
+      relation: '',
+    };
+  }
 
   showDrawer = () => {
     this.setState({
@@ -97,41 +143,141 @@ class EContactsForm extends React.Component {
     });
   };
 
+  addContact = () => {
+    const newContact = {
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
+      email: this.state.email,
+      phoneNumber: this.state.phoneNumber,
+      relation: this.state.relation
+    };
+
+    axios
+      .post(buildPath('api/contacts/addContact'), newContact, {
+        headers: {
+          Authorization: `Bearer ${retrieveToken()}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        this.props.updateContacts(res.data);
+        this.closeDrawer();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  editContact = () => {
+    const updatedContact = {
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
+      email: this.state.email,
+      phoneNumber: this.state.phoneNumber,
+      relation: this.state.relation
+    };
+
+    axios
+      .post(
+        buildPath(`api/contacts/editContact ${this.state.contactId}`),
+        updatedContact,
+        {
+          headers: {
+            Authorization: `Bearer ${retrieveToken()}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+      .then((res) => {
+        this.props.updateContacts(res.data);
+        this.closeDrawer();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  handleInputChange = (event) => {
+    this.setState({ [event.target.name]: event.target.value });
+  };
+
+  showDrawer = (action, contact) => {
+    if (action === 'add') this.setupAddForm();
+
+    if (action === 'edit') this.setupEditForm(contact);
+  };
+
+  closeDrawer = () => {
+    this.setState({
+      visible: false,
+    });
+  };
+
+  setupEditForm = (contact) => {
+    this.setState({
+      action: 'edit',
+      visible: true,
+      contactId: contact._id,
+      firstName: contact.firstName,
+      lastName: contact.lastName,
+      email: contact.email,
+      phoneNumber: contact.phoneNumber,
+      relation: contact.relation,
+    });
+  };
+
+  setupAddForm = () => {
+    this.setState({
+      action: 'add',
+      visible: true,
+      firstName: '',
+      lastName: '',
+      email: '',
+      phoneNumber: '',
+      relation: '',
+    });
+  };
+
   render() {
     return (
       <>
       <div className='site-form-in-drawer-wrapper'>
 
-        <Button type="primary" onClick={this.showDrawer}>
-          <PlusOutlined /> New emergency contact
-        </Button>
-
         <Drawer
-          title="Add a new emergency contact"
-          width={720}
-          onClose={this.onClose}
-          visible={this.state.visible}
-          bodyStyle={{ paddingBottom: 80 }}
-          footer={
-            <div
-              style={{
-                textAlign: 'right',
-              }}
-            >
-              <Button onClick={this.onClose} style={{ marginRight: 8 }}>
-                Cancel
-              </Button>
-              <Button onClick={this.onClose} type="primary">
-                Submit
-              </Button>
-            </div>
-          }
-        >
+            title={
+              this.state.action === 'add' ? 'Add a new emergency contact' : 'Edit an emergency contact'
+            }
+            width={720}
+            onClose={this.closeDrawer}
+            visible={this.state.visible}
+            bodyStyle={{ paddingBottom: 80 }}
+            footer={
+              <div
+                style={{
+                  textAlign: 'right',
+                }}
+              >
+                <Button onClick={this.closeDrawer} style={{ marginRight: 8 }}>
+                  Cancel
+                </Button>
+                <Button
+                  onClick={
+                    this.state.action === 'add'
+                      ? this.addContact
+                      : this.editContact
+                  }
+                  type="primary"
+                >
+                  Submit
+                </Button>
+              </div>
+            }
+          >
           <Form layout="vertical" hideRequiredMark>
           <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
-                  name="FirstName"
+                  id="firstName"
                   label="First Name"
                   rules={[
                     {
@@ -140,12 +286,16 @@ class EContactsForm extends React.Component {
                     },
                   ]}
                 >
-                  <Input.TextArea rows={1} placeholder="Ex. John" />
+                  <Input 
+                    onChange={this.handleInputChange}
+                    placeholder="Ex. John"
+                    value={this.state.firstName}
+                    name="firstName" />
                 </Form.Item>
               </Col>
               <Col span={12}>
               <Form.Item
-                  name="LastName"
+                  id="lastName"
                   label="Last Name"
                   rules={[
                     {
@@ -154,38 +304,54 @@ class EContactsForm extends React.Component {
                     },
                   ]}
                 >
-                  <Input placeholder="Ex. Smith" />
+                  <Input 
+                    onChange={this.handleInputChange}
+                    placeholder="Ex. Doe"
+                    value={this.state.lastName}
+                    name="lastName"  />
                 </Form.Item>
               </Col>
             </Row>
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
-                  name="PhoneNumber"
+                  id="phoneNumber"
                   label="Phone Number"
                   rules={[{ required: true, message: 'Please enter the phone number' }]}
                 >
-                  <Input placeholder="Ex. 123-456-7891" />
+                  <Input 
+                    onChange={this.handleInputChange}
+                    placeholder="Ex. 123-456-7891"
+                    value={this.state.phoneNumber}
+                    name="phoneNumber" />
                 </Form.Item>
               </Col>
               <Col span={12}>
               <Form.Item
-                  name="EmailAddress"
+                  id="email"
                   label="Email Address"
                   rules={[{ required: true, message: 'Please enter the email address' }]}
                 >
-                  <Input placeholder="Ex. myFriend123@gmail.com" />
+                  <Input
+                   onChange={this.handleInputChange}
+                   placeholder="Ex. johndoe@gmail.com"
+                   value={this.state.email}
+                   name="email" />
                 </Form.Item>
               </Col>
             </Row>
             <Row gutter={16}>
               <Col span={12}>
                 <Form.Item
-                  name="Relation"
+                  id="relation"
                   label="Relation"
                   rules={[{ required: true, message: 'Please enter relationship' }]}
                 >
-                  <Input placeholder="Ex. Mother" />
+                  <Input  
+                    onChange={this.handleInputChange}
+                    placeholder="Ex. Father"
+                    value={this.state.relation}
+                    name="relation" />
                 </Form.Item>
               </Col>
             </Row>
