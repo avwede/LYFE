@@ -2,7 +2,48 @@ const router = require('express').Router();
 const { sendResponse, sendError } = require('../util/responses');
 const contactUser = require('../models/User');
 const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware');
+const User = require('../models/User');
 // add contact, edit contact, delete contact
+
+/**
+ * @openapi
+ * 
+ * paths:
+ *  /api/contacts:
+ *    get:
+ *      security:
+ *        - BearerAuth: []
+ *      tags: [courses]
+ *      summary: Get all emergency contacts.
+ *      description:  Get all emergency contacts for the user contained in the required JSON Web Token. This 
+ *        action can only be performed by an authenticated user.
+ *      operationId: getContacts
+ *      responses:
+ *        200:
+ *          description: List of emergency contacts successfully retrieved.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/EmergencyContact'
+ *        401:
+ *          $ref: '#/components/responses/401Unauthorized'
+ *        500:
+ *          $ref: '#/components/responses/500InternalServerError'
+ */
+ router.get('/', authenticateJWT, (req, res) => {
+  const userId = req.tokenPayload.id;
+
+  User.findById(userId, 'emergencyContacts')
+    .then(results => {
+      sendResponse(res, 200, results.emergencyContacts);
+    })
+    .catch(err => {
+      sendError(res, err, err.message);
+    });
+});
+
 
 /**
  * @openapi

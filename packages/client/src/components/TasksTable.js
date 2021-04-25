@@ -4,6 +4,8 @@ import React, { Component, useState } from "react";
 import 'antd/dist/antd.css';
 import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined, PlusOutlined } from '@ant-design/icons';
 import { Layout, Menu, Breadcrumb, Tooltip, Progress, Card, Row, Col, Drawer, Form, Input, Select, DatePicker} from 'antd';
+import { retrieveToken } from '../tokenStorage';
+import { buildPath } from './bp'
 import axios from 'axios';
 
 const api = axios.create({
@@ -144,10 +146,58 @@ class TasksTable extends React.Component {
 }
 */
 
+class TasksTable extends React.Component{
 
-  const originData = [];
+  constructor(props) {
+    super(props);
+    this.state = {
+      tasks: [],
+    };
+  }
 
-  for (let i = 0; i < 10; i++) {
+  componentDidMount() {
+    axios
+      .get(buildPath('api/reminders/'), {
+        headers: {
+          Authorization: `Bearer ${retrieveToken()}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        this.setState({ tasks: res.data });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  render(){
+    return(
+      <>
+        {this.state.tasks.map((tasks) => {
+          return(
+            originData.push({
+                  key: '1',
+                  Task: tasks.name,
+                  Date: '11/11/11',
+                  Tag: 'School',
+                })
+          )
+        })}
+        <EditableTable />
+        <TasksForm />
+      </>
+    )
+  }
+    
+}
+
+export default TasksTable; 
+
+  var originData = [];
+  const otherData = [];
+
+  for (let i = 0; i < 1; i++) {
     originData.push({
       key: i.toString(),
       Task: `Homework ${i}`,
@@ -193,7 +243,11 @@ class TasksTable extends React.Component {
 
   const EditableTable = () => {
     const [form] = Form.useForm();
+    console.log(form);
+    console.log(originData);
+    console.log(otherData);
     const [data, setData] = useState(originData);
+    console.log(data);
     const [editingKey, setEditingKey] = useState('');
 
     const isEditing = (record) => record.key === editingKey;
@@ -310,6 +364,7 @@ class TasksTable extends React.Component {
           }}
           bordered
           dataSource={data}
+          {...console.log({data})}
           columns={mergedColumns}
           rowClassName="editable-row"
           pagination={{
@@ -329,29 +384,49 @@ class TasksTable extends React.Component {
 // }
 
 
-class TasksTable extends React.Component{
-  render(){
-    return(
-      <>
-        <EditableTable />
-        <TasksForm />
-      </>
-    )
-  }
-    
-}
-
-export default TasksTable; 
-
-
 
 
 const options = [{ value: 'School' }, { value: 'Health' }, { value: 'Exercise' }, { value: 'Medication' }];
 const { Option } = Select;
 
 class TasksForm extends React.Component {
-  state = { visible: false };
+  constructor(props) {
+    super(props);
+    this.state = {
+      visible: false,
+      task: '',
+      courseCode: '',
+      professor: '',
+      locationType: '',
+      location: '',
+    };
+  }
 
+  // addTask = () => {
+  //   const newTask = {
+  //     courseCode: this.state.courseCode,
+  //     professor: this.state.professor,
+  //     location: {
+  //       type: this.state.locationType,
+  //       location: this.state.location,
+  //     },
+  //   };
+
+  //   axios
+  //     .post(buildPath('api/courses/'), newTask, {
+  //       headers: {
+  //         Authorization: `Bearer ${retrieveToken()}`,
+  //         'Content-Type': 'application/json',
+  //       },
+  //     })
+  //     .then((res) => {
+  //       this.props.updateCourses(res.data);
+  //       this.closeDrawer();
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
   showDrawer = () => {
     this.setState({
       visible: true,

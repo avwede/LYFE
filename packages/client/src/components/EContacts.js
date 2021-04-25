@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom';
 import React, { Component } from "react";
 import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined, PlusOutlined } from '@ant-design/icons';
 import { Layout, Menu, Breadcrumb, Tooltip, Progress, Card, Row, Col, Drawer, Form, Input, Select, DatePicker} from 'antd';
+import axios from 'axios';
+import { retrieveToken } from '../tokenStorage';
+import { buildPath } from './bp'
 
 const columns = [
   {
@@ -17,59 +20,61 @@ const columns = [
     title: 'Email Address',
     dataIndex: 'emailaddress',
   },
+  {
+    title: 'Actions',
+    dataIndex: 'actions',
+  },
 ];
 
 const data = [];
-for (let i = 0; i < 3; i++) {
-  data.push({
-    key: i,
-    name: `dababy ${i}`,
-    phonenumber: '123-456-7890',
-    emailaddress: `letsgooooo@gmail.com`,
-  });
-}
+// for (let i = 0; i < 3; i++) {
+//   data.push({
+//     key: i,
+//     name: `dababy ${i}`,
+//     phonenumber: '123-456-7890',
+//     emailaddress: `letsgooooo@gmail.com`,
+//   });
+// }
 
 class EContacts extends React.Component {
-    state = {
-      selectedRowKeys: [], // Check here to configure the default column
-      loading: false,
+  constructor(props) {
+    super(props);
+    this.state = {
+      contacts: [],
     };
-  
-    start = () => {
-      this.setState({ loading: true });
-      // ajax request after empty completing
-      setTimeout(() => {
-        this.setState({
-          selectedRowKeys: [],
-          loading: false,
-        });
-      }, 1000);
-    };
-  
-    onSelectChange = selectedRowKeys => {
-      console.log('selectedRowKeys changed: ', selectedRowKeys);
-      this.setState({ selectedRowKeys });
-    };
+  }
+
+  componentDidMount() {
+    axios
+      .get(buildPath('api/contacts/'), {
+        headers: {
+          Authorization: `Bearer ${retrieveToken()}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        this.setState({ contacts: res.data });
+        this.state.contacts.map((contacts) => {
+          return(
+            data.push({
+                  key: contacts._id,
+                  name: contacts.firstName,
+                  phonenumber: contacts.phonenumber,
+                  emailaddress: contacts.email,
+                })
+          )
+        })
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
   
     render() {
-      const { loading, selectedRowKeys } = this.state;
-      const rowSelection = {
-        selectedRowKeys,
-        onChange: this.onSelectChange,
-      };
-      const hasSelected = selectedRowKeys.length > 0;
       return (
         <div>
           <EContactsForm/>
-          <div style={{ marginBottom: 16 }}>
-            <Button type="primary" onClick={this.start} disabled={!hasSelected} loading={loading}>
-              Reload
-            </Button>
-            <span style={{ marginLeft: 8 }}>
-              {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
-            </span>
-          </div>
-          <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
+          <Table columns={columns} dataSource={data} pagination={{defaultPageSize: 5}} />
         </div>
       );
     }
@@ -124,18 +129,32 @@ class EContactsForm extends React.Component {
         >
           <Form layout="vertical" hideRequiredMark>
           <Row gutter={16}>
-              <Col span={24}>
+              <Col span={12}>
                 <Form.Item
-                  name="Name"
-                  label="Name"
+                  name="FirstName"
+                  label="First Name"
                   rules={[
                     {
                       required: true,
-                      message: 'Please enter the name',
+                      message: 'Please enter first name',
                     },
                   ]}
                 >
-                  <Input.TextArea rows={1} placeholder="Ex. John Smith" />
+                  <Input.TextArea rows={1} placeholder="Ex. John" />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+              <Form.Item
+                  name="LastName"
+                  label="Last Name"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please enter last name',
+                    },
+                  ]}
+                >
+                  <Input placeholder="Ex. Smith" />
                 </Form.Item>
               </Col>
             </Row>
@@ -156,6 +175,17 @@ class EContactsForm extends React.Component {
                   rules={[{ required: true, message: 'Please enter the email address' }]}
                 >
                   <Input placeholder="Ex. myFriend123@gmail.com" />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  name="Relation"
+                  label="Relation"
+                  rules={[{ required: true, message: 'Please enter relationship' }]}
+                >
+                  <Input placeholder="Ex. Mother" />
                 </Form.Item>
               </Col>
             </Row>
