@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect, Component} from 'react';
 import { StyleSheet, Image, TextInput, TouchableNativeFeedback, Dimensions, CheckBox} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Overlay, Divider, Button, registerCustomIconType } from 'react-native-elements';
-import { Container, Header, Content, Icon, Accordion, Text, View, Picker } from 'native-base';
+import { Container, Header, Content, Icon, Accordion, Text, View, Picker, Item } from 'native-base';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {MaterialIcons} from '@expo/vector-icons';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
@@ -10,6 +10,8 @@ import axios from 'axios';
 import {JWTContext} from '../contexts/JWTContext.js'
 
 // https://reactnative.dev/docs/flexbox
+
+// TODO: Implement scrolling. Note: tab navigator on bottom interferes with current scrolling.
 
 const {width: WIDTH} = Dimensions.get('window')
 const {height: HEIGHT} = Dimensions.get('window')
@@ -21,9 +23,10 @@ const Classes = (props) => {
     const [courseCode, setCourseCode] = useState();
     const [location, setLocation] = useState();
     const [professor, setProfessor] = useState();
-    const [selectedType, setSelectedType] = useState();
+    const [selectedType, setSelectedType] = useState("Classroom Location");
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
+    const [selectedItems, setSelectedItems] = useState();
     const [repeatDays, setRepeatDays] = useState([]);
     const [startTime, setStartTime] = useState(new Date());
     const [endTime, setEndTime] = useState(new Date());
@@ -32,17 +35,10 @@ const Classes = (props) => {
     const [showEnd, setShowEnd] = useState(false);
     // This holds index in state for the edit and delete overlay. 
     const [activeIndex, setActiveIndex] = useState(Number.MIN_SAFE_INTEGER);
+    const [triggerRefresh, setTriggerRefresh] = useState(false);
 
     const jwt = useContext(JWTContext);
     const token = jwt.getToken();
-
-    // Notification scheduling?
-    // Get start date, end date, and weekdays from a picker/selector(checkbox, text, flatlist). 
-    // Store selected values as integers in set. After submitted, find and store smallest present value
-    // then spread to array and rebase so lowest number is 0.
-    // Use stored start date and add each (nonzero) integer to it, then schedule a notification 
-    // repeating until (end date + integer).
-    // Need to store a notification id in the database in order to unsubscribe
 
     // https://stackoverflow.com/questions/58925515/using-react-native-community-datetimepicker-how-can-i-display-a-datetime-picker
     const onChangeStartDate = (event, selectedDate) => {
@@ -92,6 +88,13 @@ const Classes = (props) => {
     // Put it into the states for the overlay.
     const editHelper = (index) => {
         setActiveIndex(index);
+        setCourseCode(data[index].courseCode);
+        setProfessor(data[index].professor);
+        setLocation(data[index].location.location);
+        setStartDate(new Date(data[index].start));
+        setStartTime(new Date(data[index].start));
+        setEndDate(new Date(data[index].end));
+        setEndTime(new Date(data[index].end));
         setAddorEdit(false);
         setDeleteOverlay(false);
         toggleOverlay();
@@ -103,59 +106,71 @@ const Classes = (props) => {
         toggleOverlay();
     };
 
-    // For the following functions, make a POST request followed
-    // by a GET request to fetch the updated data, then update "data" state
     const addClass = async () => {
-        await axios.post("https://test-lyfe-deployment-v2.herokuapp.com/api/courses/addCourse", {
+        console.log(courseCode);
+        console.log(professor);
+        console.log(location);
+        // Consider sorting by id before map
+        console.log(repeatDays.map(item => item.name));
+        console.log(selectedType);
+        const response = await axios.post("https://lyfe--app.herokuapp.com/api/courses/", {
             "courseCode": courseCode,
             "professor": professor,
             "location": {
               "type": selectedType,
               "location": location
             },
-            "day": repeatDays,
+            "day": repeatDays.map(item => item.name),
             "start": startTime,
             "end": endTime
-        });
-        await getClasses();
+        }, {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} })
+        .catch((error) => console.log(error.response.data.error));
+        console.log(response);
+        setData(response.data);
+        setTriggerRefresh(!triggerRefresh);
         toggleOverlay();
     };
 
     const getClasses = async () => {
-        const resp = await axios.get("https://test-lyfe-deployment-v2.herokuapp.com/api/users");
-        setData(resp.courses);
+        const resp = await axios.get("https://lyfe--app.herokuapp.com/api/users/",
+        {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} });
+        setData(resp.data.courses);
+        console.log(resp.data.courses);
     }
 
-    const editClass = async (activeIndex) => {
-        axios.post(`https://test-lyfe-deployment-v2.herokuapp.com/api/courses/editCourse/${data.courses[activeIndex]}`, {
+    const editClass = async () => {
+        console.log(data[activeIndex]._id);
+        console.log(selectedType);
+        const resp = await axios.put(`https://lyfe--app.herokuapp.com/api/courses/${data[activeIndex]._id}`, {
             "courseCode": courseCode,
             "professor": professor,
             "location": {
               "type": selectedType,
               "location": location
             },
-            "day": repeatDays,
-            "start": "2013-04-03T12:56:26.009Z",
-            "end": "2013-04-03T12:56:26.009Z"
-        });
+            "day": repeatDays.map(item => item.name),
+            "start": startTime,
+            "end": endTime
+        }, {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} })
+        .catch((error) => console.log(error.response));
+        console.log(resp);
         setActiveIndex(Number.MIN_SAFE_INTEGER);
+        setTriggerRefresh(!triggerRefresh);
         toggleOverlay();
     };
     
-    const deleteClass = async (activeIndex) => {
-        axios.delete(`https://test-lyfe-deployment-v2.herokuapp.com/api/courses/deleteCourse/${data.courses[activeIndex]}`, {},
-            {headers: {
-                null: null
-            },
-            params: {
-                null: null
-            }
-        });
+    const deleteClass = async () => {
+        console.log(data[activeIndex]);
+        const response = await axios.delete(`https://lyfe--app.herokuapp.com/api/courses/${data[activeIndex]._id}`,
+        {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} })
+        .catch((error) => console.log(error.response));
+        console.log(response);
         setActiveIndex(Number.MIN_SAFE_INTEGER);
+        setTriggerRefresh(!triggerRefresh);
         toggleOverlay();       
     };
 
-    const renderHeader = () => {
+    const renderHeader = (item) => {
         return(<View style={{
             padding: 10,
             justifyContent: "space-between",
@@ -163,45 +178,42 @@ const Classes = (props) => {
             backgroundColor: "#A9DAD6" }}>
             <View>
             <Text style={{ fontWeight: "600" }}>
-                COP 4331
+                {item.courseCode}
             </Text>
             </View>
             <View>
             <Text>
-                Dr. Richard Leinecker
+                {item.professor}
             </Text>
             </View>
           </View>)
     }
 
-    // Take in individual items once API set up
-    // Accordion component should handle .map()
-    // Try to set up so the item's position in array (index) is passed
-    // to editHelper()
-    // Link if location.type="Link", else text
-    const renderAccordion = () => {
+    // TODO: Link if location.type="Zoom Link", else text
+    const renderAccordion = (item, index) => {
         return(
         <View style={styles.expandedAccordion}>
         <View style={styles.textSpacing}>
-            <Text>(Zoom Link Here)</Text>
+            <Text>Location: {item.location.location}</Text>
         </View>
         <View style={styles.textSpacing}>
-            <Text>Class Days: Monday, Wednesday, Friday (times from start/end date)</Text>
+            <Text>Class Days: {`${item.day} 
+${formatTimeStart(index)} - ${formatTimeEnd(index)}`}</Text>
         </View>
         <View style={styles.textSpacing}>
-            <Text>Started: 01/10/2021</Text>
+            <Text>Started: {formatDateStringStart(index)}</Text>
         </View>
         <View style={styles.textSpacing}>
-            <Text>Ending: 04/28/2021</Text>
+            <Text>Ending: {formatDateStringEnd(index)}</Text>
         </View>
         <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
             <TouchableNativeFeedback 
-            onPress = {(index) => editHelper(index)}>
+            onPress = {() => editHelper(index)}>
                 <Icon type="FontAwesome5" name="edit">
                 </Icon>
             </TouchableNativeFeedback>
             <TouchableNativeFeedback 
-            onPress = {(index) => deleteHelper(index)}>
+            onPress = {() => deleteHelper(index)}>
                 <Icon type="FontAwesome5" name="trash-alt">
                 </Icon>
             </TouchableNativeFeedback>
@@ -214,14 +226,34 @@ const Classes = (props) => {
         return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} ${time.getHours()}:${time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes()}`;
     }
 
-    // For testing purposes
-    const dataArray = [
-        {title: "1"}
-    ]
+    const formatDateStringStart = (index) => {
+        const dateCheck = new Date(data[index].start);
+
+        return `${dateCheck.getMonth() + 1}/${dateCheck.getDate()}/${dateCheck.getFullYear()}`;
+    }
+
+    const formatDateStringEnd = (index) => {
+        const dateCheck = new Date(data[index].end);
+
+        return `${dateCheck.getMonth() + 1}/${dateCheck.getDate()}/${dateCheck.getFullYear()}`;
+    }
+
+    const formatTimeStart = (index) => {
+        const dateCheck = new Date(data[index].start);
+
+        return `${dateCheck.getHours()}:${dateCheck.getMinutes() < 10 ? '0' + dateCheck.getMinutes() : dateCheck.getMinutes()}`;
+    }
+
+    const formatTimeEnd = (index) => {
+        const dateCheck = new Date(data[index].end);
+
+        return `${dateCheck.getHours()}:${dateCheck.getMinutes() < 10 ? '0' + dateCheck.getMinutes() : dateCheck.getMinutes()}`;
+    }
+
 
     useEffect(() => {
        getClasses();
-    }, [data]);
+    }, [triggerRefresh]);
     
     // TODO: Add motivational quotes?
     return(
@@ -242,6 +274,7 @@ const Classes = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        defaultValue={addOrEdit ? undefined : courseCode}
                         onChangeText={(text) => setCourseCode(text)}
                         ></TextInput></View>
                         <View><TextInput
@@ -251,6 +284,7 @@ const Classes = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        defaultValue={addOrEdit ? undefined : professor}
                         onChangeText={(text) => setProfessor(text)}
                         ></TextInput></View>
                         <View><TextInput
@@ -260,6 +294,7 @@ const Classes = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        defaultValue={addOrEdit ? undefined : location}
                         onChangeText={(text) => setLocation(text)}
                         ></TextInput></View>
                         <View style={{width: WIDTH - 100,
@@ -272,10 +307,10 @@ const Classes = (props) => {
                             placeholder="Type"
                             selectedValue={selectedType}
                             onValueChange={(itemValue, itemIndex) =>
-                                setSelectedType(itemValue)
+                               { setSelectedType(itemValue);}
                             }>
-                                <Picker.Item label="Address" value="Address" />
-                                <Picker.Item label="Link" value="Link" />
+                                <Picker.Item label="Classroom Location" value="Classroom Location" />
+                                <Picker.Item label="Zoom Link" value="Zoom Link" />
                         </Picker>
                         </View>
                         <View style={styles.inputView, {paddingLeft: 10}}>
@@ -296,11 +331,12 @@ const Classes = (props) => {
                                                         },
                                                     ]}
                                                 IconRenderer={MaterialIcons}
-                                                uniqueKey="id"
+                                                uniqueKey="name"
                                                 selectText="Choose Days"
                                                 showDropDowns={false}
-                                                onSelectedItemsChange={(selectedItems) => setRepeatDays(selectedItems)}
-                                                selectedItems={repeatDays}
+                                                onSelectedItemsChange={(selectedItems) => setSelectedItems(selectedItems)}
+                                                onSelectedItemObjectsChange={(selectedItems) => {console.log(selectedItems); setRepeatDays(selectedItems);}}
+                                                selectedItems={selectedItems}
                                                 showChips={false} />
                                                 </View>
                         <View style={styles.inputView}>
@@ -359,7 +395,7 @@ const Classes = (props) => {
             </View>
             <View style={styles.accordion}>
                 <Accordion
-                dataArray={dataArray}
+                dataArray={data}
                 animation={true}
                 icon="add"
                 expandedIcon="remove"

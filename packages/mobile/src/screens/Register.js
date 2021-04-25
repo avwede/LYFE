@@ -51,7 +51,7 @@ class Register extends Component{
     }
     registerUser = async () => {
         console.log(this.state);
-        await axios.post("https://test-lyfe-deployment-v2.herokuapp.com/api/users/register", {
+        await axios.post("https://lyfe--app.herokuapp.com/api/users/register", {
             "firstName": this.state.firstName,
             "lastName": this.state.lastName,
             "email": this.state.email,

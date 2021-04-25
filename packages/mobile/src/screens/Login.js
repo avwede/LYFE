@@ -43,7 +43,7 @@ class Login extends Component{
     }
     // Store token if successful login
     loginUser = () => {
-        axios.post("https://test-lyfe-deployment-v2.herokuapp.com/api/users/login", {
+        axios.post("https://lyfe--app.herokuapp.com/api/users/login", {
             email: this.state.email,
             password: this.state.password,
     })

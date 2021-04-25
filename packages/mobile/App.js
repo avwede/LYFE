@@ -33,8 +33,6 @@ export default function App() {
   });
   const loginContext = useContext(LoginContext);*/
 
-  // Not ideal to force refresh, but couldn't find any
-  // other way of getting it to recognize a user logged in.
   const [token, setToken] = useState("");
 
   const loggedInCheck = (string) => {setToken(string); console.log(token);};

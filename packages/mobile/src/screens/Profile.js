@@ -7,19 +7,49 @@ import axios from 'axios';
 import {JWTContext} from '../contexts/JWTContext.js'
 
 const {width: WIDTH} = Dimensions.get('window');
+const {height: HEIGHT} = Dimensions.get('window');
 const Profile = (props) => {
     const [data, setData] = useState();
+    const [firstName, setFirstName] = useState();
+    const [lastName, setLastName] = useState();
     const [dob, setDob] = useState();
     const [height, setHeight] = useState();
     const [weight, setWeight] = useState();
     const [gender, setGender] = useState();
     const [bloodType, setBloodType] = useState();
     const [visible, setVisible] = useState(false);
+    const [triggerRefresh, setTriggerRefresh] = useState(false);
 
     const jwt = useContext(JWTContext);
-    const token = async () => await jwt.getToken();
 
-    const updateProfile = () => {
+    const getProfile = async () => {
+        const resp = await axios.get("https://lyfe--app.herokuapp.com/api/users/",
+        {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} })
+        .catch((error) => console.log(error.response));
+        console.log(resp.data);
+        setData(resp.data);
+        setGender(resp.data?.health?.gender);
+        setBloodType(resp.data?.health?.bloodType);
+    }
+
+    // update health, then update user. store in data as intermediary
+    const updateProfile = async () => {
+        await axios.put("https://lyfe--app.herokuapp.com/api/health/", {
+            "dateOfBirth": dob,
+            "height": height,
+            "weight": weight,
+            "gender": gender,
+            "bloodType": bloodType,
+        },
+        {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} })
+        .catch((error) => console.log(error.response));
+        await axios.put("https://lyfe--app.herokuapp.com/api/users/", {
+            "firstName": firstName,
+            "lastName": lastName,            
+        },
+        {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} })
+        .catch((error) => console.log(error.response));
+        setTriggerRefresh(!triggerRefresh);
         setVisible(false);
     }
 
@@ -28,9 +58,9 @@ const Profile = (props) => {
         props.updateLoggedIn("");
     }
 
-    /*useEffect(() => {
-       getClasses();
-    }, [data]); */
+    useEffect(() => {
+       getProfile();
+    }, [triggerRefresh]); 
 
     return(
         <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
@@ -48,11 +78,32 @@ const Profile = (props) => {
                         <View><Text>Update Profile</Text></View>
                         <View><TextInput
                         style={styles.inputView}
+                        placeholder= 'First Name'
+                        placeholderTextColor='black'
+                        underlineColorAndroid='transparent'
+                        returnKeyType='next'
+                        blurOnSubmit={false}
+                        defaultValue={data?.firstName}
+                        onChangeText={(text) => setFirstName(text)}
+                        ></TextInput></View>
+                        <View><TextInput
+                        style={styles.inputView}
+                        placeholder= 'Last Name'
+                        placeholderTextColor='black'
+                        underlineColorAndroid='transparent'
+                        returnKeyType='next'
+                        blurOnSubmit={false}
+                        defaultValue={data?.lastName}
+                        onChangeText={(text) => setLastName(text)}
+                        ></TextInput></View>
+                        <View><TextInput
+                        style={styles.inputView}
                         placeholder= 'Date of Birth (YYYY-MM-DD)'
                         placeholderTextColor='black'
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        defaultValue={data?.health?.dateOfBirth}
                         onChangeText={(text) => setDob(text)}
                         ></TextInput></View>
                         <View><TextInput
@@ -62,6 +113,7 @@ const Profile = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        defaultValue={data?.health?.height}
                         onChangeText={(text) => setHeight(text)}
                         ></TextInput></View>
                         <View><TextInput
@@ -71,13 +123,14 @@ const Profile = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        defaultValue={data?.health?.weight}
                         onChangeText={(text) => setWeight(text)}
                         ></TextInput></View>
                         <View style={{width: WIDTH - 100,
-                                        height:20,
-                                        paddingLeft:12,
-                                        paddingBottom: 3,
-                                        fontSize: 12}}>
+                                height:20,
+                                paddingLeft:12,
+                                marginBottom: 20,
+                                fontSize: 12}}>
                         <Picker mode="dropdown"
                             placeholder="Gender"
                             selectedValue={gender}
@@ -90,10 +143,10 @@ const Profile = (props) => {
                         </Picker>
                         </View>
                         <View style={{width: WIDTH - 100,
-                                        height:20,
-                                        paddingLeft:12,
-                                        paddingBottom: 3,
-                                        fontSize: 12}}>
+                                height:20,
+                                paddingLeft:12,
+                                marginBottom: 20,
+                                fontSize: 12}}>
                         <Picker
                             mode="dropdown"
                             placeholder="Blood Type"
@@ -101,34 +154,37 @@ const Profile = (props) => {
                             onValueChange={(itemValue, itemIndex) =>
                                 setBloodType(itemValue)
                             }>
-                                <Picker.Item label="A+" value="A+" />
-                                <Picker.Item label="A-" value="A-" />
-                                <Picker.Item label="AB+" value="AB+" />
-                                <Picker.Item label="AB-" value="AB-" />
-                                <Picker.Item label="B+" value="B+" />
-                                <Picker.Item label="B-" value="B-" />
-                                <Picker.Item label="O+" value="O+" />
-                                <Picker.Item label="O-" value="O-" />
-                                <Picker.Item label="Unknown" value="Unknown" />
+                                <Picker.Item label="Blood Type A+" value="A+" />
+                                <Picker.Item label="Blood Type A-" value="A-" />
+                                <Picker.Item label="Blood Type AB+" value="AB+" />
+                                <Picker.Item label="Blood Type AB-" value="AB-" />
+                                <Picker.Item label="Blood Type B+" value="B+" />
+                                <Picker.Item label="Blood Type B-" value="B-" />
+                                <Picker.Item label="Blood Type O+" value="O+" />
+                                <Picker.Item label="Blood Type O-" value="O-" />
+                                <Picker.Item label="Blood Type Unknown" value="Unknown" />
                         </Picker>
                         </View>
                         <Button title="Update" onPress={() => updateProfile()}></Button>
                         </Overlay>
             </View>
             <View style={styles.textSpacing}>
-                <Text>Date of Birth:</Text>
+                <Text>Name: {data?.firstName + " " + data?.lastName} </Text>
             </View>
             <View style={styles.textSpacing}>
-                <Text>Height:</Text>
+                <Text>Date of Birth: {data?.health?.dob}</Text>
             </View>
             <View style={styles.textSpacing}>
-                <Text>Weight:</Text>
+                <Text>Height: {data?.health?.height}</Text>
             </View>
             <View style={styles.textSpacing}>
-                <Text>Gender:</Text>
+                <Text>Weight: {data?.health?.weight}</Text>
             </View>
             <View style={styles.textSpacing}>
-                <Text>Blood Type:</Text>
+                <Text>Gender: {data?.health?.gender}</Text>
+            </View>
+            <View style={styles.textSpacing}>
+                <Text>Blood Type: {data?.health?.bloodType}</Text>
             </View>
             <TouchableOpacity style={styles.loginBtn} onPress={() => logOut()}>
                 <Text style={styles.signUp} >Log Out</Text>
@@ -145,11 +201,12 @@ const styles = StyleSheet.create({
         paddingLeft: 40,
         justifyContent: 'center',
         flexDirection: 'column',
+        height: HEIGHT,
     },
     logoContainer: {
         alignItems:'center',
         paddingRight: 40,
-        paddingVertical: 50,
+        //paddingVertical: 50,
     },
     logo:{
         width: 100,
@@ -176,7 +233,7 @@ const styles = StyleSheet.create({
         alignItems:"center",
         justifyContent:"center",
         marginTop: 50,
-        marginBottom: 150
+        marginBottom: 0
     },
     toLogin:{
         alignContent: 'center',

@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect, Component} from 'react';
 import { StyleSheet, Image, TextInput, TouchableNativeFeedback, Dimensions, CheckBox} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Overlay, Divider, Button, registerCustomIconType } from 'react-native-elements';
-import { Container, Header, Content, Icon, Accordion, Text, View } from 'native-base';
+import { Container, Header, Content, Icon, Accordion, Text, View, Item } from 'native-base';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
 import {JWTContext} from '../contexts/JWTContext.js'
@@ -28,9 +28,9 @@ const Reminders = (props) => {
     const [show, setShow] = useState(false);
     // This holds index in state for the edit and delete overlay. 
     const [activeIndex, setActiveIndex] = useState(Number.MIN_SAFE_INTEGER);
+    const [triggerRefresh, setTriggerRefresh] = useState(false);
 
     const jwt = useContext(JWTContext);
-    const token = jwt.getToken();
 
     // https://stackoverflow.com/questions/58925515/using-react-native-community-datetimepicker-how-can-i-display-a-datetime-picker
     const onChangeDate = (event, selectedDate) => {
@@ -65,79 +65,95 @@ const Reminders = (props) => {
     // Put it into the states for the overlay.
     const editHelper = (index) => {
         setActiveIndex(index);
+        setName(data[index].name);
+        setDescription(data[index].description);
+        setLocation(data[index].location.location);
+        setDate(new Date(data[index].startDate));
+        setTime(new Date(data[index].startDate));
         setAddorEdit(false);
         setDeleteOverlay(false);
         toggleOverlay();
     }
 
     const deleteHelper = (index) => {
+        console.log(index);
         setActiveIndex(index);
-        setDeleteOverlay(true); 
+        console.log(activeIndex);
+        //console.log(data[activeIndex]._id);
+        setDeleteOverlay(true);
         toggleOverlay();
     }
-
+ 
     // For the following functions, make a POST request followed
     // by a GET request to fetch the updated data, then update "data" state
     // Pass params and headers
     // Wrap in try/catch to get error messages
     const addReminder = async () => {
-        await axios.post("https://test-lyfe-deployment-v2.herokuapp.com/api/reminders", {
+        console.log(name);
+        console.log(description);
+        console.log(type);
+        console.log(location);
+        console.log(time);
+        const response = await axios.post("https://lyfe--app.herokuapp.com/api/reminders", {
             "name": name,
             "description": description,
-            "type": type,
+            //"type": type,
             "location": {
-                "type": "Address",
+                "type": "Classroom Location",
                 "location": location
               },
             "startDate": time,
-          });
-        await getReminders();
+          }, {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} })
+          .catch((error) => console.log(error.response.data.error));
+        setData(response.data);
+        setTriggerRefresh(!triggerRefresh);
         toggleOverlay();
     }
 
     const getReminders = async () => {
-        const resp = await axios.get("https://test-lyfe-deployment-v2.herokuapp.com/api/reminders");
-        setData(resp.reminders);
+        const resp = await axios.get("https://lyfe--app.herokuapp.com/api/reminders", 
+        {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} });
+        setData(resp.data);
+        console.log(data);
     }
 
     // get ID from data
-    const editReminder = async (activeIndex) => {
-        axios.put(`https://test-lyfe-deployment-v2.herokuapp.com/api/reminders/${data.reminders[activeIndex]}`, {
+    const editReminder = async () => {
+        await axios.put(`https://lyfe--app.herokuapp.com/api/reminders/${data[activeIndex]._id}`, {
             "name": name,
             "description": description,
-            "type": type,
+            //"type": type,
             "location": {
-                "type": "Address",
+                "type": "Classroom Location",
                 "location": location
               },
             "startDate": time,
-          });
+          }, {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} })
+          .catch((error) => console.log(error.response.data.error));;
         setActiveIndex(Number.MIN_SAFE_INTEGER);
+        setTriggerRefresh(!triggerRefresh);
         toggleOverlay();
     }
     
-    const deleteReminder = async (activeIndex) => {
-        axios.delete(`https://test-lyfe-deployment-v2.herokuapp.com/api/reminders/${data.reminders[activeIndex]}`, {},
-            {headers: {
-                null: null
-            },
-            params: {
-                null: null
-            }
-        });
+    const deleteReminder = async () => {
+        console.log(activeIndex);
+        await axios.delete(`https://lyfe--app.herokuapp.com/api/reminders/${data[activeIndex]._id}`,
+        {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'}})
+        .catch((error) => console.log(error.response.data.error));
         setActiveIndex(Number.MIN_SAFE_INTEGER);
-        toggleOverlay();       
+        setTriggerRefresh(!triggerRefresh);
+        toggleOverlay();
     }
 
-    const renderHeader = () => {
+    const renderHeader = (item) => {
         return(<View style={{
             flexDirection: "row",
             padding: 10,
             justifyContent: "space-between",
             alignItems: "center" ,
             backgroundColor: "#A9DAD6" }}>
-          <Text style={{ fontWeight: "600" }}>
-              Reminder #1
+            <Text style={{ fontWeight: "600" }}>
+              {item.name}
             </Text>
           </View>)
     }
@@ -146,46 +162,50 @@ const Reminders = (props) => {
     // Accordion component should handle .map()
     // Try to set up so the item's position in array (index) is passed
     // to editHelper()
-    const renderAccordion = () => {
+    const renderAccordion = (item, index) => {
         return(
         <View style={styles.expandedAccordion}>
         <View style={styles.textSpacing}>
-            <Text>04/21/2021 06:00 PM</Text>
+            <Text>{formatDateString(index)}</Text>
         </View>
         <View style={styles.textSpacing}>
-            <Text>Submit POOP Large Project</Text>
+            <Text>{item.description}</Text>
         </View>
         <View style={styles.textSpacing}>
-            <Text>Type: Assignment</Text>
+            <Text>Type: {item.type}</Text>
+        </View>
+        <View style={styles.textSpacing}>
+            <Text>Location: {item.location.location}</Text>
         </View>
         <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
             <TouchableNativeFeedback
-            onPress = {(index) => editHelper(index)}>
+            onPress = {() => editHelper(index)}>
                 <Icon type="FontAwesome5" name="edit">
                 </Icon>
             </TouchableNativeFeedback>
             <TouchableNativeFeedback
-            onPress = {(index) => deleteHelper(index)}>
+            onPress = {() => deleteHelper(index)}>
                 <Icon type="FontAwesome5" name="trash-alt">
                 </Icon>
             </TouchableNativeFeedback>
         </View>
-        </View>)
+        </View>);
     }
 
     // https://stackoverflow.com/questions/58925515/using-react-native-community-datetimepicker-how-can-i-display-a-datetime-picker
     const formatDate = (date, time) => {
-        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} ${time.getHours()}:${time.getMinutes()}`;
+        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} ${time.getHours()}:${time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes()}`;
     };
 
-    // For testing purposes
-    const dataArray = [
-        {title: "1"}
-    ];
+    const formatDateString = (index) => {
+        const dateCheck = new Date(data[index].startDate);
+
+        return `${dateCheck.getMonth() + 1}/${dateCheck.getDate()}/${dateCheck.getFullYear()} ${dateCheck.getHours()}:${dateCheck.getMinutes() < 10 ? '0' + dateCheck.getMinutes() : dateCheck.getMinutes()}`;
+    }
 
     useEffect(() => {
        getReminders();
-    }, [data]); 
+    }, [triggerRefresh]);
     
     return(
         <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
@@ -205,6 +225,7 @@ const Reminders = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        defaultValue={addOrEdit ? undefined : name}
                         onChangeText={(text) => setName(text)}
                         ></TextInput></View>
                         <View><TextInput
@@ -214,6 +235,7 @@ const Reminders = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        defaultValue={addOrEdit ? undefined : description}
                         onChangeText={(text) => setDescription(text)}
                         ></TextInput></View>
                         <View><TextInput
@@ -223,6 +245,7 @@ const Reminders = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        defaultValue={addOrEdit ? undefined : location}
                         onChangeText={(text) => setLocation(text)}
                         ></TextInput></View>
                         <View style={styles.inputView}>
@@ -240,16 +263,7 @@ const Reminders = (props) => {
                             />
                         )}
                         </View>
-                        <View><TextInput
-                        style={styles.inputView}
-                        placeholder= 'Type'
-                        placeholderTextColor='black'
-                        underlineColorAndroid='transparent'
-                        returnKeyType='next'
-                        blurOnSubmit={false}
-                        onChangeText={(text) => setType(text)}
-                        ></TextInput></View>
-                        {addOrEdit ? (<Button title="Add" onPress={() => addReminder}></Button>) : 
+                        {addOrEdit ? (<Button title="Add" onPress={() => addReminder()}></Button>) : 
                         (<Button title="Edit" onPress={() => editReminder()}></Button>)}
                         </Overlay>) :
                         (<Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
@@ -273,7 +287,7 @@ const Reminders = (props) => {
             </View>
             <View style={styles.accordion}>
                 <Accordion
-                dataArray={dataArray}
+                dataArray={data}
                 animation={true}
                 icon="add"
                 expandedIcon="remove"
