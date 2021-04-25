@@ -6,7 +6,7 @@ import { Layout, Menu, Breadcrumb, Tooltip, Progress, Button, Card, Row, Col, Dr
 import ReactDOM from 'react-dom';
 import '../components/components.css';
 import EContacts from "../components/EContacts";
-import AppointmentsTable from "../components/AppointmentsTable";
+import HealthProfile from "../components/HealthProfile";
 import AllergiesCards from "../components/AllergiesCards";
 
 const { SubMenu } = Menu;
@@ -20,8 +20,8 @@ class DashboardHealth extends React.Component {
 
               <Row gutter={[16, 16]}>
                   <Col span={12}>
-                    <Card title="Appointments" bordered={false} >
-                        <AppointmentsTable />
+                    <Card title="Health Profile" bordered={false} >
+                        <HealthProfile />
                     </Card>
                   </Col>
                   <Col span={12}>

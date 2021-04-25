@@ -1,14 +1,12 @@
 import { Table, Button } from 'antd';
 import ReactDOM from 'react-dom';
 import React, { Component } from "react";
-import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined, PlusOutlined } from '@ant-design/icons';
+import { UsergroupAddOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Space, Layout, Menu, Breadcrumb, Tooltip, Progress, Card, Row, Col, Drawer, Form, Input, Select, DatePicker} from 'antd';
 import axios from 'axios';
 import { retrieveToken } from '../tokenStorage';
 import { buildPath } from './bp'
 
-
-const data = [];
 
 class EContacts extends React.Component {
   constructor(props) {
@@ -37,14 +35,14 @@ class EContacts extends React.Component {
 
   deleteContact = (id) => {
     axios
-      .post(buildPath(`api/contacts/deleteContact/${id}`), {
+      .delete(buildPath(`api/contacts/${id}`), {
         headers: {
           Authorization: `Bearer ${retrieveToken()}`,
           'Content-Type': 'application/json',
         },
       })
       .then((res) => {
-        this.setState({ courses: res.data });
+        this.setState({ contacts: res.data });
       })
       .catch((error) => {
         console.log(error);
@@ -73,11 +71,17 @@ class EContacts extends React.Component {
       dataIndex: 'relation',
     },
     {
-      title: 'Actions',
+      title: '',
       render: (text, record) => (
         <Space size="middle">
-          <a onClick = {this.handleEdit(record)}>Edit</a>
-          <a>Delete</a>
+          <EditOutlined
+              key="edit"
+              onClick={() => this.handleEdit(record)}
+          />
+          <DeleteOutlined
+              key="delete"
+              onClick={() => this.deleteContact(record._id)}
+          />
         </Space>
       ),
     },
@@ -98,11 +102,10 @@ class EContacts extends React.Component {
     render() {
       return (
         <div>
-        
           <Table columns={this.columns} dataSource={this.state.contacts} pagination={{defaultPageSize: 5}} />
 
           <Button type="primary" onClick={this.handleAdd}>
-            <PlusOutlined /> New emergency contact
+            <UsergroupAddOutlined /> New emergency contact
           </Button>
 
           <EContactsForm
@@ -153,7 +156,7 @@ class EContactsForm extends React.Component {
     };
 
     axios
-      .post(buildPath('api/contacts/addContact'), newContact, {
+      .post(buildPath('api/contacts/'), newContact, {
         headers: {
           Authorization: `Bearer ${retrieveToken()}`,
           'Content-Type': 'application/json',
@@ -178,8 +181,8 @@ class EContactsForm extends React.Component {
     };
 
     axios
-      .post(
-        buildPath(`api/contacts/editContact ${this.state.contactId}`),
+      .put(
+        buildPath(`api/contacts/${this.state.contactId}`),
         updatedContact,
         {
           headers: {

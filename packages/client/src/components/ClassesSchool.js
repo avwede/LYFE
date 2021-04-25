@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, DeleteOutlined, BulbOutlined } from '@ant-design/icons';
 import { Button, Card, Row, Col } from 'antd';
 import { retrieveToken } from '../tokenStorage';
 import { buildPath } from './bp'
@@ -117,7 +117,7 @@ class ClassesSchool extends Component {
         </Row>
         <Row>
           <Button type="primary" onClick={this.handleAdd}>
-            <PlusOutlined /> New Class
+            <BulbOutlined /> New Class
           </Button>
         </Row>
         <ClassesForm

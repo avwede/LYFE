@@ -1,6 +1,6 @@
 import React from "react";
 import 'antd/dist/antd.css';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, WarningOutlined } from '@ant-design/icons';
 import { Button, Card, Row, Col, Drawer, Form, Input } from 'antd';
 
 class AllergiesCards extends React.Component {
@@ -45,7 +45,7 @@ class AllergiesForm extends React.Component {
         <div className='site-form-in-drawer-wrapper'>
   
           <Button type="primary" onClick={this.showDrawer}>
-            <PlusOutlined /> New allergy
+            <WarningOutlined /> New allergy
           </Button>
   
           <Drawer

@@ -230,7 +230,7 @@ router.put('/:id', authenticateJWT, async (req, res) => {
       user.save()
         .then(async (updatedUser) => {
           await updatedUser.populate('reminders.type').execPopulate();
-          sendResponse(res, 200, updatedUser.reminders.id(id));
+          sendResponse(res, 200, updatedUser.reminders);
         })
         .catch(err => {
           sendError(res, err, err.message);
