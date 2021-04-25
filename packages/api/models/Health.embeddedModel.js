@@ -46,6 +46,10 @@ const medicationSchema = require('./Medication.embeddedModel');
  *            $ref: '#/components/schemas/Medication'
  *        additionalInformation:
  *          type: string
+ *        emergencyContacts:
+ *          type: array
+ *          items:
+ *            $ref: '#/components/schemas/EmergencyContact'
  */
 const healthSchema = new mongoose.Schema({
   dateOfBirth: Date,
@@ -69,6 +73,7 @@ const healthSchema = new mongoose.Schema({
   additionalInformation: {
     type: String,
   },
+  emergencyContacts: [emergencyContactSchema],
 });
 
 module.exports = healthSchema;

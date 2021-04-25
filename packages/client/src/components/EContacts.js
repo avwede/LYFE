@@ -1,8 +1,6 @@
-import { Table, Button } from 'antd';
-import ReactDOM from 'react-dom';
-import React, { Component } from "react";
+import React from "react";
 import { UsergroupAddOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Space, Layout, Menu, Breadcrumb, Tooltip, Progress, Card, Row, Col, Drawer, Form, Input, Select, DatePicker} from 'antd';
+import { Space, Layout, Menu, Breadcrumb, Tooltip, Progress, Card, Row, Col, Drawer, Form, Input, Select, DatePicker, Table, Button} from 'antd';
 import axios from 'axios';
 import { retrieveToken } from '../tokenStorage';
 import { buildPath } from './bp'

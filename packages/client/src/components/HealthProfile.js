@@ -27,34 +27,15 @@ class HealthProfile extends React.Component {
       })
       .then((res) => {
         this.setState({ health: res.data });
+        console.log(this.state.health);
       })
       .catch(function (error) {
         console.log(error);
       });
   }
 
-  deleteContact = (id) => {
-    axios
-      .delete(buildPath(`api/health/${id}`), {
-        headers: {
-          Authorization: `Bearer ${retrieveToken()}`,
-          'Content-Type': 'application/json',
-        },
-      })
-      .then((res) => {
-        this.setState({ health: res.data });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  updateContacts = (health) => {
+  updateHealth = (health) => {
     this.setState({ health: health });
-  };
-
-  handleAdd = () => {
-    this.healthForm.current.showDrawer('add');
   };
 
   handleEdit = (health) => {
@@ -64,20 +45,21 @@ class HealthProfile extends React.Component {
   render(){
     return (
       <>
-      {/* { this.state.health.map((profile) => {
-        return (
           <Descriptions bordered style={{marginBottom: '40px'}}>
-          <Descriptions.Item label="Date of Birth" labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>{profile.dateOfBirth}</Descriptions.Item>
-          <Descriptions.Item label="Height" labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>{profile.height}</Descriptions.Item>
-          <Descriptions.Item label="Weight" labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>{profile.weight}</Descriptions.Item>
-          <Descriptions.Item label="Gender" labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>{profile.gender}</Descriptions.Item>
-          <Descriptions.Item label="Blood Type" span={2} labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>{profile.bloodType}</Descriptions.Item>
-          <Descriptions.Item label="Health Conditions" span={3} labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>High Blood Pressure</Descriptions.Item>
+          <Descriptions.Item label="Date of Birth" labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>{this.state.health.dateOfBirth}</Descriptions.Item>
+          <Descriptions.Item label="Height" labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>{this.state.health.height}</Descriptions.Item>
+          <Descriptions.Item label="Weight" labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>{this.state.health.weight}</Descriptions.Item>
+          <Descriptions.Item label="Gender" labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>{this.state.health.gender}</Descriptions.Item>
+          <Descriptions.Item label="Blood Type" span={2} labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>{this.state.health.bloodType}</Descriptions.Item>
+          <Descriptions.Item label="Health Conditions" span={3} labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>Diabetes</Descriptions.Item>
           </Descriptions>
-        )})
-      }; */}
 
-        <HealthProfileForm />
+          <Button type="primary" onClick={this.handleEdit} >
+          <MedicineBoxOutlined /> Edit Health Profile
+          </Button>
+
+
+          <HealthProfileForm ref={this.healthForm} updateHealth={this.updateHealth}/> 
         </>
      ) 
   }
@@ -90,7 +72,19 @@ export default HealthProfile;
 const { Option } = Select;
 
 class HealthProfileForm extends React.Component {
-  state = { visible: false };
+  constructor(props) {
+    super(props);
+    this.state = { 
+      visible: false,
+      action: '',
+      healthId: '',
+      dateOfBirth: '',
+      height: '',
+      weight: '',
+      gender: '',
+      bloodType: '',
+    };
+  }
 
   showDrawer = () => {
     this.setState({
@@ -104,17 +98,70 @@ class HealthProfileForm extends React.Component {
     });
   };
 
+  editHealth = () => {
+    const updatedHealth = {
+      dateOfBirth: this.state.dateOfBirth,
+      height: this.state.height,
+      weight: this.state.weight,
+      gender: this.state.gender,
+      bloodType: this.state.bloodType
+    };
+
+    axios
+      .put(
+        buildPath('api/health/'),
+        updatedHealth,
+        {
+          headers: {
+            Authorization: `Bearer ${retrieveToken()}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+      .then((res) => {
+        this.props.updateHealth(res.data);
+        this.closeDrawer();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  handleInputChange = (event) => {
+    this.setState({ [event.target.name]: event.target.value });
+  };
+
+  showDrawer = (action, health) => {
+    if (action === 'edit') this.setupEditForm(health);
+  };
+
+  closeDrawer = () => {
+    this.setState({
+      visible: false,
+    });
+  };
+
+  setupEditForm = (health) => {
+    this.setState({
+      action: 'edit',
+      visible: true,
+      healthId: health._id,
+      dateOfBirth: health.firstName,
+      height: health.lastName,
+      weight: health.email,
+      gender: health.gender,
+      bloodType: health.bloodType,
+    });
+  };
+
   render() {
     return (
       <>
       <div className='site-form-in-drawer-wrapper'>
 
-        <Button type="primary" onClick={this.showDrawer} >
-          <MedicineBoxOutlined /> Create Health Profile
-        </Button>
 
         <Drawer
-          title="Create Health Profile"
+          title="Edit Health Profile"
           width={720}
           onClose={this.onClose}
           visible={this.state.visible}
@@ -147,7 +194,11 @@ class HealthProfileForm extends React.Component {
                     },
                   ]}
                 >
-                  <Input placeholder="Ex. 01/01/1999" />
+                  <Input 
+                    onChange={this.handleInputChange}
+                    placeholder="Ex. 11/11/1999"
+                    value={this.state.dateOfBirth}
+                    name="dateOfBirth" />
                 </Form.Item>
               </Col>
               <Col span={12}>
@@ -162,9 +213,9 @@ class HealthProfileForm extends React.Component {
                   ]}
                 >
                   <Select
-                      //onSelect={this.handleDropdownChange}
+                      onSelect={this.handleDropdownChange}
                       placeholder="Ex. Male"
-                      //value={this.state.description}
+                      value={this.state.gender}
                       name="gender"
                     >
                       <Option value="Male">Male</Option>
@@ -182,7 +233,12 @@ class HealthProfileForm extends React.Component {
                   label="Height"
                   rules={[{ required: true, message: 'Please enter your height' }]}
                 >
-                  <Input placeholder="Ex. 5.11 Feet" />
+                  <Input 
+                  onChange={this.handleInputChange}
+                  placeholder="Ex. 5.11 Feet" 
+                  value={this.state.height}
+                  name="height"
+                  />
                 </Form.Item>
               </Col>
               <Col span={12}>
@@ -191,7 +247,11 @@ class HealthProfileForm extends React.Component {
                   label="Weight"
                   rules={[{ required: true, message: 'Please enter your weight' }]}
                 >
-                  <Input placeholder="Ex. 150 Pounds" />
+                  <Input 
+                  onChange={this.handleInputChange}
+                  placeholder="Ex. 150 Pounds"  
+                  value={this.state.weight}
+                  name="height" />
                 </Form.Item>
               </Col>
             </Row>
@@ -204,9 +264,9 @@ class HealthProfileForm extends React.Component {
                   rules={[{ required: true, message: 'Please enter your blood type' }]}
                 >
                   <Select
-                      //onSelect={this.handleDropdownChange}
+                      onSelect={this.handleDropdownChange}
                       placeholder="Ex. O-"
-                      //value={this.state.description}
+                      value={this.state.bloodType}
                       name="bloodType"
                     >
                       <Option value="A+">A+</Option>
@@ -222,11 +282,11 @@ class HealthProfileForm extends React.Component {
               </Col>
               <Col span={12}>
               <Form.Item
-                  id="weight"
-                  label="Weight"
-                  rules={[{ required: true, message: 'Please enter your weight' }]}
+                  id="healthConditions"
+                  label="Health Conditions"
+                  rules={[{ required: true, message: 'Please enter your health Conditions' }]}
                 >
-                  <Input placeholder="Ex. 150 Pounds" />
+                  <Input placeholder="Ex. High Blood Pressure" />
                 </Form.Item>
               </Col>
             </Row>
