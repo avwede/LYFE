@@ -1,18 +1,61 @@
 const router = require('express').Router();
-const Course = require('../models/Course');
+const User = require('../models/User');
 const courseUser = require('../models/User');
 const { sendResponse, sendError } = require('../util/responses');
 const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware');
+
+/**
+ * @openapi
+ * 
+ * paths:
+ *  /api/courses:
+ *    get:
+ *      security:
+ *        - BearerAuth: []
+ *      tags: [courses]
+ *      summary: Get all courses.
+ *      description:  Get all courses for the user contained in the required JSON Web Token. This 
+ *        action can only be performed by an authenticated user.
+ *      operationId: getCourses
+ *      responses:
+ *        200:
+ *          description: List of courses successfully retrieved.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/Courses'
+ *        401:
+ *          $ref: '#/components/responses/401Unauthorized'
+ *        500:
+ *          $ref: '#/components/responses/500InternalServerError'
+ */
+ router.get('/', authenticateJWT, (req, res) => {
+  const userId = req.tokenPayload.id;
+
+  User.findById(userId, 'courses')
+    .then(results => {
+      sendResponse(res, 200, results.courses);
+    })
+    .catch(err => {
+      sendError(res, err, err.message);
+    });
+});
 
 
 /**
  * @openapi
  * 
  * paths:
- *  /api/courses/addCourse:
+ *  /api/courses:
  *    post:
+ *      security:
+ *        - BearerAuth: []
  *      tags: [courses]
- *      description: Adds a course to the users account.
+ *      summary: Add a course.
+ *      description:  Add a course to the user contained in the required JSON Web Token. This 
+ *        action can only be performed by an authenticated user.
  *      operationId: addCourse
  *      requestBody:
  *        description: Add course.
@@ -23,63 +66,111 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
  *        required: true
  *      responses:
  *        201:
- *          description: New course added.
+ *          description: Updated list of courses belonging to user.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/Courses'
+ *        400:
+ *          $ref: '#/components/responses/400BadRequest'
+ *        401:
+ *          $ref: '#/components/responses/401Unauthorized'
+ *        500:
+ *          $ref: '#/components/responses/500InternalServerError'
  */
 
- router.post('/addCourse', authenticateJWT, (req, res) => {
-    const newCourse = req.body;
-    const {id} = req.tokenPayload;
-  
-    courseUser.findByIdAndUpdate(id, {"$push": { "courses": newCourse}}, {new: true, runValidators : true}, function(err, result){
-    
-    if (err)
-    {
-      sendError(res, err, 'The course could not be created.');
-    }
-    else
-    {
-      sendResponse(res, 201, {"response": "Course was created."});
-      //res.send(result)
-    }
-    
-    })
-  });
+ router.post('/', authenticateJWT, async (req, res) => {
+  const userId = req.tokenPayload.id;
+  const newCourse = req.body;
+  const user = await User.findById(userId);
+
+  if (user) {
+    user.courses.push(newCourse);
+    user
+      .save()
+      .then((updatedUser) => {
+        sendResponse(res, 201, updatedUser.courses);
+      })
+      .catch((err) => {
+        sendError(res, err, err.message);
+      });
+  } else {
+    sendError(res, 500, 'Server failed to fetch this user.');
+  }
+});
 
 /**
  * @openapi
  * 
  * paths:
- *  /api/courses/editCourse:
- *    post:
+ *  /api/courses/{courseId}:
+ *    put:
+ *      security:
+ *        - BearerAuth: []
  *      tags: [courses]
- *      description: Edits a course within the users account.
- *      operationId: editCourse
+ *      summary: Update a course.
+ *      description: Update a course for the user contained in the required JSON Web Token. This 
+ *        action can only be performed by an authenticated user.
+ *      operationId: updateCourse
+ *      parameters:
+ *        - in: path
+ *          name: courseId
+ *          required: true
+ *          description: The Object Id of the course to be updated.
+ *          schema:
+ *            type: string
+ *            format: objectId
+ *          example: 6058319d6aedde248dbad720
  *      requestBody:
- *        description: Edit course.
- *        content: 
- *          application/json:
- *            schema: 
- *              $ref: '#/components/schemas/Courses'
+ *        description: Course
  *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/Courses'
  *      responses:
- *        201:
- *          description: Course edited.
+ *        200:
+ *          description: Updated list of courses belonging to user.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/Courses'
+ *        400:
+ *          $ref: '#/components/responses/400BadRequest'
+ *        401:
+ *          $ref: '#/components/responses/401Unauthorized'
+ *        404:
+ *          description: Not found.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  error: 
+ *                    type: string
+ *                    example: Course with id does not exist.
+ *        500:
+ *          $ref: '#/components/responses/500InternalServerError'
  */
 
- router.post('/editCourse/:id', authenticateJWT, (req, res) => {
+ router.put('/:id', authenticateJWT, (req, res) => {
     const newCourse = req.body;
     const {id} = req.tokenPayload;
     const courseId = req.params.id;
-    console.log(newCourse);
+
     courseUser.findById(id, function(err, result){
       if(err)
       {
-        res.send(err)
+        sendError(res, err, err.message);
       }
       else
       {
         result.updateCourses(courseId, newCourse)
-          .then(user => res.send(user))
+          .then(user => sendResponse(res, 200, user.courses))
           .catch((err) => {
             sendError(res, err, 'The course could not be edited.');
           });
@@ -91,36 +182,60 @@ const { generateJWT, authenticateJWT } = require('../middleware/routerMiddleware
  * @openapi
  * 
  * paths:
- *  /api/courses/deleteCourse:
- *    post:
+ *  /api/courses/{courseId}:
+ *    delete:
+ *      security:
+ *        - BearerAuth: []
  *      tags: [courses]
- *      description: Deletes a course to the users account.
+ *      summary: Delete a course.
+ *      description: Delete a course by id for the user contained in the required JSON Web Token.
+ *        This action can only be performed by an authenticated user.
  *      operationId: deleteCourse
- *      requestBody:
- *        description: Delete course.
- *        content: 
- *          application/json:
- *            schema: 
- *              $ref: '#/components/schemas/Courses'
- *        required: true
+ *      parameters:
+ *        - in: path
+ *          name: courseId
+ *          required: true
+ *          description: The Object Id of the course to be deleted.
+ *          schema:
+ *            type: string
+ *            format: objectId
+ *          example: 6058319d6aedde248dbad720
  *      responses:
- *        201:
- *          description: Course deleted.
+ *        200:
+ *          description: Updated list of courses belonging to user.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/Courses'
+ *        401:
+ *          $ref: '#/components/responses/401Unauthorized'
+ *        404:
+ *          description: Not found.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  error: 
+ *                    type: string
+ *                    example: Course with id does not exist.
+ *        500:
+ *          $ref: '#/components/responses/500InternalServerError'
  */
 
-  router.post('/deleteCourse/:id', authenticateJWT, (req, res) => {
+  router.delete('/:id', authenticateJWT, (req, res) => {
     const deleteId = req.params.id;
-    //console.log(req.body);
-    //console.log(req.tokenPayload);
     const {id} = req.tokenPayload;
     courseUser.findByIdAndUpdate(id, {"$pull": { "courses": {"_id": deleteId}}}, {new:true}, function(err, result){
       if (err)
       {
-          res.send(err)
+          sendError(res, err, err.message);
       }
       else
       {
-        sendResponse(res, 201, {"response": "Course was deleted."});
+        sendResponse(res, 200, result.courses);
       }
     })
   });

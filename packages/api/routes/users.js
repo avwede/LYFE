@@ -68,6 +68,7 @@ const { APP_URL } = process.env;
  */
 router.post('/register', (req, res) => {
   const newUser = req.body;
+  console.log(newUser);
 
   User.create(newUser)
     .then(user => {
@@ -243,7 +244,7 @@ router.post('/verify/:token', async (req, res) => {
  * @openapi
  * 
  * paths:
- *  api/users/login:
+ *  /api/users/login:
  *    post:
  *      tags: [users]
  *      summary: Log in.
@@ -532,7 +533,9 @@ router.get('/reset/:token', (req, res) => {
 router.get('/', authenticateJWT, (req, res) => {
   const userId = req.tokenPayload.id;
 
-  User.findById(userId)
+  User
+    .findById(userId)
+    .populate('reminders.type')
     .then((user) => {
       sendResponse(res, 200, user);
     })

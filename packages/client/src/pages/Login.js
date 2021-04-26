@@ -1,50 +1,66 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import axios from 'axios'
 
-const api = axios.create({
-    baseURL: 'http://localhost:3001/api/users'
-})
+function LoginPage() {
 
-export default class LoginPage extends Component{
+    const storage = require('../tokenStorage.js');
+    const bp = require('../components/bp.js');
 
-    // state = {
-    //     email: '',
-    //     password: '',
-    // }
-    
-    // onEmailChange = email => {
-    //     this.setState({email});
-    // };
-    
-    // onPasswordChange = password => {
-    //     this.setState({password});
-    // };
+    var email;
+    var password;
 
-    doLogin = async() => {
-        //const {email, password} = this.state;
-        // let res = await api.post('/login', {email : 'avwede@gmail.com', password : 'Pw@12345678'}).then((response) => {
-        //     console.log(response)
-        // })
-
-        console.log("are we here?");
+    const [message, setMessage] = useState('');
+    const [modalShow, setModalShow] = useState(false);
 
 
-        api.post('/login', {
-            email: "avwede@gmail.com",
-            password: "Pw@12345678"
-        })
-        .then(response => { 
-            console.log("got the response")
-            console.log(response)
-        })
-        .catch(error => {
-            console.log("got the err")
-            console.log(error)
-        });
-    }
+    const doLogin = async event => {
 
-    render() {
-        return (
+        event.preventDefault();
+
+        var obj = { email: email.value, password: password.value };
+        var js = JSON.stringify(obj);
+
+        try {
+            var config = {
+                method: 'post',
+                url: bp.buildPath('api/users/login'), //'http://localhost:3001/api/users/login', 
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: js
+
+            };
+
+            axios(config)
+                .then(function (response) {
+                    var res = response.data;
+
+                    if (res.error) {
+                        setMessage(res.error);
+
+                    } else {
+                        console.log(res);
+                        storage.storeToken(res);
+                        window.location.href = './Dashboard';
+                    }
+
+                })
+                .catch(function (error) {
+                    setMessage(error);
+
+                });
+
+
+        } catch (e) {
+            alert(e.toString());
+            return;
+
+        }
+    };
+
+
+
+    return (
         
         <div className="inner">
             <form>
@@ -52,15 +68,15 @@ export default class LoginPage extends Component{
 
                 <div className="form-group">
                     <label>Email</label>
-                    <input type="email" id = 'email' className="form-control" placeholder="Enter email"/>
+                    <input type="email" id = 'email' className="form-control" placeholder="Enter email" ref={(c) => email = c} />
                 </div>
 
                 <div className="form-group">
                     <label>Password</label>
-                    <input type="password" id = 'password' className="form-control" placeholder="Enter password"/>
+                    <input type="password" id = 'password' className="form-control" placeholder="Enter password" ref={(c) => password = c} />
                 </div>
 
-                <button type="Button" className="btn btn-dark btn-lg btn-block" onClick={this.doLogin}> Sign in </button>
+                <button type="submit" className="btn btn-dark btn-lg btn-block" onClick={doLogin}> Sign in </button>
 
                 <p className="forgot-password text-right">
                     Forgot <a href="#">password?</a>
@@ -68,6 +84,6 @@ export default class LoginPage extends Component{
             </form>
         </div>
         );
-    }
 }
 
+export default LoginPage;

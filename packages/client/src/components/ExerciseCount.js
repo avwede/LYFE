@@ -10,14 +10,16 @@ class ExerciseCount extends React.Component {
 
   increase = () => {
     let percent = this.state.percent + 10;
-    if (percent > 100) {
+    if (percent >= 100) {
       percent = 100;
     }
+
     this.setState({ percent });
   };
 
   decline = () => {
     let percent = this.state.percent - 10;
+
     if (percent < 0) {
       percent = 0;
     }
@@ -27,8 +29,8 @@ class ExerciseCount extends React.Component {
   render() {
     return (
       <>
-        <h5 style={{paddingTop: '86px'}}>Daily Exercise Tracker</h5>
-        <Progress strokeColor={{'0%': '#ACC1FF', '100%': '#9CECFF',}} type="circle" percent={this.state.percent}/>
+        <h5 style={{paddingTop: '101px'}}>Daily Exercise Tracker</h5>
+        <Progress strokeColor={{'0%': '#ACC1FF', '100%': '#9CECFF',}} type="circle" percent={this.state.percent} format={percent => `${percent/3.333333333333333333333333} Mins`}/>
         
         <Button.Group style={{margin: 30}}>
           <Button onClick={this.decline} icon={<MinusOutlined />} />

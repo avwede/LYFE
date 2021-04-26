@@ -34,7 +34,9 @@ const { authenticateJWT } = require('../middleware/routerMiddleware');
 router.get('/', authenticateJWT, (req, res) => {
   const userId = req.tokenPayload.id;
 
-  User.findById(userId, 'reminders')
+  User
+    .findById(userId, 'reminders')
+    .populate('reminders.type')
     .then(results => {
       sendResponse(res, 200, results.reminders);
     })
@@ -89,7 +91,9 @@ router.get('/:id', authenticateJWT, (req, res) => {
   const { id } = req.params;
   const userId = req.tokenPayload.id;
 
-  User.findById(userId)
+  User
+    .findById(userId)
+    .populate('reminders.type')
     .then(user => {
       const reminder = user.reminders.id(id);
       
@@ -125,7 +129,7 @@ router.get('/:id', authenticateJWT, (req, res) => {
  *              $ref: '#/components/schemas/Reminder'
  *      responses:
  *        201:
- *          description: New reminder successfully created.
+ *          description: List of reminders for this user.
  *          content:
  *            application/json:
  *              schema:
@@ -147,7 +151,8 @@ router.post('/', authenticateJWT, async (req, res) => {
   if (user) {
     user.reminders.push(newReminder);
     user.save()
-      .then(updatedUser => {
+      .then(async (updatedUser) => {
+        await updatedUser.populate('reminders.type').execPopulate();
         sendResponse(res, 201, updatedUser.reminders);
       })
       .catch(err => {
@@ -223,8 +228,9 @@ router.put('/:id', authenticateJWT, async (req, res) => {
     if (reminder) {
       const updatedReminder = partialUpdate(reminder, updatedFields);
       user.save()
-        .then(() => {
-          sendResponse(res, 200, updatedReminder);
+        .then(async (updatedUser) => {
+          await updatedUser.populate('reminders.type').execPopulate();
+          sendResponse(res, 200, updatedUser.reminders);
         })
         .catch(err => {
           sendError(res, err, err.message);
@@ -236,7 +242,6 @@ router.put('/:id', authenticateJWT, async (req, res) => {
     sendError(res, 500, 'Server failed to fetch this user.');
   }
 });
-
 
 /**
  * @openapi
@@ -284,7 +289,7 @@ router.delete('/:id', authenticateJWT, async (req, res) => {
   const user = await User.findById(userId);
 
   if (user) {
-    deleteReminder(user, id, resp);
+    deleteReminder(user, id, res);
   } else {
     sendError(res, 500, 'Server failed to fetch this user.');
   }
@@ -297,7 +302,7 @@ router.delete('/:id', authenticateJWT, async (req, res) => {
  * @param {String} reminderId Reminder Object Id.
  * @param {Object} resp Express response object.
  */
-const deleteReminder = (user, reminderId, resp) => {
+const deleteReminder = (user, reminderId, res) => {
   const reminder = user.reminders.id(reminderId);
 
   if (reminder) {

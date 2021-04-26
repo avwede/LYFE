@@ -6,7 +6,7 @@ import WaterCount from "../components/WaterCount";
 import ExerciseCount from "../components/ExerciseCount";
 import TasksTable from "../components/TasksTable";
 import ProgressBar from "../components/ProgressBar";
-import Classes from "../components/Classes";
+import ClassesHome from "../components/ClassesHome";
 
 const { Content } = Layout;
 
@@ -26,7 +26,7 @@ class DashboardHome extends React.Component {
                     
                     <Row gutter={[16, 16]} >
                     <Col span={16}>
-                        <Card title="Daily Tasks" bordered={false}>
+                        <Card title="Daily Tasks" bordered={false} style={{paddingBottom:'15px'}}>
                             <TasksTable />
                         </Card>
                     </Col>
@@ -40,7 +40,7 @@ class DashboardHome extends React.Component {
 
                     <Row gutter={[16, 16]}>
                         <Col span={24}>
-                            <Classes /> 
+                            <ClassesHome /> 
                         </Col>
                     </Row>
                 </div>

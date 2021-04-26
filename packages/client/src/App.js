@@ -16,6 +16,7 @@ import ErrorPage from "./pages/Error";
 import HomePage from "./pages/Home";
 import Header from "./components/Header";
 import Dashboard from "./pages/Dashboard";
+import EmailRedirect from "./pages/EmailRedirect";
 
 function App(){
   return (
@@ -36,7 +37,9 @@ function App(){
                   <Route exact path = "/Login" component={LoginPage} />
                   <Route exact path = "/Register" component={RegisterPage} />
                   <Route exact path = "/Error" component={ErrorPage} />
+                  <Route exact path = "/EmailRedirect" component={EmailRedirect} />
                 </div>
+
             </Fragment>
           
             <Redirect to = "/Error" />
