@@ -1,16 +1,14 @@
-import React, { Component } from "react";
+import React from "react";
 import 'antd/dist/antd.css';
-import { Table, } from 'antd';
-import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined, PlusOutlined } from '@ant-design/icons';
-import { Layout, Menu, Breadcrumb, Tooltip, Progress, Button, Card, Row, Col, Drawer, Form, Input, Select, DatePicker } from 'antd';
-import ReactDOM from 'react-dom';
+import { Layout, Card, Row, Col } from 'antd';
+
 import '../components/components.css';
 import EContacts from "../components/EContacts";
 import HealthProfile from "../components/HealthProfile";
 import MedicationsTable from "../components/MedicationsTable";
 
-const { SubMenu } = Menu;
-const { Header, Content, Footer, Sider } = Layout;
+
+const { Content } = Layout;
 
 class DashboardHealth extends React.Component {
     render () {

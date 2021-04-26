@@ -1,9 +1,7 @@
-import React, { Component } from "react";
+import React from "react";
 import 'antd/dist/antd.css';
-import { Layout, Menu, Breadcrumb } from 'antd';
+import { Layout, Menu } from 'antd';
 import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined } from '@ant-design/icons';
-import { Tooltip, Progress, Button, Card, Row, Col } from 'antd';
-import ReactDOM from 'react-dom';
 
 import DashboardHome from "./DashboardHome";
 import DashboardHealth from "./DashboardHealth";
@@ -14,9 +12,7 @@ import HeaderDashboard from "../components/HeaderDashboard";
 import {
     BrowserRouter as Router,
     Route,
-    Switch,
     Link,
-    Redirect
   } from "react-router-dom";
 
 const { Content, Footer, Sider } = Layout;
