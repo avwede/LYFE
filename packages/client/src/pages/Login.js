@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import axios from 'axios'
 
 const api = axios.create({
-    baseURL: 'localhost:3001/api/users'
+    baseURL: 'http://localhost:3001/api/users'
 })
 
 export default class LoginPage extends Component{
@@ -39,7 +39,7 @@ export default class LoginPage extends Component{
         })
         .catch(error => {
             console.log("got the err")
-            console.log(error.response.data)
+            console.log(error)
         });
     }
 
@@ -60,7 +60,7 @@ export default class LoginPage extends Component{
                     <input type="password" id = 'password' className="form-control" placeholder="Enter password"/>
                 </div>
 
-                <button type="submit" className="btn btn-dark btn-lg btn-block" onClick={this.doLogin}> Sign in </button>
+                <button type="Button" className="btn btn-dark btn-lg btn-block" onClick={this.doLogin}> Sign in </button>
 
                 <p className="forgot-password text-right">
                     Forgot <a href="#">password?</a>
