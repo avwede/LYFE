@@ -19,6 +19,12 @@ class TasksTable extends React.Component {
     this.tasksForm = React.createRef();
   }
 
+  formatDateString = () => {
+    const dateCheck = new Date(this.state.health.dateOfBirth);
+  
+    return `${dateCheck.getMonth() + 1}/${dateCheck.getDate()}/${dateCheck.getFullYear()}`;
+  }
+
   componentDidMount() {
     axios
       .get(buildPath('api/reminders/'), {
@@ -59,6 +65,7 @@ class TasksTable extends React.Component {
     {
       title: 'Date',
       dataIndex: 'startDate',
+
     },
     {
       title: 'Tags',
