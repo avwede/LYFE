@@ -44,8 +44,8 @@ class HealthProfile extends React.Component {
     this.setState({ health: health });
   };
 
-  handleEdit = (health) => {
-    this.healthForm.current.showDrawer('edit', health);
+  handleEdit = () => {
+    this.healthForm.current.showDrawer('edit', this.state.health);
   };
 
   render(){
@@ -134,6 +134,14 @@ class HealthProfileForm extends React.Component {
       });
   };
 
+  handleDropdownChangeB = (value) => {
+    this.setState({ bloodType: value });
+  };
+
+  handleDropdownChangeG = (value) => {
+    this.setState({ gender: value });
+  };
+
   handleInputChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
@@ -148,14 +156,22 @@ class HealthProfileForm extends React.Component {
     });
   };
 
+  formatDateString = () => {
+    const dateCheck = new Date(this.state.dateOfBirth);
+  
+    return `${dateCheck.getMonth() + 1}-${dateCheck.getDate()}-${dateCheck.getFullYear()}`;
+  }
+
   setupEditForm = (health) => {
+    console.log(health);
+
     this.setState({
       action: 'edit',
       visible: true,
       healthId: health._id,
-      dateOfBirth: health.firstName,
-      height: health.lastName,
-      weight: health.email,
+      dateOfBirth: health.dateOfBirth,
+      height: health.height,
+      weight: health.weight,
       gender: health.gender,
       bloodType: health.bloodType,
     });
@@ -182,7 +198,7 @@ class HealthProfileForm extends React.Component {
               <Button onClick={this.onClose} style={{ marginRight: 8 }}>
                 Cancel
               </Button>
-              <Button onClick={this.onClose} type="primary">
+              <Button onClick={this.editHealth} type="primary">
                 Submit
               </Button>
             </div>
@@ -204,7 +220,7 @@ class HealthProfileForm extends React.Component {
                   <Input 
                     onChange={this.handleInputChange}
                     placeholder="Ex. 11/11/1999"
-                    value={this.state.dateOfBirth}
+                    value={this.formatDateString()}
                     name="dateOfBirth" />
                 </Form.Item>
               </Col>
@@ -220,7 +236,7 @@ class HealthProfileForm extends React.Component {
                   ]}
                 >
                   <Select
-                      onSelect={this.handleDropdownChange}
+                      onSelect={this.handleDropdownChangeG}
                       placeholder="Ex. Male"
                       value={this.state.gender}
                       name="gender"
@@ -258,7 +274,7 @@ class HealthProfileForm extends React.Component {
                   onChange={this.handleInputChange}
                   placeholder="Ex. 150 Pounds"  
                   value={this.state.weight}
-                  name="height" />
+                  name="weight" />
                 </Form.Item>
               </Col>
             </Row>
@@ -271,7 +287,7 @@ class HealthProfileForm extends React.Component {
                   rules={[{ required: true, message: 'Please enter your blood type' }]}
                 >
                   <Select
-                      onSelect={this.handleDropdownChange}
+                      onSelect={this.handleDropdownChangeB}
                       placeholder="Ex. O-"
                       value={this.state.bloodType}
                       name="bloodType"

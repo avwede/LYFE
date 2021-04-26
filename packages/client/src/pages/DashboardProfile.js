@@ -3,6 +3,12 @@ import 'antd/dist/antd.css';
 import { Layout } from 'antd';
 import { Button, Card, Row, Col, Form, Input } from 'antd';
 import profilePic from "../profile.png";
+import { retrieveToken } from '../tokenStorage';
+import { buildPath } from '../components/bp'
+import axios from 'axios';
+
+import LoginPage from "./Login";
+import { Link } from "react-router-dom";
 
 const { Content } = Layout;
 
@@ -29,7 +35,29 @@ const validateMessages = {
 
 
 class DashboardProfile extends React.Component {
-    
+    constructor(props) {
+        super(props);
+        this.state = {
+          tasks: [],
+        };
+      }
+
+      componentDidMount() {
+        axios
+          .get(buildPath('api/reminders/'), {
+            headers: {
+              Authorization: `Bearer ${retrieveToken()}`,
+              'Content-Type': 'application/json',
+            },
+          })
+          .then((res) => {
+            this.setState({ tasks: res.data });
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+      
     render () {
         return (            
             <Content style={{ padding: '0 24px', minHeight: 280 }}>
@@ -72,8 +100,8 @@ class DashboardProfile extends React.Component {
                                         </Form.Item>
                                     
                                         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }} style={{paddingBottom:'85px'}}>
-                                            <Button type="primary" htmlType="submit">
-                                                Submit
+                                            <Button type="primary">
+                                                Logout<Link to= "/Login" />
                                             </Button>
                                         </Form.Item>
                                     </Form>

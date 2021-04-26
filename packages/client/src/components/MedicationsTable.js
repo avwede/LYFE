@@ -17,10 +17,12 @@ class MedicationsTable extends React.Component {
     };
     this.medicationsForm = React.createRef();
     this.updateHealthMeds = this.updateHealthMeds.bind(this);
+    this.editHealthMeds = this.editHealthMeds.bind(this);
   }
 
   updateHealthMeds(newMeds) {
     const meds = this.state.healthMeds;
+    console.log(meds);
     meds.push(newMeds);
     this.setState({healthMeds: meds});
     const newMed = {
@@ -35,7 +37,45 @@ class MedicationsTable extends React.Component {
         },
       })
       .then((res) => {
-        this.updateMeds(res.data.medication);
+        //console.log(res.data);
+        this.updateMeds(res.data.medications);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  getIndex(value, arr, prop) {
+    for(var i = 0; i < arr.length; i++) {
+        if(arr[i][prop] === value) {
+            return i;
+        }
+      }
+      return -1; //to handle the case where the value doesn't exist
+  }
+
+  editHealthMeds(eMed)
+  {
+    var editMed = this.state.healthMeds;
+    var index = this.getIndex(eMed.name, editMed, 'name');
+   
+    //console.log(index);
+    
+    editMed[index] = eMed;
+
+    const sendE = {
+      medications: editMed,
+    }
+
+    axios
+      .put(buildPath('api/health/'), sendE, {
+        headers: {
+          Authorization: `Bearer ${retrieveToken()}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        this.updateMeds(res.data.medications);
       })
       .catch((error) => {
         console.log(error);
@@ -58,16 +98,25 @@ class MedicationsTable extends React.Component {
       });
   }
 
-  deleteMed = () => {
+  deleteMed = (id) => {
+    console.log(id);
+    const deletedMed = this.state.healthMeds.filter(med => med._id !== id);
+    console.log(deletedMed);
+    this.setState({healthMeds: deletedMed});
+    const newMed = {
+      medications : deletedMed,
+    }
+    console.log(newMed);
     axios
-      .delete(buildPath('api/health/'), {
+      .put(buildPath('api/health/'), newMed, {
         headers: {
           Authorization: `Bearer ${retrieveToken()}`,
           'Content-Type': 'application/json',
         },
       })
       .then((res) => {
-        this.setState({ healthMeds: res.data.medications });
+        //console.log(res.data);
+        this.updateMeds(res.data.medications);
       })
       .catch((error) => {
         console.log(error);
@@ -97,7 +146,7 @@ class MedicationsTable extends React.Component {
           />
           <DeleteOutlined
               key="delete"
-              onClick={() => this.deleteMedication(record._id)}
+              onClick={() => this.deleteMed(record._id)}
           />
         </Space>
       ),
@@ -105,6 +154,7 @@ class MedicationsTable extends React.Component {
   ];
 
   updateMeds = (medication) => {
+    console.log(medication);
     this.setState({ healthMeds: medication });
   };
 
@@ -129,6 +179,7 @@ class MedicationsTable extends React.Component {
           ref={this.medicationsForm}
           updateMeds={this.updateMeds}
           updateHealthMeds={this.updateHealthMeds}
+          editHealthMeds = {this.editHealthMeds}
         />
         </div>
       );
@@ -180,20 +231,10 @@ class MedicationsForm extends React.Component {
       frequency: this.state.frequency,
       }
 
-      axios
-      .put(buildPath('api/health/'), updatedMeds, {
-        headers: {
-          Authorization: `Bearer ${retrieveToken()}`,
-          'Content-Type': 'application/json',
-        },
-      })
-      .then((res) => {
-        this.props.updateMeds(res.data.medication);
-        this.closeDrawer();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+     // console.log(this.tate.);
+
+      this.props.editHealthMeds(updatedMeds)
+      this.closeDrawer();
     };
 
 
@@ -214,14 +255,16 @@ class MedicationsForm extends React.Component {
   };
 
   setupEditForm = (medication) => {
+    //console.log(medication);
     this.setState({
       action: 'edit',
       visible: true,
       medId: medication._id,
-      name: medication.firstName,
-      dosage: medication.lastName,
-      frequency: medication.email,
+      name: medication.name,
+      dosage: medication.dosage,
+      frequency: medication.frequency,
     });
+    //console.log(this.state.name);
   };
 
   setupAddForm = () => {
@@ -330,162 +373,3 @@ class MedicationsForm extends React.Component {
     );
   }
 }
-
-// class AllergiesCards extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       healthAllerg: [],
-//     };
-//     this.allergiesForm = React.createRef();
-//   }
-
-//   componentDidMount() {
-//     axios
-//       .get(buildPath('api/health/'), {
-//         headers: {
-//           Authorization: `Bearer ${retrieveToken()}`,
-//           'Content-Type': 'application/json',
-//         },
-//       })
-//       .then((res) => {
-//         this.setState({ allergies: res.data });
-//       })
-//       .catch(function (error) {
-//         console.log(error);
-//       });
-//   }
-
-//   deleteAllergies = (id) => {
-//     axios
-//       .delete(buildPath(`api/health/${id}`), {
-//         headers: {
-//           Authorization: `Bearer ${retrieveToken()}`,
-//           'Content-Type': 'application/json',
-//         },
-//       })
-//       .then((res) => {
-//         this.setState({ allergies: res.data });
-//       })
-//       .catch((error) => {
-//         console.log(error);
-//       });
-//   };
-
-//   updateAllergies = (allergies) => {
-//     this.setState({ allergies: allergies });
-//   };
-
-//   handleAdd = () => {
-//     this.allergiesForm.current.showDrawer('add');
-//   };
-
-//   handleEdit = (allergies) => {
-//     this.allergiesForm.current.showDrawer('edit', allergies);
-//   };
-  
-//     render () {
-//         return (
-//             <>
-//             {/* {this.state.healthAllerg.allergies.map((allergy) =>
-//                 <Card type="inner" style={{ marginTop: 16 }} title={allergy}>
-//                   Reaction: Redness, Inflammation
-//                 </Card> 
-            
-//             )} */}
-
-//                 <AllergiesForm />
-//             </>
-            
-//         );
-//     }
-// }
-
-// export default AllergiesCards;
-
-// class AllergiesForm extends React.Component {
-//     state = { visible: false };
-  
-//     showDrawer = () => {
-//       this.setState({
-//         visible: true,
-//       });
-//     };
-  
-//     onClose = () => {
-//       this.setState({
-//         visible: false,
-//       });
-//     };
-  
-//     render() {
-//       return (
-//         <>
-//         <div className='site-form-in-drawer-wrapper'>
-  
-//           <Button type="primary" onClick={this.showDrawer}>
-//             <WarningOutlined /> New allergy
-//           </Button>
-  
-//           <Drawer
-//             title="Add a new allergy"
-//             width={720}
-//             onClose={this.onClose}
-//             visible={this.state.visible}
-//             bodyStyle={{ paddingBottom: 80 }}
-//             footer={
-//               <div
-//                 style={{
-//                   textAlign: 'right',
-//                 }}
-//               >
-//                 <Button onClick={this.onClose} style={{ marginRight: 8 }}>
-//                   Cancel
-//                 </Button>
-//                 <Button onClick={this.onClose} type="primary">
-//                   Submit
-//                 </Button>
-//               </div>
-//             }
-//           >
-//             <Form layout="vertical" hideRequiredMark>
-//             <Row gutter={16}>
-//                 <Col span={24}>
-//                   <Form.Item
-//                     name="Allergy"
-//                     label="Allergy"
-//                     rules={[
-//                       {
-//                         required: true,
-//                         message: 'Please enter the allergy description',
-//                       },
-//                     ]}
-//                   >
-//                     <Input.TextArea rows={4} placeholder="Ex. Peanuts" />
-//                   </Form.Item>
-//                 </Col>
-//               </Row>
-//               <Row gutter={16}>
-//               <Col span={24}>
-//                   <Form.Item
-//                     name="Reaction"
-//                     label="Reaction"
-//                     rules={[
-//                       {
-//                         required: true,
-//                         message: 'Please enter the reaction to the allergy',
-//                       },
-//                     ]}
-//                   >
-//                     <Input.TextArea rows={4} placeholder="Ex. Hives, Redness, Swelling, Nausea" />
-//                   </Form.Item>
-//                 </Col>
-                
-//               </Row>
-//             </Form>
-//           </Drawer>
-//           </div>
-//         </>
-//       );
-//     }
-//   }
