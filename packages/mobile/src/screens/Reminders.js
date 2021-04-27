@@ -105,7 +105,7 @@ const Reminders = (props) => {
             "startDate": time,
           }, {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} })
           .catch((error) => console.log(error.response.data.error));
-        setData(response.data);
+        //setData(response.data);
         setTriggerRefresh(!triggerRefresh);
         toggleOverlay();
     }
@@ -113,7 +113,11 @@ const Reminders = (props) => {
     const getReminders = async () => {
         const resp = await axios.get("https://lyfe--app.herokuapp.com/api/reminders", 
         {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} });
-        setData(resp.data);
+        setData(resp.data.sort(function compare(a, b) {
+            var dateA = new Date(a.startDate);
+            var dateB = new Date(b.startDate);
+            return dateA - dateB;
+          }));
         console.log(data);
     }
 

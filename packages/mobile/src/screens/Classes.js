@@ -33,6 +33,7 @@ const Classes = (props) => {
     const [mode, setMode] = useState('date');
     const [showStart, setShowStart] = useState(false);
     const [showEnd, setShowEnd] = useState(false);
+    const [rand, setRand] = useState(Math.floor(Math.random() * 4));
     // This holds index in state for the edit and delete overlay. 
     const [activeIndex, setActiveIndex] = useState(Number.MIN_SAFE_INTEGER);
     const [triggerRefresh, setTriggerRefresh] = useState(false);
@@ -106,12 +107,22 @@ const Classes = (props) => {
         toggleOverlay();
     };
 
+    // https://stackoverflow.com/questions/14872554/sorting-on-a-custom-order
+    const daySort = (arr, desiredOrder) => {
+        const orderForIndexVals = desiredOrder.slice(0).reverse();
+        arr.sort((a, b) => {
+          const aIndex = -orderForIndexVals.indexOf(a);
+          const bIndex = -orderForIndexVals.indexOf(b);
+          return aIndex - bIndex;
+        })};
+    
     const addClass = async () => {
         console.log(courseCode);
         console.log(professor);
         console.log(location);
-        // Consider sorting by id before map
-        console.log(repeatDays.map(item => item.name));
+        const map = repeatDays.map(item => item.name);
+        daySort(map, ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]);
+        console.log(map);
         console.log(selectedType);
         const response = await axios.post("https://lyfe--app.herokuapp.com/api/courses/", {
             "courseCode": courseCode,
@@ -120,13 +131,13 @@ const Classes = (props) => {
               "type": selectedType,
               "location": location
             },
-            "day": repeatDays.map(item => item.name),
+            "day": map,
             "start": startTime,
             "end": endTime
         }, {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} })
         .catch((error) => console.log(error.response.data.error));
         console.log(response);
-        setData(response.data);
+        //setData(response.data);
         setTriggerRefresh(!triggerRefresh);
         toggleOverlay();
     };
@@ -198,6 +209,7 @@ const Classes = (props) => {
         </View>
         <View style={styles.textSpacing}>
             <Text>Class Days: {`${item.day} 
+
 ${formatTimeStart(index)} - ${formatTimeEnd(index)}`}</Text>
         </View>
         <View style={styles.textSpacing}>
@@ -253,6 +265,7 @@ ${formatTimeStart(index)} - ${formatTimeEnd(index)}`}</Text>
 
     useEffect(() => {
        getClasses();
+       setRand(Math.floor(Math.random() * 4));
     }, [triggerRefresh]);
     
     // TODO: Add motivational quotes?
@@ -390,8 +403,15 @@ ${formatTimeStart(index)} - ${formatTimeEnd(index)}`}</Text>
                         </View>
                         </Overlay>)}
             </View>
-            <View>
-                <Divider />
+            <View style={{marginVertical: 25, height: (0.01*HEIGHT), width: WIDTH - 100}}>
+                <Text>
+                {
+                    (rand === 0) ? `"JUST DO IT" - Shia Labeouf` :
+                    (rand === 1) ? `"How can mirrors be real if our eyes aren't real?" - Jayden Smith` :
+                    (rand === 2) ? `"With great power comes great responsibility." - Stan Lee` :
+                    `"The early bird catches the worm but the second mouse eats the cheese." - Unknown Redditor`
+                }
+                </Text>
             </View>
             <View style={styles.accordion}>
                 <Accordion

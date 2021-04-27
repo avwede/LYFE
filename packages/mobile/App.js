@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Login from './src/screens/Login.js';
 import Register from './src/screens/Register.js';
 import ForgotPassword from './src/screens/ForgotPassword.js';
+import ResetToken from './src/screens/ResetToken.js';
 import Dashboard from './src/screens/Dashboard.js';
 import Reminders from './src/screens/Reminders.js';
 import Health from './src/screens/Health.js';
@@ -15,6 +16,7 @@ import Profile from './src/screens/Profile.js';
 import {JWTProvider, JWTContext}  from './src/contexts/JWTContext.js'
 import { LoginContext } from './src/contexts/LoginContext.js'
 import { Provider as PaperProvider} from 'react-native-paper';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -50,8 +52,27 @@ export default function App() {
         </Stack.Screen>
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="Forgot Password" component={ForgotPassword} />
+        <Stack.Screen name="Reset Token" component={ResetToken} />
       </Stack.Navigator>) :
-      (<Tab.Navigator initialRouteName="Dashboard">
+      (<Tab.Navigator initialRouteName="Dashboard" screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === 'Dashboard') {
+            iconName = 'globe-outline';
+          } else if (route.name === 'Reminders') {
+            iconName = 'list';
+          } else if (route.name === 'Health') {
+            iconName = 'medkit';
+          } else if (route.name === 'School') {
+            iconName = 'school';
+          } else if (route.name === 'Profile') {
+            iconName = 'person-circle';
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+      })}>
         <Tab.Screen name="Dashboard" component={Dashboard}  />
         <Tab.Screen name="Reminders" component={Reminders}  />
         <Tab.Screen name="Health" component={EditHealth} />

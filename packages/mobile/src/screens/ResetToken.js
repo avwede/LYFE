@@ -27,7 +27,7 @@ const ForgotPassword = (props) => {
                 blurOnSubmit={false}
                 ></TextInput>
             </View>
-            <TouchableOpacity style={styles.loginBtn} onPress={() => props.navigation.navigate('Reset Token')}>
+            <TouchableOpacity style={styles.loginBtn}>
                 <Text style={styles.signUp} >Reset Password</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.toLogin}
