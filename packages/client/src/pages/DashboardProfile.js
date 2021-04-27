@@ -36,11 +36,12 @@ const validateMessages = {
 
 class DashboardProfile extends React.Component {
     constructor(props) {
-        super(props);
-        this.state = {
-          tasks: [],
-        };
-      }
+      super(props);
+      this.state = {
+        profile: [],
+      };
+
+    }
 
       componentDidMount() {
         axios
@@ -74,13 +75,14 @@ class DashboardProfile extends React.Component {
                                 <Col span={20}>
                                     <Form {...layout} name="nest-messages" validateMessages={validateMessages} style={{paddingTop:'85px'}}>
                                         <Form.Item
-                                            name={['user', 'name']}
-                                            label="Name"
-                                            rules={[
-                                            {
-                                                required: true,
-                                            },
-                                            ]}
+                                            name={['user', 'firstName']}
+                                            label="First Name"
+                                        >
+                                            <Input />
+                                        </Form.Item>
+                                        <Form.Item
+                                            name={['user', 'lastName']}
+                                            label="Last Name"
                                         >
                                             <Input />
                                         </Form.Item>
@@ -101,7 +103,7 @@ class DashboardProfile extends React.Component {
                                     
                                         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }} style={{paddingBottom:'85px'}}>
                                             <Button type="primary">
-                                                Logout<Link to= "/Login" />
+                                              <a href="/Home">Logout</a>
                                             </Button>
                                         </Form.Item>
                                     </Form>
