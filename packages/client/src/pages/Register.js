@@ -44,7 +44,7 @@ function RegisterPage() {
 
 				})
 				.catch(function (error) {
-					setMessage(error);
+					setMessage(error.response.data.error);
 
 				});
 
@@ -82,7 +82,10 @@ function RegisterPage() {
                     <input type="password" className="form-control" placeholder="Enter password" ref={(c) => password = c}/>
                 </div>
 
-                <button type="submit" className="btn btn-dark btn-lg btn-block" onClick={doRegister}> Register </button>
+                <button type="submit" className="btn btn-dark btn-lg btn-block" onClick={doRegister} style={{marginBottom: '20px'}}> Register </button>
+				<span id="loginResult" style={{color: 'red', fontWeight: 'bold'}}>{message}</span>
+
+
                 <p className="forgot-password text-right">
                     Already registered <a href="/Login">log in?</a>
                 </p>

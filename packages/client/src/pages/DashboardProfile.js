@@ -38,21 +38,27 @@ class DashboardProfile extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        profile: [],
+        firstName: '',
+        lastName: '',
+        email: '',
       };
 
     }
 
       componentDidMount() {
         axios
-          .get(buildPath('api/reminders/'), {
+          .get(buildPath('api/users/'), {
             headers: {
               Authorization: `Bearer ${retrieveToken()}`,
               'Content-Type': 'application/json',
             },
           })
           .then((res) => {
-            this.setState({ tasks: res.data });
+            this.setState({ 
+              firstName: res.data.firstName, 
+              lastName: res.data.lastName,
+              email: res.data.email,
+            });
           })
           .catch(function (error) {
             console.log(error);
@@ -78,29 +84,25 @@ class DashboardProfile extends React.Component {
                                             name={['user', 'firstName']}
                                             label="First Name"
                                         >
-                                            <Input />
+
+                                            {console.log(this.state.firstName)}
+                                            <Input name="firstName" value={this.state.firstName}/>
+
                                         </Form.Item>
                                         <Form.Item
                                             name={['user', 'lastName']}
                                             label="Last Name"
                                         >
-                                            <Input />
+                                            {console.log(this.state.lastName)}
+                                            <Input name="lastName" value={this.state.lastName}/>
                                         </Form.Item>
                                         <Form.Item
                                             name={['user', 'email']}
                                             label="Email"
-                                            rules={[
-                                            {
-                                                type: 'email',
-                                            },
-                                            ]}
                                         >
-                                            <Input />
+                                            {console.log(this.state.email)}
+                                            <Input name="email" value={this.state.email}/>
                                         </Form.Item>
-                                        <Form.Item name={['user', 'password']} label="Password">
-                                            <Input />
-                                        </Form.Item>
-                                    
                                         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }} style={{paddingBottom:'85px'}}>
                                             <Button type="primary">
                                               <a href="/Home">Logout</a>

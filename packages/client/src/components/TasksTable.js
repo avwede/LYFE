@@ -15,12 +15,13 @@ class TasksTable extends React.Component {
     super(props);
     this.state = {
       tasks: [],
+      prettyDate: '',
     };
     this.tasksForm = React.createRef();
   }
 
   formatDateString = () => {
-    const dateCheck = new Date(this.state.health.dateOfBirth);
+    const dateCheck = new Date(this.state.prettyDate);
   
     return `${dateCheck.getMonth() + 1}/${dateCheck.getDate()}/${dateCheck.getFullYear()}`;
   }
@@ -34,7 +35,8 @@ class TasksTable extends React.Component {
         },
       })
       .then((res) => {
-        this.setState({ tasks: res.data });
+        this.setState({ tasks: res.data, prettyDate: res.data.startDate});
+        // this.setState({ tasks.startDate : newDate});
       })
       .catch(function (error) {
         console.log(error);
@@ -50,7 +52,7 @@ class TasksTable extends React.Component {
         },
       })
       .then((res) => {
-        this.setState({ tasks: res.data });
+        this.updateTasks(res.data);
       })
       .catch((error) => {
         console.log(error);
@@ -160,6 +162,12 @@ class TasksForm extends React.Component {
       startDate: '',
       description: '',
     };
+  }
+
+  formatDateString = () => {
+    const dateCheck = new Date(this.state.startDate);
+  
+    return `${dateCheck.getMonth() + 1}-${dateCheck.getDate()}-${dateCheck.getFullYear()}`;
   }
 
   showDrawer = () => {
@@ -335,8 +343,8 @@ class TasksForm extends React.Component {
                 >
                   <Input 
                     onChange={this.handleInputChange}
-                    placeholder="Ex. 11/11/11"
-                    value={this.state.startDate}
+                    placeholder="Ex. YYYY-MM-DD"
+                    value={this.state.action === 'add' ? this.state.startDate : this.formatDateString()}
                     name="startDate" />
                 </Form.Item>
               </Col>

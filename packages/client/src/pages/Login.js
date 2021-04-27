@@ -10,8 +10,6 @@ function LoginPage() {
     var password;
 
     const [message, setMessage] = useState('');
-    const [modalShow, setModalShow] = useState(false);
-
 
     const doLogin = async event => {
 
@@ -39,14 +37,14 @@ function LoginPage() {
                         setMessage(res.error);
 
                     } else {
-                        console.log(res);
                         storage.storeToken(res);
                         window.location.href = './Dashboard';
                     }
 
                 })
                 .catch(function (error) {
-                    setMessage(error);
+                    console.log(error.response.data.error);
+                    setMessage(error.response.data.error);
 
                 });
 
@@ -76,12 +74,15 @@ function LoginPage() {
                     <input type="password" id = 'password' className="form-control" placeholder="Enter password" ref={(c) => password = c} />
                 </div>
 
-                <button type="submit" className="btn btn-dark btn-lg btn-block" onClick={doLogin}> Sign in </button>
+                <button type="submit" className="btn btn-dark btn-lg btn-block" onClick={doLogin} style={{marginBottom: '20px'}}> Sign in </button>
+                <span id="loginResult" style={{color: 'red', fontWeight: 'bold'}}>{message}</span>
 
                 <p className="forgot-password text-right">
                     Forgot <a href="#">password?</a>
                 </p>
             </form>
+
+            
         </div>
         );
 }
