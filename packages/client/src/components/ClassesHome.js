@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Space, Card} from 'antd';
 import axios from 'axios';
+import { buildPath } from './bp';
+import { retrieveToken } from '../tokenStorage';
 
 const storage = require('../tokenStorage.js');
 const token = storage.retrieveToken();
@@ -19,13 +21,19 @@ class ClassesHome extends React.Component {
 
 
     componentDidMount() {
-        axios.get('http://localhost:3001/api/courses/', {headers: {'Authorization' : `Bearer ${token}`, 'Content-Type': 'application/json'} })
-            .then(res => {
-                this.setState({ courses: res.data });
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
+      axios
+      .get(buildPath('api/courses/'), {
+        headers: {
+          Authorization: `Bearer ${retrieveToken()}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        this.setState({ courses: res.data });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     }
       
     gridStyle = {
