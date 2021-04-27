@@ -16,6 +16,7 @@ import {JWTProvider, JWTContext} from './src/contexts/JWTContext.js'
 import { LoginContext } from './src/contexts/LoginContext.js'
 import { Provider as PaperProvider} from 'react-native-paper';
 
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -40,11 +41,11 @@ export default function App() {
         <Stack.Screen name="Forgot Password" component={ForgotPassword} />
       </Stack.Navigator>) :
       (<Tab.Navigator initialRouteName="Dashboard">
-        <Tab.Screen name="Dashboard" component={Dashboard}  />
-        <Tab.Screen name="Reminders" component={Reminders}  />
-        <Tab.Screen name="Health" component={EditHealth} />
-        <Tab.Screen name="School" component={School} />
-        <Tab.Screen name="Profile" component={Profile} />
+        <Tab.Screen name="Dashboard" component={DashboardStackScreen}/>
+        <Tab.Screen name="Reminders" component={Reminders}/>
+        <Tab.Screen name="Health" component={HealthStackScreen}/>
+        <Tab.Screen name="School" component={School}/>
+        <Tab.Screen name="Profile" component={Profile}/>
       </Tab.Navigator>)}
     </LoginContext.Provider>
     </JWTProvider>
@@ -52,13 +53,23 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-/*     <View style={styles.container}>
-<Image source= {require('./assets/logo.png')} />
-<StatusBar style="auto" />
-</View> **/
-
-
+const HealthStack = createStackNavigator();
+function HealthStackScreen () {
+  return(
+    <HealthStack.Navigator>
+      <HealthStack.Screen name="Health Profile" component={Health} />
+      <HealthStack.Screen name="Edit Health Profile" component={EditHealth} />
+    </HealthStack.Navigator>
+  );
+}
+const DashboardStack = createStackNavigator();
+function DashboardStackScreen (){
+  return(
+    <DashboardStack.Navigator>
+      <DashboardStack.Screen name="Dashboard" component={Dashboard}/>
+    </DashboardStack.Navigator>
+  );
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
