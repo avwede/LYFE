@@ -39,7 +39,7 @@ function App(){
                   <Route exact path = "/Login" component={LoginPage} />
                   <Route exact path = "/Register" component={RegisterPage} />
                   <Route exact path = "/Error" component={ErrorPage} />
-                  <Route exact path = "/EmailRedirect" component={EmailRedirect} />
+                  <Route exact path = "/EmailRedirect/:tok" component={EmailRedirect} />
                   <Route exact path = "/ForgetPassword" component={ForgetPassword} />
                   <Route exact path = "/ResetPassword" component={ResetPassword} />
                 </div>

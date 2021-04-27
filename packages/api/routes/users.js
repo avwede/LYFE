@@ -824,7 +824,7 @@ const setVerificationStatus = (user, status, res) => {
  * @param {Object} res Express response object.
  */
 const sendVerificationEmail = (user, token, res) => {
-  const verificationLink = `${APP_URL}/verify/${token}`;
+  const verificationLink = `${APP_URL}/EmailRedirect/${token}`;
   const emailBody = `<p>Hi ${user.firstName} ${user.lastName},</p><br>
                         <p>Please verify your email address by clicking the link below.</p>
                         <strong><a href="${verificationLink}" alt="Verify My Email">Verify My Email</a></strong>
@@ -851,7 +851,7 @@ const sendVerificationEmail = (user, token, res) => {
  * @param {Object} res Express response object.
  */
 const sendPasswordResetEmail = (user, token, res) => {
-  const passwordResetLink = `${APP_URL}/verify/${token}`;
+  const passwordResetLink = `${APP_URL}/ResetPassword`;
   const emailBody = `<p>Hi ${user.firstName} ${user.lastName},</p><br>
                         <p>We received a request to reset your password. Please create a new password by clicking this link:</p>
                         <strong><a href="${passwordResetLink}" alt="Reset My Password">Reset My Password</a></strong>

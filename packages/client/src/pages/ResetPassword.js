@@ -1,4 +1,5 @@
-import React from "react";
+import React, { Component, useState } from "react";
+import axios from 'axios';
 
 function ResetPassword () {
         return (
@@ -7,7 +8,6 @@ function ResetPassword () {
                     <h3>Enter your new password</h3>
     
                     <div className="form-group">
-                        <label>New Password</label>
                         <input type="password" id = 'password' className="form-control" placeholder="Enter new password" />
                     </div>
     
