@@ -851,7 +851,7 @@ const sendVerificationEmail = (user, token, res) => {
  * @param {Object} res Express response object.
  */
 const sendPasswordResetEmail = (user, token, res) => {
-  const passwordResetLink = `${APP_URL}/ResetPassword`;
+  const passwordResetLink = `${APP_URL}ResetPassword/${token}`;
   const emailBody = `<p>Hi ${user.firstName} ${user.lastName},</p><br>
                         <p>We received a request to reset your password. Please create a new password by clicking this link:</p>
                         <strong><a href="${passwordResetLink}" alt="Reset My Password">Reset My Password</a></strong>

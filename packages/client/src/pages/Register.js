@@ -39,7 +39,7 @@ function RegisterPage() {
 
 					} else {
 						storage.storeToken(res);
-						window.location.href = './Login';
+						// window.location.href = './Login';
 					}
 
 				})
@@ -89,6 +89,8 @@ function RegisterPage() {
                 <p className="forgot-password text-right">
                     Already registered <a href="/Login">log in?</a>
                 </p>
+
+
             </form>
         </div>
     );   
