@@ -78,7 +78,7 @@ function LoginPage() {
                 <span id="loginResult" style={{color: 'red', fontWeight: 'bold'}}>{message}</span>
 
                 <p className="forgot-password text-right">
-                    Forgot <a href="#">password?</a>
+                    <a href="/ForgetPassword">Forgot password?</a>
                 </p>
             </form>
 

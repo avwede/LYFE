@@ -17,6 +17,8 @@ import HomePage from "./pages/Home";
 import Header from "./components/Header";
 import Dashboard from "./pages/Dashboard";
 import EmailRedirect from "./pages/EmailRedirect";
+import ForgetPassword from "./pages/ForgetPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App(){
   return (
@@ -38,6 +40,8 @@ function App(){
                   <Route exact path = "/Register" component={RegisterPage} />
                   <Route exact path = "/Error" component={ErrorPage} />
                   <Route exact path = "/EmailRedirect" component={EmailRedirect} />
+                  <Route exact path = "/ForgetPassword" component={ForgetPassword} />
+                  <Route exact path = "/ResetPassword" component={ResetPassword} />
                 </div>
 
             </Fragment>
