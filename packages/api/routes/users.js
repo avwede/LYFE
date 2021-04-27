@@ -824,7 +824,7 @@ const setVerificationStatus = (user, status, res) => {
  * @param {Object} res Express response object.
  */
 const sendVerificationEmail = (user, token, res) => {
-  const verificationLink = `${APP_URL}/EmailRedirect/${token}`;
+  const verificationLink = `${APP_URL}EmailRedirect/${token}`;
   const emailBody = `<p>Hi ${user.firstName} ${user.lastName},</p><br>
                         <p>Please verify your email address by clicking the link below.</p>
                         <strong><a href="${verificationLink}" alt="Verify My Email">Verify My Email</a></strong>

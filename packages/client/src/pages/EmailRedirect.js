@@ -3,43 +3,77 @@ import axios from 'axios';
 import { buildPath } from '../components/bp';
 import { retrieveToken } from '../tokenStorage';
 
-class EmailRedirect extends React.Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            result: '',
-        }
-    }
+function EmailRedirect () {
+    const storage = require('../tokenStorage.js');
+    const bp = require('../components/bp.js');
 
-    componentDidMount() {
+	var password;
+
+	const [message, setMessage] = useState('');
+
+	const verifyEmail = async event => {
+		event.preventDefault();
+
+		var obj = {password: password.value };
+		var js = JSON.stringify(obj);
         const path = window.location.pathname;
         var splitPath = path.split('/');
         const token = splitPath[2];
         console.log(token);
-        axios
-      .post(buildPath(`api/users/verify/${token}`), {
-        headers: {
-          Authorization: `Bearer ${retrieveToken()}`,
-          'Content-Type': 'application/json',
-        },
-      })
-      .then((res) => {
-        this.setState({ result: res.data });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    }
-    render(){
-        return (
-            <div className="inner">
-                <div>
-                    <h1 style={{textAlign: 'center'}}>Welcome to LYFE!</h1>
-                    <h3>Your email has been successfully verified.</h3>
+
+		try {
+			var config = {
+				method: 'post',
+				url: bp.buildPath(`api/users/verify/${token}`), //'http://localhost:3001/api/users/register', 
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				data: js
+
+			};
+
+			axios(config)
+				.then(function (response) {
+					var res = response.data;
+
+					if (res.error) {
+						setMessage(res);
+
+					} else {
+						storage.storeToken(res);
+						window.location.href = './VerifiedSuccess';
+					}
+
+				})
+				.catch(function (error) {
+					setMessage(error.response.data.error);
+
+				});
+
+
+		} catch (e) {
+			alert(e.toString());
+			return;
+
+		}
+	};
+
+      return (
+          <div className="inner">
+              <div>
+                  <h1 style={{textAlign: 'center'}}>Welcome to LYFE!</h1>
+                  
+                  <h4 style={{textAlign: 'center'}}>Please enter your password to verify your account.</h4>
+
+                  <div className="form-group">
+                    <input type="password" id = 'password' className="form-control" placeholder="Enter password" ref={(c) => password = c} />
                 </div>
-            </div>
-        );
-    }
+
+                <button type="submit" className="btn btn-dark btn-lg btn-block" style={{marginBottom: '20px'}}>Verify Password!</button>
+              </div>
+          </div>
+      );
+  
     
 }
 

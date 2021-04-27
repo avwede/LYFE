@@ -19,6 +19,7 @@ import Dashboard from "./pages/Dashboard";
 import EmailRedirect from "./pages/EmailRedirect";
 import ForgetPassword from "./pages/ForgetPassword";
 import ResetPassword from "./pages/ResetPassword";
+import VerifiedSuccess from "./pages/VerifiedSuccess";
 
 function App(){
   return (
@@ -42,6 +43,7 @@ function App(){
                   <Route exact path = "/EmailRedirect/:tok" component={EmailRedirect} />
                   <Route exact path = "/ForgetPassword" component={ForgetPassword} />
                   <Route exact path = "/ResetPassword" component={ResetPassword} />
+                  <Route exact path = "/VerifiedSuccess" component={VerifiedSuccess} />
                 </div>
 
             </Fragment>
