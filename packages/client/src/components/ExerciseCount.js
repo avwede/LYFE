@@ -3,34 +3,81 @@ import 'antd/dist/antd.css';
 import { Progress, Button } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
+import { retrieveToken } from '../tokenStorage';
+import { buildPath } from './bp'
+import axios from 'axios';
+
+
 class ExerciseCount extends React.Component {
-  state = {
-    percent: 0,
-  };
+  constructor(props){
+    super(props);
+    this.state = {
+      percent: 0,
+      exercise: 0,
+    }
+  }
+
+  componentDidMount() {
+    axios
+    .get(buildPath('api/users/'), {
+      headers: {
+        Authorization: `Bearer ${retrieveToken()}`,
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((res) => {
+      this.setState({ exercise: res.data.exerciseCount });
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  }
+  
+  updateExerciseAccount = (percent) => {
+    const newExercise = {
+      exerciseCount : percent,
+    }
+
+    axios
+    .put(buildPath('api/users/'), newExercise, {
+      headers: {
+        Authorization: `Bearer ${retrieveToken()}`,
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((res) => {
+      this.setState({ exercise: res.data.exerciseCount });
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  }
 
   increase = () => {
-    let percent = this.state.percent + 10;
+    var percent = 10 + this.state.exercise;
+    console.log(percent);
     if (percent >= 100) {
       percent = 100;
     }
-
-    this.setState({ percent });
+    this.setState({ percent: percent });
+    this.updateExerciseAccount(percent);
   };
 
   decline = () => {
-    let percent = this.state.percent - 10;
-
+    var percent = this.state.exercise - 10;
     if (percent < 0) {
       percent = 0;
     }
-    this.setState({ percent });
+    this.setState({ percent: percent});
+    this.updateExerciseAccount(percent);
   };
+
 
   render() {
     return (
       <>
         <h5 style={{paddingTop: '101px'}}>Daily Exercise Tracker</h5>
-        <Progress strokeColor={{'0%': '#ACC1FF', '100%': '#9CECFF',}} type="circle" percent={this.state.percent} format={percent => `${percent/3.333333333333333333333333} Mins`}/>
+        <Progress strokeColor={{'0%': '#ACC1FF', '100%': '#9CECFF',}} type="circle" percent={this.state.exercise} format={percent => `${percent/3.333333333333333333333333} Mins`}/>
         
         <Button.Group style={{margin: 30}}>
           <Button onClick={this.decline} icon={<MinusOutlined />} />

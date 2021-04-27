@@ -1,7 +1,6 @@
 import React from "react";
 
-class ResetPassword extends React.Component {
-    render(){
+function ResetPassword () {
         return (
             <div className="inner">
                 <form>
@@ -9,7 +8,7 @@ class ResetPassword extends React.Component {
     
                     <div className="form-group">
                         <label>New Password</label>
-                        <input type="password" id = 'password' className="form-control" placeholder="Enter email" />
+                        <input type="password" id = 'password' className="form-control" placeholder="Enter new password" />
                     </div>
     
                     <button type="submit" className="btn btn-dark btn-lg btn-block" style={{marginBottom: '20px'}}>Reset Password</button>
@@ -20,8 +19,6 @@ class ResetPassword extends React.Component {
                 
             </div>
         );
-    }
-    
 }
 
 export default ResetPassword;

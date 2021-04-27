@@ -35,6 +35,9 @@ function ForgetPassword() {
                     if (res.error) {
                         setMessage(res.error);
                     } 
+                    else {
+                        setMessage(res);
+                    }
 
                 })
                 .catch(function (error) {
@@ -63,10 +66,10 @@ function ForgetPassword() {
 
                 <button type="submit" className="btn btn-dark btn-lg btn-block" style={{marginBottom: '20px'}} onClick = {sendReset}> Send Email Reset Link </button>
                 
-                <span id="loginResult" style={{color: 'red', fontWeight: 'bold'}}>{message}</span>
+                <span id="resetsResult" style={{color: 'red', fontWeight: 'bold'}}>{message}</span>
 
                 <p className="resend-email text-right">
-                   <a href="#">Resend Email</a>
+                   <a href="#" onClick = {sendReset}>Resend Email</a>
                 </p>
             </form>
 

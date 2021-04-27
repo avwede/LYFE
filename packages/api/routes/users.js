@@ -613,11 +613,7 @@ router.put('/', authenticateJWT, async (req, res) => {
     user.save()
       .then(result => {
         // if fields contain email send verification email request
-        sendResponse(res, 200, {
-          firstName: updatedProfile['firstName'],
-          lastName: updatedProfile['lastName'],
-          email: updatedProfile['email'],
-        });
+        sendResponse(res, 200, updatedProfile);
       })
       .catch((err) => {
         sendError(res, err, err.message);

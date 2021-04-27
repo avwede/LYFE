@@ -117,6 +117,14 @@ const userSchema = new mongoose.Schema({
   courses: [courseSchema],
   emergencyContacts: [emergencyContactSchema],
   health: healthSchema,
+  waterCount: {
+    type: Number,
+    default: 0,
+  },
+  exerciseCount: {
+    type: Number,
+    default: 0,
+  },
 });
 
 /**

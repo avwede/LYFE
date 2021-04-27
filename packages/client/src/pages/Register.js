@@ -39,7 +39,7 @@ function RegisterPage() {
 
 					} else {
 						storage.storeToken(res);
-						window.location.href = './';
+						window.location.href = './Login';
 					}
 
 				})
