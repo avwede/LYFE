@@ -43,13 +43,11 @@ class Register extends Component{
         this.setState({
             email: text
         })
-        console.log(text);
     }
     updatePassword = (text) => {
         this.setState({
             password: text
         })
-        console.log(text);
     }
     registerUser = async () => {
         console.log(this.state);

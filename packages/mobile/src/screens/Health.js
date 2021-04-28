@@ -80,10 +80,8 @@ const Health = ({navigation}) => {
     const isEmpty = (object) => { for(var i in object) { return false; } return true; };
     
     const getHealthProfile = async() => {
-        console.log("calling getHealthProfile");
         const resp = await axios.get("https://lyfe--app.herokuapp.com/api/health", 
         {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} });
-        console.log(resp.data);
         if(isEmpty(resp.data))
         {
             console.log("it's empty");

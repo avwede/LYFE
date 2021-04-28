@@ -91,7 +91,7 @@ const Dashboard = (props) => {
 
         return `${dateCheck.getMonth() + 1}/${dateCheck.getDate()}/${dateCheck.getFullYear()} ${dateCheck.getHours()}:${dateCheck.getMinutes() < 10 ? '0' + dateCheck.getMinutes() : dateCheck.getMinutes()}`;
     }
-    formatCourseStartDateString = (index) => {
+    const formatCourseStartDateString = (index) => {
         const dateCheck = new Date(courses[index].start);
 
         return `${dateCheck.getHours()}:${dateCheck.getMinutes() < 10 ? '0' + dateCheck.getMinutes() : dateCheck.getMinutes()}`;

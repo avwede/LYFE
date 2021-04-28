@@ -118,13 +118,8 @@ const Classes = (props) => {
         })};
     
     const addClass = async () => {
-        console.log(courseCode);
-        console.log(professor);
-        console.log(location);
         const map = repeatDays.map(item => item.name);
         daySort(map, ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]);
-        console.log(map);
-        console.log(selectedType);
         const response = await axios.post("https://lyfe--app.herokuapp.com/api/courses/", {
             "courseCode": courseCode,
             "professor": professor,
@@ -137,7 +132,6 @@ const Classes = (props) => {
             "end": endTime
         }, {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} })
         .catch((error) => console.log(error.response.data.error));
-        console.log(response);
         //setData(response.data);
         setTriggerRefresh(!triggerRefresh);
         toggleOverlay();
@@ -147,12 +141,9 @@ const Classes = (props) => {
         const resp = await axios.get("https://lyfe--app.herokuapp.com/api/users/",
         {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} });
         setData(resp.data.courses);
-        console.log(resp.data.courses);
     }
 
     const editClass = async () => {
-        console.log(data[activeIndex]._id);
-        console.log(selectedType);
         const resp = await axios.put(`https://lyfe--app.herokuapp.com/api/courses/${data[activeIndex]._id}`, {
             "courseCode": courseCode,
             "professor": professor,
@@ -165,18 +156,15 @@ const Classes = (props) => {
             "end": endTime
         }, {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} })
         .catch((error) => console.log(error.response));
-        console.log(resp);
         setActiveIndex(Number.MIN_SAFE_INTEGER);
         setTriggerRefresh(!triggerRefresh);
         toggleOverlay();
     };
     
     const deleteClass = async () => {
-        console.log(data[activeIndex]);
         const response = await axios.delete(`https://lyfe--app.herokuapp.com/api/courses/${data[activeIndex]._id}`,
         {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} })
         .catch((error) => console.log(error.response));
-        console.log(response);
         setActiveIndex(Number.MIN_SAFE_INTEGER);
         setTriggerRefresh(!triggerRefresh);
         toggleOverlay();       
@@ -268,7 +256,6 @@ ${formatTimeStart(index)} - ${formatTimeEnd(index)}`}</Text>
         let msg = `Hello! Here is my class schedule:
         
 `;
-        console.log(msg);
 
         for (let i = 0; i < data.length; i++)
         {
@@ -285,14 +272,12 @@ Ending: ${formatDateStringEnd(i)}
 
 `       }
 
-        console.log(msg);
         return msg;
     }
 
     const onShare = async () => {
         try {
             const msg = createMsg();
-            console.log(msg);
             const result = await Share.share({
               message: `${msg}`,
             });

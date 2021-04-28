@@ -80,10 +80,7 @@ const Reminders = (props) => {
     }
 
     const deleteHelper = (index) => {
-        console.log(index);
         setActiveIndex(index);
-        console.log(activeIndex);
-        //console.log(data[activeIndex]._id);
         setDeleteOverlay(true);
         toggleOverlay();
     }
@@ -93,11 +90,6 @@ const Reminders = (props) => {
     // Pass params and headers
     // Wrap in try/catch to get error messages
     const addReminder = async () => {
-        console.log(name);
-        console.log(description);
-        console.log(type);
-        console.log(location);
-        console.log(time);
         const response = await axios.post("https://lyfe--app.herokuapp.com/api/reminders", {
             "name": name,
             "description": description,
@@ -122,7 +114,6 @@ const Reminders = (props) => {
             var dateB = new Date(b.startDate);
             return dateA - dateB;
           }));
-        console.log(data);
     }
 
     // get ID from data
@@ -144,7 +135,6 @@ const Reminders = (props) => {
     }
     
     const deleteReminder = async () => {
-        console.log(activeIndex);
         await axios.delete(`https://lyfe--app.herokuapp.com/api/reminders/${data[activeIndex]._id}`,
         {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'}})
         .catch((error) => console.log(error.response.data.error));

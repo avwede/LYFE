@@ -26,7 +26,6 @@ const Profile = (props) => {
         const resp = await axios.get("https://lyfe--app.herokuapp.com/api/users/",
         {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} })
         .catch((error) => console.log(error.response));
-        console.log(resp.data);
         setData(resp.data);
         setGender(resp.data?.health?.gender);
         setBloodType(resp.data?.health?.bloodType);
@@ -170,10 +169,10 @@ const Profile = (props) => {
                 <Text>Date of Birth: {formatDateString(data?.health?.dateOfBirth)}</Text>
             </View>
             <View style={styles.textSpacing}>
-                <Text>Height: {data?.health?.height}</Text>
+                <Text>Height (in): {data?.health?.height}</Text>
             </View>
             <View style={styles.textSpacing}>
-                <Text>Weight: {data?.health?.weight}</Text>
+                <Text>Weight (lb): {data?.health?.weight}</Text>
             </View>
             <View style={styles.textSpacing}>
                 <Text>Gender: {data?.health?.gender}</Text>

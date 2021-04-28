@@ -28,13 +28,11 @@ class Login extends Component{
         this.setState({
             email: text
         })
-        console.log(text);
     }
     updatePassword = (text) => {
         this.setState({
             password: text
         })
-        console.log(text);
     }
     storeJWT = async (token) => {
         await this.context.setToken(token);
