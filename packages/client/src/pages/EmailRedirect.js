@@ -41,7 +41,8 @@ function EmailRedirect () {
 
 					} else {
 						storage.storeToken(res);
-						window.location.href = './VerifiedSuccess';
+						setMessage("Your account has successfully been verified.")
+						// window.location.href = './VerifiedSuccess';
 					}
 
 				})
@@ -70,7 +71,7 @@ function EmailRedirect () {
                 </div>
 
                 <button type="submit" onClick={verifyEmail} className="btn btn-dark btn-lg btn-block" style={{marginBottom: '20px'}}>Verify Password!</button>
-				<span id="loginResult" style={{color: 'red', fontWeight: 'bold'}}>{message}</span>
+				<span id="loginResult" style={{color: 'green', fontWeight: 'bold'}}>{message}</span>
 
 			  
 			  </div>

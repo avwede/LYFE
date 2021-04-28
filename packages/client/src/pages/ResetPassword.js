@@ -22,7 +22,7 @@ function ResetPassword () {
 		try {
 			var config = {
 				method: 'post',
-				url: bp.buildPath(`api/reset/${token}`), //'http://localhost:3001/api/users/register', 
+				url: bp.buildPath(`api/users/reset/${token}`), //'http://localhost:3001/api/users/register', 
 				headers: {
 					'Content-Type': 'application/json'
 				},

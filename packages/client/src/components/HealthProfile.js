@@ -53,12 +53,12 @@ class HealthProfile extends React.Component {
       <>
           <Descriptions bordered style={{marginBottom: '40px', borderStyle:'double'}}>
           <Descriptions.Item label="Date of Birth" labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>{this.formatDateString()}</Descriptions.Item>
-          <Descriptions.Item label="Height" labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>{this.state.health.height}</Descriptions.Item>
-          <Descriptions.Item label="Weight" labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>{this.state.health.weight}</Descriptions.Item>
+          <Descriptions.Item label="Height (ft)" labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>{this.state.health.height}</Descriptions.Item>
+          <Descriptions.Item label="Weight (lbs)" labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>{this.state.health.weight}</Descriptions.Item>
           <Descriptions.Item label="Gender" labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>{this.state.health.gender}</Descriptions.Item>
           <Descriptions.Item label="Blood Type" span={2} labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>{this.state.health.bloodType}</Descriptions.Item>
-          <Descriptions.Item label="Health Conditions" span={3} labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>Diabetes</Descriptions.Item>
-          <Descriptions.Item label="Allergies" span={3} labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>Bees, Ants, Pollen, Amoxil, Peanuts</Descriptions.Item>
+          {/* <Descriptions.Item label="Health Conditions" span={3} labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>Diabetes</Descriptions.Item>
+          <Descriptions.Item label="Allergies" span={3} labelStyle={{background: '#DBF3FA', fontWeight: 'bold'}}>Bees, Ants, Pollen, Amoxil, Peanuts</Descriptions.Item> */}
           </Descriptions>
 
           <Button type="primary" onClick={this.handleEdit} >
@@ -303,15 +303,15 @@ class HealthProfileForm extends React.Component {
                     </Select>
                 </Form.Item>
               </Col>
-              <Col span={12}>
-              <Form.Item
+              {/* {<Col span={12}>
+              { <Form.Item
                   id="healthConditions"
                   label="Health Conditions"
                   rules={[{ required: true, message: 'Please enter your health Conditions' }]}
                 >
                   <Input placeholder="Ex. High Blood Pressure" />
                 </Form.Item>
-              </Col>
+              </Col>} */}
             </Row>
 
           </Form>
