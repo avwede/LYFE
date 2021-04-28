@@ -168,10 +168,10 @@ const Reminders = (props) => {
             <Text>{formatDateString(index)}</Text>
         </View>
         <View style={styles.textSpacing}>
-            <Text>{item.description}</Text>
+            <Text>{item.description ? item.description : "No description"}</Text>
         </View>
         <View style={styles.textSpacing}>
-            <Text>Location: {item.location.location}</Text>
+            <Text>Location: {item.location.location ? item.location.location : "UCF"}</Text>
         </View>
         <View style={{flexDirection: 'row', justifyContent: "space-around", paddingBottom: 10}}>
             <TouchableNativeFeedback
