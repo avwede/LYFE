@@ -317,7 +317,8 @@ const deleteReminder = (user, reminderId, res) => {
     reminder.remove();
 
     user.save()
-      .then(() => {
+      .then(async () => {
+        await user.populate('reminders.type').execPopulate();
         sendResponse(res, 200, user.reminders);
       })
       .catch((err) => {
