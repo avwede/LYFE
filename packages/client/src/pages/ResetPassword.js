@@ -60,7 +60,7 @@ function ResetPassword () {
                     <h3>Enter your new password</h3>
     
                     <div className="form-group">
-                        <input type="password" id = 'password' className="form-control" placeholder="Enter new password" />
+                        <input type="password" id = 'password' className="form-control" placeholder="Enter new password" ref={(c) => password = c}/>
                     </div>
     
                     <button type="submit" onClick = {resetPass} className="btn btn-dark btn-lg btn-block" style={{marginBottom: '20px'}}>Reset Password</button>

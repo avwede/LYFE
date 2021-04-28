@@ -37,7 +37,7 @@ function EmailRedirect () {
 					var res = response.data;
 
 					if (res.error) {
-						setMessage(res);
+						setMessage("Error");
 
 					} else {
 						storage.storeToken(res);
@@ -70,7 +70,10 @@ function EmailRedirect () {
                 </div>
 
                 <button type="submit" onClick={verifyEmail} className="btn btn-dark btn-lg btn-block" style={{marginBottom: '20px'}}>Verify Password!</button>
-              </div>
+				<span id="loginResult" style={{color: 'red', fontWeight: 'bold'}}>{message}</span>
+
+			  
+			  </div>
           </div>
       );
   

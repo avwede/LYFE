@@ -22,7 +22,7 @@ function RegisterPage() {
 		try {
 			var config = {
 				method: 'post',
-				url: bp.buildPath('api/users/register'), //'http://localhost:3001/api/users/register', 
+				url: bp.buildPath('api/users/register'), 
 				headers: {
 					'Content-Type': 'application/json'
 				},

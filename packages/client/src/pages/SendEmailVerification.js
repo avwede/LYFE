@@ -73,7 +73,6 @@ function SendEmailVerification () {
 
 					} else {
 						setMessage('Email has been re-sent')
-						//window.location.href = './VerifiedSuccess';
 					}
 
 				})

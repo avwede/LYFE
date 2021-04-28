@@ -44,7 +44,7 @@ function App(){
                   <Route exact path = "/EmailRedirect/:tok" component={EmailRedirect} />
                   <Route exact path = "/ForgetPassword" component={ForgetPassword} />
                   <Route exact path = "/ResetPassword/:tok" component={ResetPassword} />
-                  <Route exact path = "/VerifiedSuccess" component={VerifiedSuccess} />
+                  <Route exact path = "/EmailRedirect/VerifiedSuccess" component={VerifiedSuccess} />
                   <Route exact path = "/SendEmailVerification" component={SendEmailVerification} />
                 </div>
 
