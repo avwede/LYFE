@@ -73,10 +73,17 @@ export default function App() {
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}>
+<<<<<<< HEAD
         <Tab.Screen name="Dashboard" component={Dashboard}  />
         <Tab.Screen name="Reminders" component={Reminders}  />
         <Tab.Screen name="Health" component={EditHealth} />
         <Tab.Screen name="School" component={Classes} />
+=======
+        <Tab.Screen name="Dashboard" component={DashboardStackScreen}  />
+        <Tab.Screen name="Reminders" component={ReminderStackScreen}  />
+        <Tab.Screen name="Health" component={HealthStackScreen} />
+        <Tab.Screen name="School" component={ClassesStackScreen} />
+>>>>>>> 983c59e6e3e0f0d4db20752f4553175ae280e1dd
         <Tab.Screen name="Profile" >
           {props => <Profile {...props} updateLoggedIn={loggedInCheck} />}
         </Tab.Screen>
@@ -92,8 +99,39 @@ export default function App() {
 <Image source= {require('./assets/logo.png')} />
 <StatusBar style="auto" />
 </View> **/
-
-
+const HealthStack = createStackNavigator();
+function HealthStackScreen () {
+  return(
+    <HealthStack.Navigator>
+      <HealthStack.Screen name="Health Profile" component={Health} />
+      <HealthStack.Screen name="Edit Health Profile" component={EditHealth} />
+    </HealthStack.Navigator>
+  );
+}
+const DashboardStack = createStackNavigator();
+function DashboardStackScreen () {
+  return(
+    <DashboardStack.Navigator>
+      <DashboardStack.Screen name="Dashboard" component={Dashboard}/>
+    </DashboardStack.Navigator>
+  );
+}
+const ReminderStack = createStackNavigator();
+function ReminderStackScreen () {
+  return(
+  <ReminderStack.Navigator>
+    <ReminderStack.Screen name="Reminders" component={Reminders}/>
+  </ReminderStack.Navigator>
+  );
+}
+const ClassesStack = createStackNavigator();
+function ClassesStackScreen () {
+  return(
+    <ClassesStack.Navigator>
+      <ClassesStack.Screen name="Classes" component={Classes}/>
+    </ClassesStack.Navigator>
+  );
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,

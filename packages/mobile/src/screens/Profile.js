@@ -113,7 +113,7 @@ const Profile = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
-                        defaultValue={data?.health?.height}
+                        defaultValue={data?.health?.height.toString()}
                         onChangeText={(text) => setHeight(text)}
                         ></TextInput></View>
                         <View><TextInput
@@ -123,7 +123,7 @@ const Profile = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
-                        defaultValue={data?.health?.weight}
+                        defaultValue={data?.health?.weight.toString()}
                         onChangeText={(text) => setWeight(text)}
                         ></TextInput></View>
                         <View style={{width: WIDTH - 100,

@@ -1,75 +1,187 @@
-import React, { useState, useContext, Component} from 'react';
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Dimensions} from 'react-native';
+import React, { useState, useContext, useEffect} from 'react';
+import { StyleSheet, Text, View, RefreshControl, TouchableOpacity, Dimensions, ScrollView} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Card, ListItem, Header } from 'react-native-elements';
+import {JWTContext} from '../contexts/JWTContext';
+import axios from 'axios';
 
 const {width: WIDTH} = Dimensions.get('window')
 const Dashboard = (props) => {
+
+    const jwt = useContext(JWTContext);
+    
+    const [refreshing, setRefreshing] = useState(false);
+
+    const [reminders, setReminders] = useState([]);
+    const [courses, setCourses] = useState([]);
+    const [medicationList, setMedicationList] = useState([]);
+
+    const [missingCourses, setMissingCourses] = useState(false);
+    const [missingMedication, setMissingMedication] = useState(false);
+    const [missingReminders, setMissingReminders] = useState(false);
+
+    const getReminders = async () => {
+        const resp = await axios.get("https://lyfe--app.herokuapp.com/api/reminders", 
+        {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} });
+        if(resp.data.length == 0)
+        {
+            setMissingReminders(true);
+        }
+        else
+        {
+            setMissingReminders(false);
+            setReminders(resp.data.sort(function compare(a, b) {
+                var dateA = new Date(a.startDate);
+                var dateB = new Date(b.startDate);
+                return dateA - dateB;
+              }));
+        }
+        
+    }
+    const getMedications = async () => {
+        const resp = await axios.get("https://lyfe--app.herokuapp.com/api/health", 
+        {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} });
+        if(resp.data.length || resp.data.medications.length == 0)
+        {
+            setMissingMedication(true);
+        }
+        else
+        {
+            setMissingMedication(false);
+            setMedicationList(resp.data.medications);
+        }
+    }
+    const getCourses = async () => {
+        const resp = await axios.get("https://lyfe--app.herokuapp.com/api/users/",
+        {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} });
+        if(resp.data.length || resp.data.courses.length == 0)
+        {
+            setMissingCourses(true);
+        }
+        else
+        {
+            setMissingCourses(false);
+            setCourses(resp.data.courses);
+        }
+    }
+    const wait = timeout => {
+        return new Promise(resolve => {
+          setTimeout(resolve, timeout);
+        });
+      };
+
+    const onRefresh = React.useCallback(async () => {
+        setRefreshing(true);
+        console.log(jwt.getToken());
+        getReminders();
+        getMedications();
+        getCourses();
+        wait(2000).then(() => setRefreshing(false));
+      }, []);
+
+    useEffect(() => {
+        getReminders();
+        getMedications();
+        getCourses();
+    }, []);
+
+    const formatDateString = (index) => {
+        const dateCheck = new Date(reminders[index].startDate);
+
+        return `${dateCheck.getMonth() + 1}/${dateCheck.getDate()}/${dateCheck.getFullYear()} ${dateCheck.getHours()}:${dateCheck.getMinutes() < 10 ? '0' + dateCheck.getMinutes() : dateCheck.getMinutes()}`;
+    }
+    formatCourseStartDateString = (index) => {
+        const dateCheck = new Date(courses[index].start);
+
+        return `${dateCheck.getHours()}:${dateCheck.getMinutes() < 10 ? '0' + dateCheck.getMinutes() : dateCheck.getMinutes()}`;
+    }
+    const formatCourseEndDateString = (index) => {
+        const dateCheck = new Date(courses[index].end);
+
+        return `${dateCheck.getHours()}:${dateCheck.getMinutes() < 10 ? '0' + dateCheck.getMinutes() : dateCheck.getMinutes()}`;
+    }
+    const formatCourseDays = (index) => {
+        return courses[index].day.join(', ');
+    }
     return(
-        <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
-            <View style={styles.logoContainer}>
-                <Image style={styles.logo} source={require('../../assets/logo4.png')}></Image>
-            </View>
-            <View style={{alignItems:'center', marginTop:30}}>
-                <TextInput
-                style={styles.inputView}
-                placeholder= 'First Name'
-                placeholderTextColor='black'
-                underlineColorAndroid='transparent'
-                returnKeyType='next'
-                blurOnSubmit={false}
-                ></TextInput>
-            </View>
-            <View style={{alignItems:'center'}}>
-                <TextInput
-                style={styles.inputView}
-                placeholder= 'Last Name'
-                placeholderTextColor='black'
-                underlineColorAndroid='transparent'
-                returnKeyType='next'
-                blurOnSubmit={false}
-                ></TextInput>
-            </View>
-            <View style={{alignItems:'center'}}>
-                <TextInput
-                style={styles.inputView}
-                placeholder= 'Email'
-                placeholderTextColor='black'
-                underlineColorAndroid='transparent'
-                returnKeyType='next'
-                blurOnSubmit={false}
-                ></TextInput>
-            </View>
-            <View style={{alignItems:'center'}}>
-                <TextInput
-                style={styles.inputView}
-                placeholder= 'Password'
-                placeholderTextColor='black'
-                underlineColorAndroid='transparent'
-                secureTextEntry={true}
-                blurOnSubmit={true}
-                ></TextInput>
-            </View>
-            <TouchableOpacity style={styles.loginBtn}>
-                <Text style={styles.signUp} >Create Account</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.toLogin}>
-            <View style={{alignContent:'center', marginTop:30}}>
-                <Text style={styles.loginText} >
-                    Already have an account? Tap here.
-                </Text>
-            </View>
-            </TouchableOpacity>
-        </LinearGradient>
+            <SafeAreaProvider style={styles.container}>
+                <ScrollView 
+                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+                        <Card containerStyle={{width:315, borderRadius:15}}>
+                            <Card.Title>Upcoming Reminders</Card.Title>
+                            <Card.Divider/>
+                            <View style={{backgroundColor:'green'}}>
+                                {!missingReminders ?
+                                    reminders.map((l,i) => (
+                                        <ListItem key={i}
+                                        bottomDivider
+                                        >
+                                        <ListItem.Content>
+                                            <ListItem.Title>{l.name}</ListItem.Title>
+                                            <ListItem.Subtitle>{l.description} {formatDateString(i)}</ListItem.Subtitle>
+                                        </ListItem.Content>
+                                    </ListItem>
+                                    ))
+                                :
+                                    <Text> You currently have no reminders.</Text>
+                                }
+                            </View>
+                        </Card>
+                        <Card containerStyle={{width:315, borderRadius:15}}>
+                            <Card.Title>Medications to Take</Card.Title>
+                            <Card.Divider/>
+                            <View>
+                            {!missingMedication ?
+                                    medicationList.map((l,i) => (
+                                        <ListItem key={i}
+                                        bottomDivider
+                                        >
+                                        <ListItem.Content>
+                                            <ListItem.Title>{l.name}</ListItem.Title>
+                                            <ListItem.Subtitle>{l.dosage} {l.frequency}</ListItem.Subtitle>
+                                        </ListItem.Content>
+                                    </ListItem>
+                                    )) 
+                                :
+                                    <Text> You currently have no medications to take.</Text>
+                            }
+                            </View>
+                        </Card>
+                        <Card containerStyle={{width:315, borderRadius:15}}>
+                            <Card.Title>Classes</Card.Title>
+                            <Card.Divider/>
+                            <View>
+                            {!missingCourses ?
+                                courses.map((l,i) => (
+                                    <ListItem key={i}
+                                    bottomDivider
+                                    >
+                                    <ListItem.Content>
+                                        <ListItem.Title>{l.courseCode} </ListItem.Title>
+                                        <ListItem.Subtitle>{l.professor} {formatCourseDays(i)} </ListItem.Subtitle>
+                                        <ListItem.Subtitle>{formatCourseStartDateString(i)} - {formatCourseEndDateString(i)}</ListItem.Subtitle>
+                                    </ListItem.Content>
+                                </ListItem>
+                                ))
+                            :
+                                <Text>You currently have no classes.</Text>
+                            }
+                            </View>
+                        </Card>
+                </ScrollView>
+           </SafeAreaProvider>
     );
 }
 
 export default Dashboard;
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        paddingTop:50,
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
+        backgroundColor:'#c8c8c8',//'#f0f0f0'
     },
     logoContainer: {
         alignItems:'center',

@@ -1,6 +1,7 @@
 import React, { useState, useContext, Component} from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Dimensions} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Overlay, Button } from 'react-native-elements';
 import axios from 'axios';
 import {JWTContext} from '../contexts/JWTContext.js'
 //import { useNavigation } from '@react-navigation/native';
@@ -23,7 +24,8 @@ class Register extends Component{
         email: "",
         password: "",
         errorCheck: false,
-        errorMsg: ""
+        errorMsg: "",
+        toggleOL: false,
     }
     updateFirstName = (text) => {
         this.setState({
@@ -59,11 +61,29 @@ class Register extends Component{
     })
     .then((response) => {
         console.log(response.data);
-        this.setState({
-            errorCheck: true,
-            errorMsg: response.data.message
-        });
+        
         console.log(this.state);
+        if(response.status == 200)
+        {
+            console.log("HELLOOOOO");
+            this.setState({
+               toggleOL: true 
+            });
+        }
+        else if(response.status == 400)
+        {
+            this.setState({
+                errorCheck: true,
+                errorMsg: response.data.message,
+            });
+        }
+        else if(response.status == 500)
+        {
+            this.setState({
+                errorCheck: true,
+                errorMsg: response.data.message,
+            });
+        }
     })
     .catch((error) => {
         console.log(error);
@@ -77,7 +97,6 @@ class Register extends Component{
     focusNextField(id) {
     this.inputs[id].focus();
     }
-
     render(){
         return(
             <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
@@ -142,6 +161,18 @@ class Register extends Component{
                 onPress={() => this.registerUser()}>
                     <Text style={styles.signUp} >Create Account</Text>
                 </TouchableOpacity>
+                <Overlay
+                        isVisible={this.state.toggleOL}
+                        onBackdropPress={() => {this.setState({toggleOL:false}); this.props.navigation.navigate('Login')}}
+                        fullScreen={false}>
+                            <View style={{alignItems:'center', paddingBottom:10}}>
+                                <Text style={{fontSize: 17,fontWeight:'bold'}}>Email Verification</Text>
+                            </View>
+                            <View>
+                                <Text>An email has been sent</Text>
+                                <Text>to verify your account.</Text>
+                            </View>
+                        </Overlay>
             </LinearGradient>
         );
     }
