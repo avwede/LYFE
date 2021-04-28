@@ -1,10 +1,13 @@
 import React, { useState, useContext, Component} from 'react';
 import { StyleSheet, Text, View, Image, KeyboardAvoidingView, TextInput, TouchableOpacity, Dimensions, ScrollView} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import axios from 'axios';
+import { JWTContext } from '../contexts/JWTContext.js'
 
 const {width: WIDTH} = Dimensions.get('window');
 
 class Login extends Component{
+    static contextType = JWTContext;
     constructor(props) {
         super(props);
     
@@ -17,7 +20,9 @@ class Login extends Component{
     }
     state = {
         email: "",
-        password: ""
+        password: "",
+        errorCheck: false,
+        errorMsg: ""
     }
     updateEmail = (text) => {
         this.setState({
@@ -31,16 +36,28 @@ class Login extends Component{
         })
         console.log(text);
     }
+    storeJWT = async (token) => {
+        await this.context.setToken(token);
+        console.log(await this.context.getToken());
+        this.props.updateLoggedIn();
+    }
+    // Store token if successful login
     loginUser = () => {
-        axios.post("https://test-lyfe-deployment-v2.herokuapp.com/api/users/login", {
+        axios.post("https://lyfe--app.herokuapp.com/api/users/login", {
             email: this.state.email,
             password: this.state.password,
     })
-    .then(function(response) {
-        console.log(response.data);
+    .then((response) => {
+        console.log(response.data.token);
+        this.storeJWT(response.data.token);
     })
-    .catch(function(error){
+    .catch((error) => {
         console.log(error);
+        console.log(error.response.data.error);
+        this.setState({
+            errorCheck: true,
+            errorMsg: error.response.data.error
+        });
     })        
     }
         render(){
@@ -73,13 +90,16 @@ class Login extends Component{
                         ref={ input => {this.inputs['two'] = input;}}
                         onChangeText={this.updatePassword}
                         ></TextInput>
+                        {this.state.errorCheck && <View>
+                            <Text>Error! {this.state.errorMsg}</Text>
+                        </View>}
                         <TouchableOpacity style={styles.forgotPos} 
                         onPress={() => this.props.navigation.navigate('Forgot Password')}>
                             <Text style={styles.forgotText}>
                                 Forgot Password?
                             </Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.loginBtn}>
+                        <TouchableOpacity style={styles.loginBtn} onPress={() => this.loginUser()}>
                             <Text style={styles.loginText}>
                                 Sign In
                             </Text>

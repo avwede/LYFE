@@ -111,9 +111,9 @@ const Health = ({navigation}) => {
         return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} ${time.getHours()}:${time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes()}`;
     };
 
-    const formatDateString = (index) => {
-        const dateCheck = new Date(data[index].startDate);
-        return `${dateCheck.getMonth() + 1}/${dateCheck.getDate()}/${dateCheck.getFullYear()} ${dateCheck.getHours()}:${dateCheck.getMinutes() < 10 ? '0' + dateCheck.getMinutes() : dateCheck.getMinutes()}`;
+    const formatDateString = () => {
+        const dateCheck = new Date(dateOfBirth);
+        return `${dateCheck.getMonth() + 1}/${dateCheck.getDate()}/${dateCheck.getFullYear()}`;
     }
 
     const showMode = (currentMode) => {
@@ -145,7 +145,7 @@ const Health = ({navigation}) => {
                                         <ListItem.Title>Date Of Birth:</ListItem.Title>
                                     </View>
                                     <View style={{flex:1, flexDirection:'row-reverse'}}>
-                                        <Text>{dateOfBirth}</Text>
+                                        <Text>{formatDateString()}</Text>
                                         {/* <TextInput
                                         editable={false}
                                         style={styles.inputView}

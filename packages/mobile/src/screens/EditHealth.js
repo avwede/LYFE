@@ -1,12 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, TextInput, ScrollView, TouchableOpacity, Dimensions, KeyboardAvoidingView, TouchableNativeFeedback} from 'react-native';
+import { StyleSheet, Text, View, Image, TextInput, ScrollView, KeyboardAvoidingView, TouchableNativeFeedback} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { List } from 'react-native-paper';
-import { ListItem, Divider, Icon, Overlay, Button, Input, Header } from 'react-native-elements';
+import { ListItem, Divider, Icon, Overlay, Button, Input} from 'react-native-elements';
 import {Picker} from 'native-base';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import RNDateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
 import {JWTContext} from '../contexts/JWTContext.js'
 
@@ -96,6 +95,7 @@ const EditHealth = ({navigation}) => {
         }
         else
         {
+            setDate(new Date(resp.data.dateOfBirth));
             setDOB(resp.data.dateOfBirth);
             setHeight(resp.data.height);
             setWeight(resp.data.weight);
@@ -112,6 +112,7 @@ const EditHealth = ({navigation}) => {
     const createHealthProfile = async () => {
         const response = await axios.post("https://lyfe--app.herokuapp.com/api/health",
         {
+            "dateOfBirth": dateOfBirth,
             "height": height,
             "weight": weight,
             "gender": gender,
@@ -127,6 +128,7 @@ const EditHealth = ({navigation}) => {
     const updateHealthProfile = async () => {
         const response = await axios.put("https://lyfe--app.herokuapp.com/api/health",
         {
+            "dateOfBirth": dateOfBirth,
             "height": height,
             "weight": weight,
             "gender": gender,
@@ -228,28 +230,19 @@ const EditHealth = ({navigation}) => {
     }
 
     const onChangeDate = (event, selectedDate) => {
-        setShow(Platform.OS === 'ios');
-        if (mode == 'date') {
+        
+        if (mode == 'date' && show == true) {
             const currentDate = selectedDate || date;
+            setShow(false);
             setDate(currentDate);
-            setMode('time');
-            setShow(Platform.OS !== 'ios'); 
-        } else {
-            const selectedTime = selectedDate || new Date();
-            setMedication({...medication, reminder:{startDate:selectedTime}});
-            setShow(Platform.OS === 'ios'); 
-            setMode('date'); 
+            setDOB(currentDate);
         }
+        //setShow(false);
     };
 
     const formatDate = (date, time) => {
-        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} ${time.getHours()}:${time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes()}`;
+        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
     };
-
-    const formatDateString = (index) => {
-        const dateCheck = new Date(data[index].startDate);
-        return `${dateCheck.getMonth() + 1}/${dateCheck.getDate()}/${dateCheck.getFullYear()} ${dateCheck.getHours()}:${dateCheck.getMinutes() < 10 ? '0' + dateCheck.getMinutes() : dateCheck.getMinutes()}`;
-    }
 
     const showMode = (currentMode) => {
         setShow(true);
@@ -275,11 +268,24 @@ const EditHealth = ({navigation}) => {
                                         <ListItem.Title>Date Of Birth:</ListItem.Title>
                                     </View>
                                     <View style={{flex:1, flexDirection:'row-reverse'}}>
-                                        <TextInput
+                                        {/* <TextInput
                                         style={styles.inputView}
                                         defaultValue={dateOfBirth}
                                         onChangeText={setDOB}>
-                                        </TextInput>
+                                        </TextInput> */}
+                                        <TouchableNativeFeedback 
+                        title='Show Date Picker'
+                        onPress={() => showDatepicker()}>
+                            <Text>{formatDate(date, time)}</Text>
+                        </TouchableNativeFeedback>
+                        {show && (
+                            <DateTimePicker
+                                value={date}
+                                display='default'
+                                mode={mode}
+                                onChange={onChangeDate}
+                            />
+                        )}
                                     </View>
                                 </ListItem.Content>
                             </ListItem>
@@ -329,7 +335,7 @@ const EditHealth = ({navigation}) => {
                                     </View>
                                 </ListItem.Content>
                             </ListItem>
-                            <ListItem bottomDivider containerStyle={{borderBottomEndRadius:15, borderBottomStartRadius:15}}>
+                            <ListItem bottomDivider>
                                 <ListItem.Content style={{flex:1, flexDirection:'row'}}>
                                     <View style={{flex:1}}>
                                         <ListItem.Title>Blood Type:</ListItem.Title>

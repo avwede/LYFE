@@ -1,11 +1,13 @@
 import React, { useState, useContext, useEffect, Component} from 'react';
-import { StyleSheet, Image, TextInput, TouchableNativeFeedback, Dimensions, CheckBox} from 'react-native';
+import { StyleSheet, Image, TextInput, TouchableNativeFeedback, Dimensions, Share, ScrollView, CheckBox} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Overlay, Divider, Button, registerCustomIconType } from 'react-native-elements';
-import { Container, Header, Content, Icon, Accordion, Text, View } from 'native-base';
+import { Container, Header, Content, Icon, Accordion, Text, View, Item } from 'native-base';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import axios from 'axios';
+import {JWTContext} from '../contexts/JWTContext.js'
+import { useScrollToTop } from '@react-navigation/native';
 
-// TODO: Integrate push notifications.
 // https://reactnative.dev/docs/flexbox
 
 const {width: WIDTH} = Dimensions.get('window')
@@ -17,13 +19,22 @@ const Reminders = (props) => {
     const [addOrEdit, setAddorEdit] = useState(true);
     const [visible, setVisible] = useState(false);
     const [data, setData] = useState();
-    const [checked, setChecked] = useState(false);
+    const [name, setName] = useState();
+    const [description, setDescription] = useState();
+    const [location, setLocation] = useState();
     const [date, setDate] = useState(new Date());
     const [time, setTime] = useState(new Date());
+    const [type, setType] = useState();
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
     // This holds index in state for the edit and delete overlay. 
     const [activeIndex, setActiveIndex] = useState(Number.MIN_SAFE_INTEGER);
+    const [triggerRefresh, setTriggerRefresh] = useState(false);
+    const [rand, setRand] = useState(Math.floor(Math.random() * 4));
+
+    const ref = React.useRef(null);
+    useScrollToTop(ref);
+    const jwt = useContext(JWTContext);
 
     // https://stackoverflow.com/questions/58925515/using-react-native-community-datetimepicker-how-can-i-display-a-datetime-picker
     const onChangeDate = (event, selectedDate) => {
@@ -58,50 +69,100 @@ const Reminders = (props) => {
     // Put it into the states for the overlay.
     const editHelper = (index) => {
         setActiveIndex(index);
-        setAddorEdit(true);
+        setName(data[index].name);
+        setDescription(data[index].description);
+        setLocation(data[index].location.location);
+        setDate(new Date(data[index].startDate));
+        setTime(new Date(data[index].startDate));
+        setAddorEdit(false);
         setDeleteOverlay(false);
         toggleOverlay();
     }
 
     const deleteHelper = (index) => {
+        console.log(index);
         setActiveIndex(index);
-        setDeleteOverlay(true); 
+        console.log(activeIndex);
+        //console.log(data[activeIndex]._id);
+        setDeleteOverlay(true);
         toggleOverlay();
     }
-
+ 
     // For the following functions, make a POST request followed
     // by a GET request to fetch the updated data, then update "data" state
-    const addReminder = () => {
-        if (checked) {
-
-        }
-        return;
+    // Pass params and headers
+    // Wrap in try/catch to get error messages
+    const addReminder = async () => {
+        console.log(name);
+        console.log(description);
+        console.log(type);
+        console.log(location);
+        console.log(time);
+        const response = await axios.post("https://lyfe--app.herokuapp.com/api/reminders", {
+            "name": name,
+            "description": description,
+            //"type": type,
+            "location": {
+                "type": "Classroom Location",
+                "location": location
+              },
+            "startDate": time,
+          }, {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} })
+          .catch((error) => console.log(error.response.data.error));
+        //setData(response.data);
+        setTriggerRefresh(!triggerRefresh);
+        toggleOverlay();
     }
 
-    const editReminder = () => {
+    const getReminders = async () => {
+        const resp = await axios.get("https://lyfe--app.herokuapp.com/api/reminders", 
+        {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} });
+        setData(resp.data.sort(function compare(a, b) {
+            var dateA = new Date(a.startDate);
+            var dateB = new Date(b.startDate);
+            return dateA - dateB;
+          }));
+        console.log(data);
+    }
 
+    // get ID from data
+    const editReminder = async () => {
+        await axios.put(`https://lyfe--app.herokuapp.com/api/reminders/${data[activeIndex]._id}`, {
+            "name": name,
+            "description": description,
+            //"type": type,
+            "location": {
+                "type": "Classroom Location",
+                "location": location
+              },
+            "startDate": time,
+          }, {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} })
+          .catch((error) => console.log(error.response.data.error));;
         setActiveIndex(Number.MIN_SAFE_INTEGER);
+        setTriggerRefresh(!triggerRefresh);
         toggleOverlay();
-        return;
     }
     
-    // Turn off alarm if needed
-    const deleteReminder = () => {
-
+    const deleteReminder = async () => {
+        console.log(activeIndex);
+        await axios.delete(`https://lyfe--app.herokuapp.com/api/reminders/${data[activeIndex]._id}`,
+        {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'}})
+        .catch((error) => console.log(error.response.data.error));
         setActiveIndex(Number.MIN_SAFE_INTEGER);
-        toggleOverlay();       
-        return;
+        setTriggerRefresh(!triggerRefresh);
+        toggleOverlay();
     }
 
-    const renderHeader = () => {
+    const renderHeader = (item) => {
         return(<View style={{
             flexDirection: "row",
             padding: 10,
             justifyContent: "space-between",
             alignItems: "center" ,
-            backgroundColor: "#A9DAD6" }}>
-          <Text style={{ fontWeight: "600" }}>
-              Reminder #1
+            backgroundColor: "#A9DAD6",
+            width: WIDTH - 50 }}>
+            <Text style={{ fontWeight: "600" }}>
+              {item.name}
             </Text>
           </View>)
     }
@@ -110,56 +171,87 @@ const Reminders = (props) => {
     // Accordion component should handle .map()
     // Try to set up so the item's position in array (index) is passed
     // to editHelper()
-    const renderAccordion = () => {
+    const renderAccordion = (item, index) => {
         return(
-        <View>
-        <View>
-            <Text>04/21/2021 06:00 PM</Text>
+        <View style={styles.expandedAccordion}>
+        <View style={styles.textSpacing}>
+            <Text>{formatDateString(index)}</Text>
         </View>
-        <View>
-            <Text>Submit POOP Large Project</Text>
+        <View style={styles.textSpacing}>
+            <Text>{item.description}</Text>
         </View>
-        <View>
-            <Text>Type: Assignment</Text>
+        <View style={styles.textSpacing}>
+            <Text>Location: {item.location.location}</Text>
         </View>
-        <View>
-            <TouchableNativeFeedback 
-            onPress = {(index) => editHelper(index)}>
+        <View style={{flexDirection: 'row', justifyContent: "space-around", paddingBottom: 10}}>
+            <TouchableNativeFeedback
+            onPress = {() => editHelper(index)}>
                 <Icon type="FontAwesome5" name="edit">
                 </Icon>
             </TouchableNativeFeedback>
-            <TouchableNativeFeedback 
-            onPress = {(index) => deleteHelper(index)}>
+            <TouchableNativeFeedback
+            onPress = {() => deleteHelper(index)}>
                 <Icon type="FontAwesome5" name="trash-alt">
                 </Icon>
             </TouchableNativeFeedback>
         </View>
-        </View>)
+        </View>);
     }
 
     // https://stackoverflow.com/questions/58925515/using-react-native-community-datetimepicker-how-can-i-display-a-datetime-picker
     const formatDate = (date, time) => {
-        return `${date.getMonth()}/${date.getDate() +
-          1}/${date.getFullYear()} ${time.getHours()}:${time.getMinutes()}`;
+        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} ${time.getHours()}:${time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes()}`;
     };
 
-    // For testing purposes
-    const dataArray = [
-        {title: "1"}
-    ];
+    const formatDateString = (index) => {
+        const dateCheck = new Date(data[index].startDate);
 
-    /*useEffect(() => {
+        return `${dateCheck.getMonth() + 1}/${dateCheck.getDate()}/${dateCheck.getFullYear()} ${dateCheck.getHours()}:${dateCheck.getMinutes() < 10 ? '0' + dateCheck.getMinutes() : dateCheck.getMinutes()}`;
+    }
+
+    const createMsg = () => {
+        let msg = `Hello! Here are my LYFE Reminders:
+        
+`;
+        for (let i = 0; i < data.length; i++)
+        {
+            msg += `${i + 1}) ${data[i].name}
+${formatDateString(i)}
+            
+${data[i].description}
+            
+Location: ${data[i].location.location}
+`
+        }
+
+        return msg;
+    }
+
+    const onShare = async () => {
+        try {
+          const msg = createMsg();
+          const result = await Share.share({
+            message: msg,
+          });
+        } catch (error) {
+          console.log(error.message);
+        }
+      };
+
+    useEffect(() => {
        getReminders();
-    }, [data]); */
+       setRand(Math.floor(Math.random() * 4));
+    }, [triggerRefresh]);
     
     return(
-        <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
-            <View style={{alignItems:'center', marginTop: 150, flexDirection:'row', 
-            justifyContent: "space-between", width:WIDTH-100}}>
+        <View style={styles.container}>
+            <ScrollView ref={ref} contentContainerStyle={{flexGrow : 1}}
+            showsVerticalScrollIndicator={false}>
+            <View style={{marginTop: 75, alignItems:'center', flexDirection:'row', justifyContent: "space-between", width:WIDTH-50}}>
                 <Text>
                     Reminders
                 </Text>
-                <Button title="Add Reminder" onPress = {() => {setDeleteOverlay(false); setAddorEdit(false); toggleOverlay();}} />
+                <Button title="Add Reminder" onPress = {() => {setDeleteOverlay(false); setAddorEdit(true); toggleOverlay();}} />
                     {(!deleteOverlay) ?
                         (<Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
                         <View><Text>New Reminder</Text></View>
@@ -170,6 +262,8 @@ const Reminders = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        defaultValue={addOrEdit ? undefined : name}
+                        onChangeText={(text) => setName(text)}
                         ></TextInput></View>
                         <View><TextInput
                         style={styles.inputView}
@@ -178,6 +272,8 @@ const Reminders = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        defaultValue={addOrEdit ? undefined : description}
+                        onChangeText={(text) => setDescription(text)}
                         ></TextInput></View>
                         <View><TextInput
                         style={styles.inputView}
@@ -186,8 +282,10 @@ const Reminders = (props) => {
                         underlineColorAndroid='transparent'
                         returnKeyType='next'
                         blurOnSubmit={false}
+                        defaultValue={addOrEdit ? undefined : location}
+                        onChangeText={(text) => setLocation(text)}
                         ></TextInput></View>
-                        <View>
+                        <View style={styles.inputView}>
                         <TouchableNativeFeedback 
                         title='Show Date Picker'
                         onPress={() => showDatepicker()}>
@@ -202,20 +300,7 @@ const Reminders = (props) => {
                             />
                         )}
                         </View>
-                        <View><TextInput
-                        style={styles.inputView}
-                        placeholder= 'Type'
-                        placeholderTextColor='black'
-                        underlineColorAndroid='transparent'
-                        returnKeyType='next'
-                        blurOnSubmit={false}
-                        ></TextInput></View>
-                        <View>
-                            <CheckBox title='Set Alarm' iconRight
-                            checked={checked} onPress={() => setChecked(!checked)}
-                            />
-                        </View>
-                        {addOrEdit ? (<Button title="Add" onPress={() => addReminder}></Button>) : 
+                        {addOrEdit ? (<Button title="Add" onPress={() => addReminder()}></Button>) : 
                         (<Button title="Edit" onPress={() => editReminder()}></Button>)}
                         </Overlay>) :
                         (<Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
@@ -234,12 +319,19 @@ const Reminders = (props) => {
                         </View>
                         </Overlay>)}
             </View>
-            <View>
-                <Divider />
+            <View style={{marginVertical: 25, height: (0.01*HEIGHT), width: WIDTH - 50}}>
+                <Text>
+                {
+                    (rand === 0) ? `"Write a wise saying and your name will live forever. " - Anonymous` :
+                    (rand === 1) ? `"People say nothing is impossible, but I do nothing every day." - A.A. Milne` :
+                    (rand === 2) ? `"A witty saying proves nothing." - Voltaire` :
+                    `"JUST DO IT" - Shia Labeouf`
+                }
+                </Text>
             </View>
-            <View style={{alignItems:'center', marginTop: 50}}>
+            <View style={styles.accordion}>
                 <Accordion
-                dataArray={dataArray}
+                dataArray={data}
                 animation={true}
                 icon="add"
                 expandedIcon="remove"
@@ -248,7 +340,12 @@ const Reminders = (props) => {
                 renderContent={renderAccordion}
                 />            
             </View>
-        </LinearGradient>
+            <Button style={styles.loginBtn}
+                onPress={() => onShare()} title="Share">
+                    <Text style={styles.signUp} >Share Reminders</Text>
+            </Button>
+            </ScrollView>
+        </View>
     );
 }
 
@@ -259,12 +356,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
+        backgroundColor:'#eae9eb'
     },
     inputContainer:{
         marginTop:10
     },
     inputView:{
-        width: WIDTH - 100,
+        width: WIDTH - 50,
         backgroundColor:"white",
         borderRadius:25,
         height:50,
@@ -287,7 +385,7 @@ const styles = StyleSheet.create({
         marginTop:60
     },
     signUp:{
-        color:'white',
+        //color:'white',
         fontSize: 13,
         fontFamily: 'sans-serif',
     },
@@ -295,5 +393,15 @@ const styles = StyleSheet.create({
         color:'black',
         fontSize: 12,
         fontFamily: 'sans-serif',
-    }
+    },
+    accordion:{
+        alignItems:'center', 
+        marginTop: 30
+    },
+    expandedAccordion: {
+        width: WIDTH - 50
+    },
+    textSpacing:{
+        marginVertical: 10
+    },
 });

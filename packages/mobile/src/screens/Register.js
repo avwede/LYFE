@@ -1,8 +1,9 @@
 import React, { useState, useContext, Component} from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Dimensions} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Overlay, Button } from 'react-native-elements';
 import axios from 'axios';
-import { JWTProvider } from '../contexts/JWTContext';
+import {JWTContext} from '../contexts/JWTContext.js'
 //import { useNavigation } from '@react-navigation/native';
 
 
@@ -14,11 +15,17 @@ class Register extends Component{
         this.focusNextField = this.focusNextField.bind(this);
         this.inputs = {};
       }
+    
+    static contextType = JWTContext;
+    
     state = {
         firstName: "",
         lastName: "",
         email: "",
-        password: ""
+        password: "",
+        errorCheck: false,
+        errorMsg: "",
+        toggleOL: false,
     }
     updateFirstName = (text) => {
         this.setState({
@@ -44,24 +51,52 @@ class Register extends Component{
         })
         console.log(text);
     }
-    registerUser = () => {
-        axios.post("https://test-lyfe-deployment-v2.herokuapp.com/api/users/register", {
-            firstName: this.state.firstName,
-            lastName: this.state.lastName,
-            email: this.state.email,
-            password: this.state.password,
+    registerUser = async () => {
+        console.log(this.state);
+        await axios.post("https://lyfe--app.herokuapp.com/api/users/register", {
+            "firstName": this.state.firstName,
+            "lastName": this.state.lastName,
+            "email": this.state.email,
+            "password": this.state.password
     })
-    .then(function(response) {
-        console.log(response);
+    .then((response) => {
+        console.log(response.data);
+        
+        console.log(this.state);
+        if(response.status == 200)
+        {
+            console.log("HELLOOOOO");
+            this.setState({
+               toggleOL: true 
+            });
+        }
+        else if(response.status == 400)
+        {
+            this.setState({
+                errorCheck: true,
+                errorMsg: response.data.message,
+            });
+        }
+        else if(response.status == 500)
+        {
+            this.setState({
+                errorCheck: true,
+                errorMsg: response.data.message,
+            });
+        }
     })
-    .catch(function(error){
+    .catch((error) => {
         console.log(error);
+        console.log(error.response.data.error);
+        this.setState({
+            errorCheck: true,
+            errorMsg: "Error! " + error.response.data.error
+        });
     })
     }    
     focusNextField(id) {
     this.inputs[id].focus();
     }
-
     render(){
         return(
             <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
@@ -119,10 +154,25 @@ class Register extends Component{
                     onChangeText={this.updatePassword}
                     ></TextInput>
                 </View>
+                {this.state.errorCheck && <View>
+                    <Text>{this.state.errorMsg}</Text>
+                </View>}
                 <TouchableOpacity style={styles.loginBtn}
                 onPress={() => this.registerUser()}>
                     <Text style={styles.signUp} >Create Account</Text>
                 </TouchableOpacity>
+                <Overlay
+                        isVisible={this.state.toggleOL}
+                        onBackdropPress={() => {this.setState({toggleOL:false}); this.props.navigation.navigate('Login')}}
+                        fullScreen={false}>
+                            <View style={{alignItems:'center', paddingBottom:10}}>
+                                <Text style={{fontSize: 17,fontWeight:'bold'}}>Email Verification</Text>
+                            </View>
+                            <View>
+                                <Text>An email has been sent</Text>
+                                <Text>to verify your account.</Text>
+                            </View>
+                        </Overlay>
             </LinearGradient>
         );
     }

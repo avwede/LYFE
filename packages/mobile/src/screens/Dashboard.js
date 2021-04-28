@@ -3,7 +3,6 @@ import { StyleSheet, Text, View, RefreshControl, TouchableOpacity, Dimensions, S
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Card, ListItem, Header } from 'react-native-elements';
-import { Appbar } from 'react-native-paper';
 import {JWTContext} from '../contexts/JWTContext';
 import axios from 'axios';
 
@@ -32,7 +31,11 @@ const Dashboard = (props) => {
         else
         {
             setMissingReminders(false);
-            setReminders(resp.data);
+            setReminders(resp.data.sort(function compare(a, b) {
+                var dateA = new Date(a.startDate);
+                var dateB = new Date(b.startDate);
+                return dateA - dateB;
+              }));
         }
         
     }
@@ -69,9 +72,8 @@ const Dashboard = (props) => {
       };
 
     const onRefresh = React.useCallback(async () => {
-        console.log("Hello everyone my name is jeff");
         setRefreshing(true);
-    
+        console.log(jwt.getToken());
         getReminders();
         getMedications();
         getCourses();
@@ -84,6 +86,24 @@ const Dashboard = (props) => {
         getCourses();
     }, []);
 
+    const formatDateString = (index) => {
+        const dateCheck = new Date(reminders[index].startDate);
+
+        return `${dateCheck.getMonth() + 1}/${dateCheck.getDate()}/${dateCheck.getFullYear()} ${dateCheck.getHours()}:${dateCheck.getMinutes() < 10 ? '0' + dateCheck.getMinutes() : dateCheck.getMinutes()}`;
+    }
+    formatCourseStartDateString = (index) => {
+        const dateCheck = new Date(courses[index].start);
+
+        return `${dateCheck.getHours()}:${dateCheck.getMinutes() < 10 ? '0' + dateCheck.getMinutes() : dateCheck.getMinutes()}`;
+    }
+    const formatCourseEndDateString = (index) => {
+        const dateCheck = new Date(courses[index].end);
+
+        return `${dateCheck.getHours()}:${dateCheck.getMinutes() < 10 ? '0' + dateCheck.getMinutes() : dateCheck.getMinutes()}`;
+    }
+    const formatCourseDays = (index) => {
+        return courses[index].day.join(', ');
+    }
     return(
             <SafeAreaProvider style={styles.container}>
                 <ScrollView 
@@ -99,7 +119,7 @@ const Dashboard = (props) => {
                                         >
                                         <ListItem.Content>
                                             <ListItem.Title>{l.name}</ListItem.Title>
-                                            <ListItem.Subtitle>{l.description} {l.startDate}</ListItem.Subtitle>
+                                            <ListItem.Subtitle>{l.description} {formatDateString(i)}</ListItem.Subtitle>
                                         </ListItem.Content>
                                     </ListItem>
                                     ))
@@ -138,8 +158,9 @@ const Dashboard = (props) => {
                                     bottomDivider
                                     >
                                     <ListItem.Content>
-                                        <ListItem.Title>{l.courseCode}</ListItem.Title>
-                                        <ListItem.Subtitle>{l.professor} {l.location.location}</ListItem.Subtitle>
+                                        <ListItem.Title>{l.courseCode} </ListItem.Title>
+                                        <ListItem.Subtitle>{l.professor} {formatCourseDays(i)} </ListItem.Subtitle>
+                                        <ListItem.Subtitle>{formatCourseStartDateString(i)} - {formatCourseEndDateString(i)}</ListItem.Subtitle>
                                     </ListItem.Content>
                                 </ListItem>
                                 ))
@@ -156,7 +177,7 @@ const Dashboard = (props) => {
 export default Dashboard;
 const styles = StyleSheet.create({
     container: {
-        paddingTop:10,
+        paddingTop:50,
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',

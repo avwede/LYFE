@@ -1,8 +1,7 @@
 import React, { useState, Component } from 'react';
 
 const LoginContext = React.createContext({
-    loggedIn: {},
-    toggleLoggedIn: () => {},
+    loggedIn: false,
 });
 
 /*const LoginProvider = (props) => {
