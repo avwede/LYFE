@@ -275,7 +275,7 @@ ${formatTimeStart(index)} - ${formatTimeEnd(index)}`}</Text>
             msg += `${i + 1}) ${data[i].courseCode} with ${data[i].professor}
 Location: ${data[i].location.location}
 
-${data[i].day} 
+${data[i].day.join(', ')} 
 
 ${formatTimeStart(i)} - ${formatTimeEnd(i)}
             
@@ -309,7 +309,7 @@ Ending: ${formatDateStringEnd(i)}
     return(
         <View style={styles.container}>
             <ScrollView ref={ref} showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow : 1}}>
-            <View style={{marginTop: 75, alignItems: 'center', flexDirection:'row', 
+            <View style={{marginTop: 25, alignItems: 'center', flexDirection:'row', 
             justifyContent: "space-between", width: WIDTH-50}}>
                 <Text>
                     Classes

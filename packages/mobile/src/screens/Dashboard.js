@@ -24,7 +24,7 @@ const Dashboard = (props) => {
     const getReminders = async () => {
         const resp = await axios.get("https://lyfe--app.herokuapp.com/api/reminders", 
         {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} });
-        if(resp.data.length == 0)
+        if(!(resp.data) || resp.data.length === 0)
         {
             setMissingReminders(true);
         }
@@ -42,7 +42,7 @@ const Dashboard = (props) => {
     const getMedications = async () => {
         const resp = await axios.get("https://lyfe--app.herokuapp.com/api/health", 
         {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} });
-        if(resp.data.length || resp.data.medications.length == 0)
+        if(!(resp.data.medications) || resp.data.medications.length === 0)
         {
             setMissingMedication(true);
         }
@@ -55,7 +55,7 @@ const Dashboard = (props) => {
     const getCourses = async () => {
         const resp = await axios.get("https://lyfe--app.herokuapp.com/api/users/",
         {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} });
-        if(resp.data.length || resp.data.courses.length == 0)
+        if(!(resp.data.courses) || resp.data.courses.length === 0)
         {
             setMissingCourses(true);
         }
@@ -111,7 +111,7 @@ const Dashboard = (props) => {
                         <Card containerStyle={{width:315, borderRadius:15}}>
                             <Card.Title>Upcoming Reminders</Card.Title>
                             <Card.Divider/>
-                            <View style={{backgroundColor:'green'}}>
+                            <View>
                                 {!missingReminders ?
                                     reminders.map((l,i) => (
                                         <ListItem key={i}
@@ -177,7 +177,7 @@ const Dashboard = (props) => {
 export default Dashboard;
 const styles = StyleSheet.create({
     container: {
-        paddingTop:50,
+        paddingTop:25,
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',

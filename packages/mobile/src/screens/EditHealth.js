@@ -46,8 +46,8 @@ const EditHealth = ({navigation}) => {
     const [dateOfBirth, setDOB] = useState(""); // Gen health info
     const [height, setHeight] = useState(0); // gen health info
     const [weight, setWeight] = useState(0); // gen health info
-    const [gender, setGender] = useState(""); // gen health info
-    const [bloodType, setBloodType] = useState(""); // gen health info
+    const [gender, setGender] = useState(); // gen health info
+    const [bloodType, setBloodType] = useState(); // gen health info
 
     const [allergyText, setAllergyText] = useState("");
     const [allergyList, setAllergyList] = useState([]); // wrap this in a function and call .concat to update array
@@ -83,12 +83,15 @@ const EditHealth = ({navigation}) => {
     const [emergencyContact, setEmergencyContact] = useState(initialState);
     
     const [emergencyContactsList, setEmergencyContactsList] = useState ([]);
-    const [additionalInformation, setAdditionalInformation] = useState("");
+    const [additionalInformation, setAdditionalInformation] = useState();
+
+    const isEmpty = (object) => { for(var i in object) { return false; } return true; };
     
     const getHealthProfile = async() => {
         const resp = await axios.get("https://lyfe--app.herokuapp.com/api/health", 
         {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} });
-        if(resp.data.length)
+        console.log(resp.data);
+        if(isEmpty(resp.data))
         {
             console.log("it's empty");
             setCreate(true);
@@ -110,28 +113,51 @@ const EditHealth = ({navigation}) => {
     }
 
     const createHealthProfile = async () => {
+        console.log({"dateOfBirth": (dateOfBirth ? dateOfBirth : new Date("1969-12-31T00:00:00.000Z")),
+        "height": height,
+        "weight": weight,
+        "gender": (gender ? gender : "Prefer not to say"),
+        "bloodType": bloodType,
+        "allergies": allergyList,
+        "healthConditions": healthConditionsList,
+        "medications": medicationList,
+        "emergencyContacts": emergencyContactsList,
+        "additionalInformation": additionalInformation});
         const response = await axios.post("https://lyfe--app.herokuapp.com/api/health",
         {
-            "dateOfBirth": dateOfBirth,
+            "dateOfBirth": (dateOfBirth ? dateOfBirth : "1969-12-31"),
             "height": height,
             "weight": weight,
-            "gender": gender,
+            "gender": (gender ? gender : "Prefer not to say"),
             "bloodType": bloodType,
             "allergies": allergyList,
+            "healthConditions": healthConditionsList,
             "medications": medicationList,
             "emergencyContacts": emergencyContactsList,
             "additionalInformation": additionalInformation
         }, {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} })
-        .catch((error) =>(error.response.data.error));
+        .catch((error) =>(console.log(error.response.data.error)));
+        console.log(response);
+        navigation.navigate('Health Profile');
     }
 
     const updateHealthProfile = async () => {
+        console.log({"dateOfBirth": (dateOfBirth ? dateOfBirth : "1969-12-31"),
+        "height": height,
+        "weight": weight,
+        "gender": (gender ? gender : "Prefer not to say"),
+        "bloodType": bloodType,
+        "allergies": allergyList,
+        "healthConditions": healthConditionsList,
+        "medications": medicationList,
+        "emergencyContacts": emergencyContactsList,
+        "additionalInformation": additionalInformation});
         const response = await axios.put("https://lyfe--app.herokuapp.com/api/health",
         {
-            "dateOfBirth": dateOfBirth,
+            "dateOfBirth": (dateOfBirth ? dateOfBirth : "1969-12-31"),
             "height": height,
             "weight": weight,
-            "gender": gender,
+            "gender": (gender ? gender : "Prefer not to say"),
             "bloodType": bloodType,
             "allergies": allergyList,
             "healthConditions": healthConditionsList,
@@ -140,6 +166,7 @@ const EditHealth = ({navigation}) => {
             "additionalInformation": additionalInformation
         }, {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} })
         .catch((error) =>(error.response.data.error));
+        console.log(response);
         navigation.navigate('Health Profile');
     }
 
@@ -297,7 +324,7 @@ const EditHealth = ({navigation}) => {
                                     <View style={{flex:1, flexDirection:'row-reverse'}}>
                                         <TextInput
                                         style={styles.inputView}
-                                        defaultValue={height.toString()}
+                                        defaultValue={height?.toString()}
                                         onChangeText={setHeight}>
                                         </TextInput>
                                     </View>
@@ -311,7 +338,7 @@ const EditHealth = ({navigation}) => {
                                     <View style={{flex:1, flexDirection:'row-reverse'}}>
                                         <TextInput
                                         style={styles.inputView}
-                                        defaultValue={weight.toString()}
+                                        defaultValue={weight?.toString()}
                                         onChangeText={setWeight}>
                                         </TextInput>
                                     </View>
@@ -367,7 +394,7 @@ const EditHealth = ({navigation}) => {
                         <List.Accordion
                         title="Allergies">
                         {
-                            allergyList.map((l,i) => (
+                            allergyList?.map((l,i) => (
                                 <ListItem key={i}
                                 bottomDivider
                                 onPress={() => {setIndex(i); setViewOrEditAllergyOL(true);}}
@@ -443,7 +470,7 @@ const EditHealth = ({navigation}) => {
                                 underlineColorAndroid='transparent'
                                 returnKeyType='next'
                                 blurOnSubmit={false}
-                                defaultValue={allergyList[index]}
+                                defaultValue={allergyList ? allergyList[index] : undefined}
                                 editable={editAllergy}
                                 onChangeText={updateAllergyText}>
                                 </TextInput>
@@ -480,7 +507,7 @@ const EditHealth = ({navigation}) => {
                         title="Health Conditions"
                         style={{}}>
                             {
-                            healthConditionsList.map((l,i) => (
+                            healthConditionsList?.map((l,i) => (
                                 <ListItem key={i} 
                                 bottomDivider
                                 onPress={() => {setIndex(i); setViewOrEditHealthConditionOL(true);}}
@@ -580,7 +607,7 @@ const EditHealth = ({navigation}) => {
                                 underlineColorAndroid='transparent'
                                 returnKeyType='next'
                                 blurOnSubmit={false}
-                                defaultValue={healthConditionsList[index]}
+                                defaultValue={healthConditionsList ? healthConditionsList[index] : undefined}
                                 editable={editHealthCondition}
                                 onChangeText={updateHealthConditionsText}>
                                 </TextInput>
@@ -616,14 +643,14 @@ const EditHealth = ({navigation}) => {
                         <List.Accordion
                         title="Medications">
                             {
-                            medicationList.map((l,i) => (
+                            medicationList?.map((l,i) => (
                                 <ListItem key={i} 
                                 bottomDivider
                                 onPress={() => {setIndex(i); setMedicationToView(i); setViewOrEditMedicationOL(true);}}
                                 onLongPress={() => {setIndex(i); setDeleteMedicationOL(true);}}>
                                 <ListItem.Content>
-                                    <ListItem.Title>{l.name}</ListItem.Title>
-                                    <ListItem.Subtitle>{l.dosage} {l.frequency}</ListItem.Subtitle>
+                                    <ListItem.Title>{l?.name}</ListItem.Title>
+                                    <ListItem.Subtitle>{l?.dosage} {l?.frequency}</ListItem.Subtitle>
                                 </ListItem.Content>
                                 <ListItem.Chevron/>
                             </ListItem>
@@ -752,21 +779,21 @@ const EditHealth = ({navigation}) => {
                             <TextInput
                             style={styles.inputView}
                             editable={editMedication}
-                            defaultValue={medication.name}
+                            defaultValue={medication?.name}
                             onChangeText={(text) => {setMedication({...medication, name: text});}}>
                             </TextInput>
                             <Text>Dosage:</Text>
                             <TextInput
                             style={styles.inputView}
                             editable={editMedication}
-                            defaultValue={medication.dosage}
+                            defaultValue={medication?.dosage}
                             onChangeText={(text) => {setMedication({...medication, dosage: text});}}>
                             </TextInput>
                             <Text>Frequency:</Text>
                             <TextInput
                             style={styles.inputView}
                             editable={editMedication}
-                            defaultValue={medication.frequency}
+                            defaultValue={medication?.frequency}
                             onChangeText={(text) => {setMedication({...medication, frequency: text});}}>
                             </TextInput>
                             {/* <Text style={{fontSize:14, fontWeight:'bold', paddingLeft:60}}>Reminder</Text>
@@ -832,13 +859,13 @@ const EditHealth = ({navigation}) => {
                         <List.Accordion
                         title="Emergency Contacts">
                             {
-                            emergencyContactsList.map((l,i) => (
+                            emergencyContactsList?.map((l,i) => (
                                 <ListItem key={i} 
                                 bottomDivider
                                 onPress={() => {setIndex(i); setContactToView(i); setViewOrEditContact(true);}}
                                 onLongPress={() => {setIndex(i); setDeleteContactOL(true);}}>
                                 <ListItem.Content>
-                                    <ListItem.Title>{l.firstName} {l.lastName}</ListItem.Title>
+                                    <ListItem.Title>{l?.firstName} {l?.lastName}</ListItem.Title>
                                 </ListItem.Content>
                                 <ListItem.Chevron/>
                             </ListItem>
@@ -951,35 +978,35 @@ const EditHealth = ({navigation}) => {
                             <TextInput
                             style={styles.inputView}
                             onChangeText={(text) => {setEmergencyContact({...emergencyContact, firstName: text});}}
-                            defaultValue={emergencyContact.firstName}
+                            defaultValue={emergencyContact?.firstName}
                             editable={editContact}>
                             </TextInput>
                             <Text>Last Name:</Text>
                             <TextInput
                             style={styles.inputView}
                             onChangeText={(text) => {setEmergencyContact({...emergencyContact, lastName: text});}}
-                            defaultValue={emergencyContact.lastName}
+                            defaultValue={emergencyContact?.lastName}
                             editable={editContact}>
                             </TextInput>
                             <Text>Phone Number:</Text>
                             <TextInput
                             style={styles.inputView}
                             onChangeText={(text) => {setEmergencyContact({...emergencyContact, phoneNumber: text});}}
-                            defaultValue={emergencyContact.phoneNumber}
+                            defaultValue={emergencyContact?.phoneNumber}
                             editable={editContact}>
                             </TextInput>
                             <Text>Email:</Text>
                             <TextInput
                             style={styles.inputView}
                             onChangeText={(text) => {setEmergencyContact({...emergencyContact, email: text});}}
-                            defaultValue={emergencyContact.email}
+                            defaultValue={emergencyContact?.email}
                             editable={editContact}>
                             </TextInput>
                             <Text>Relation:</Text>
                             <TextInput
                             style={styles.inputView}
                             onChangeText={(text) => {setEmergencyContact({...emergencyContact, relation: text});}}
-                            defaultValue={emergencyContact.relation}
+                            defaultValue={emergencyContact?.relation}
                             editable={editContact}>
                             </TextInput>
                         </ScrollView>
@@ -1048,7 +1075,7 @@ const EditHealth = ({navigation}) => {
                                         style={styles.descriptionView}
                                         multiline={true}
                                         defaultValue={additionalInformation}
-                                        onChangeText={setAdditionalInformation}>
+                                        onChangeText={(text) => setAdditionalInformation(text)}>
                                         </TextInput>
                                     </View>
                                 </ListItem.Content>
@@ -1061,13 +1088,13 @@ const EditHealth = ({navigation}) => {
                         <Button
                         title="Save Changes"
                         type='solid'
-                        onPress={() => {updateHealthProfile();}}>
+                        onPress={() => {console.log(create); updateHealthProfile();}}>
                         </Button>
                         :
                         <Button
                         title="Save Changes"
                         type='solid'
-                        onPress={() => {createHealthProfile(); setCreate(false);}}>
+                        onPress={() => {console.log(create); createHealthProfile(); setCreate(false);}}>
                         </Button>
                     }
                     </View>

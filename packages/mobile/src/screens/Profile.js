@@ -35,7 +35,7 @@ const Profile = (props) => {
     // update health, then update user. store in data as intermediary
     const updateProfile = async () => {
         await axios.put("https://lyfe--app.herokuapp.com/api/health/", {
-            "dateOfBirth": dob,
+            "dateOfBirth": dob + "T00:00:00.000Z",
             "height": height,
             "weight": weight,
             "gender": gender,
@@ -62,6 +62,11 @@ const Profile = (props) => {
        getProfile();
     }, [triggerRefresh]); 
 
+    const formatDateString = (dateOfBirth) => {
+        const dateCheck = new Date(dateOfBirth);
+        return `${dateCheck.getMonth() + 1}/${dateCheck.getDate()}/${dateCheck.getFullYear()}`;
+    };
+
     return(
         <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
             <View style={styles.logoContainer}>
@@ -74,7 +79,7 @@ const Profile = (props) => {
                 <Icon type="FontAwesome5" name="edit" style={styles.iconStyle}>
                 </Icon>
                 </TouchableNativeFeedback>
-                <Overlay isVisible={visible} onBackdropPress={() => setVisible(false)}>
+                <Overlay isVisible={visible} onBackdropPress={() => {setVisible(false); setTriggerRefresh(!triggerRefresh)}}>
                         <View><Text>Update Profile</Text></View>
                         <View><TextInput
                         style={styles.inputView}
@@ -95,16 +100,6 @@ const Profile = (props) => {
                         blurOnSubmit={false}
                         defaultValue={data?.lastName}
                         onChangeText={(text) => setLastName(text)}
-                        ></TextInput></View>
-                        <View><TextInput
-                        style={styles.inputView}
-                        placeholder= 'Date of Birth (YYYY-MM-DD)'
-                        placeholderTextColor='black'
-                        underlineColorAndroid='transparent'
-                        returnKeyType='next'
-                        blurOnSubmit={false}
-                        defaultValue={data?.health?.dateOfBirth}
-                        onChangeText={(text) => setDob(text)}
                         ></TextInput></View>
                         <View><TextInput
                         style={styles.inputView}
@@ -172,7 +167,7 @@ const Profile = (props) => {
                 <Text>Name: {data?.firstName + " " + data?.lastName} </Text>
             </View>
             <View style={styles.textSpacing}>
-                <Text>Date of Birth: {data?.health?.dob}</Text>
+                <Text>Date of Birth: {formatDateString(data?.health?.dateOfBirth)}</Text>
             </View>
             <View style={styles.textSpacing}>
                 <Text>Height: {data?.health?.height}</Text>

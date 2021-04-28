@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { StyleSheet, Text, View, Image, TextInput, ScrollView, TouchableOpacity, Dimensions, KeyboardAvoidingView, TouchableNativeFeedback} from 'react-native';
+import { StyleSheet, Text, View, Image, Share, TextInput, ScrollView, TouchableOpacity, Dimensions, KeyboardAvoidingView, TouchableNativeFeedback} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { List } from 'react-native-paper';
@@ -76,11 +76,15 @@ const Health = ({navigation}) => {
     
     const [emergencyContactsList, setEmergencyContactsList] = useState ([]);
     const [additionalInformation, setAdditionalInformation] = useState("");
+
+    const isEmpty = (object) => { for(var i in object) { return false; } return true; };
     
     const getHealthProfile = async() => {
+        console.log("calling getHealthProfile");
         const resp = await axios.get("https://lyfe--app.herokuapp.com/api/health", 
         {headers: {'Authorization' : `Bearer ${await jwt.getToken()}`, 'Content-Type': 'application/json'} });
-        if(resp.data.length)
+        console.log(resp.data);
+        if(isEmpty(resp.data))
         {
             console.log("it's empty");
         }
@@ -131,6 +135,46 @@ const Health = ({navigation}) => {
         }, [])
       );
 
+    const onShare = async () => {
+        try {
+          const msg = createMsg();
+          const result = await Share.share({
+            message: msg,
+          });
+        } catch (error) {
+          console.log(error.message);
+        }
+      };
+
+    const createMsg = () => {
+        let msg = `Hello! Here is my health profile:
+        
+`;
+        
+            msg += `Date of Birth: ${formatDateString()}
+Height: ${height}
+Weight: ${weight}
+Gender: ${gender}
+Blood Type: ${bloodType}
+
+Allergies: ${allergyList.join(', ')}
+
+Health Conditons: ${healthConditionsList.join(', ')}
+
+Medications: `;
+
+for (let i = 0; i < medicationList.length; i++)
+{
+    msg += `${i+1}: ${(medicationList[i].name)}, ${(medicationList[i].dosage)} ${(medicationList[i].frequency)}
+`;
+}
+
+msg += `Additional Info: ${additionalInformation}
+`
+        return msg;
+    }
+
+
     return(
         <View style={styles.container}>
             <SafeAreaProvider>
@@ -161,7 +205,7 @@ const Health = ({navigation}) => {
                                         <ListItem.Title>Height (inches):</ListItem.Title>
                                     </View>
                                     <View style={{flex:1, flexDirection:'row-reverse'}}>
-                                        <Text style={{fontSize:15}}>{height.toString()}</Text>
+                                        <Text style={{fontSize:15}}>{height?.toString()}</Text>
                                         {/* <TextInput
                                         editable={false}
                                         style={styles.inputView}
@@ -177,7 +221,7 @@ const Health = ({navigation}) => {
                                         <ListItem.Title>Weight (lbs):</ListItem.Title>
                                     </View>
                                     <View style={{flex:1, flexDirection:'row-reverse'}}>
-                                        <Text style={{fontSize:15}}>{weight.toString()}</Text>
+                                        <Text style={{fontSize:15}}>{weight?.toString()}</Text>
                                         {/* <TextInput
                                         editable={false}
                                         style={styles.inputView}
@@ -239,7 +283,7 @@ const Health = ({navigation}) => {
                         <List.Accordion
                         title="Allergies">
                         {
-                            allergyList.map((l,i) => (
+                            allergyList?.map((l,i) => (
                                 <ListItem key={i}
                                 bottomDivider
                                 onPress={() => {setIndex(i); setViewOrEditAllergyOL(true);}}
@@ -269,7 +313,7 @@ const Health = ({navigation}) => {
                                 underlineColorAndroid='transparent'
                                 returnKeyType='next'
                                 blurOnSubmit={false}
-                                defaultValue={allergyList[index]}
+                                defaultValue={allergyList? allergyList[index] : undefined}
                                 editable={editAllergy}
                                 >
                                 </TextInput>
@@ -283,7 +327,7 @@ const Health = ({navigation}) => {
                         title="Health Conditions"
                         style={{}}>
                             {
-                            healthConditionsList.map((l,i) => (
+                            healthConditionsList?.map((l,i) => (
                                 <ListItem key={i} 
                                 bottomDivider
                                 onPress={() => {setIndex(i); setViewOrEditHealthConditionOL(true);}}
@@ -312,7 +356,7 @@ const Health = ({navigation}) => {
                                 underlineColorAndroid='transparent'
                                 returnKeyType='next'
                                 blurOnSubmit={false}
-                                defaultValue={healthConditionsList[index]}
+                                defaultValue={healthConditionsList ? healthConditionsList[index] : undefined}
                                 editable={editHealthCondition}
                                 >
                                 </TextInput>
@@ -325,7 +369,7 @@ const Health = ({navigation}) => {
                         <List.Accordion
                         title="Medications">
                             {
-                            medicationList.map((l,i) => (
+                            medicationList?.map((l,i) => (
                                 <ListItem key={i} 
                                 bottomDivider
                                 onPress={() => {setIndex(i); setMedicationToView(i); setViewOrEditMedicationOL(true);}}
@@ -353,21 +397,21 @@ const Health = ({navigation}) => {
                             <TextInput
                             style={styles.inputView}
                             editable={editMedication}
-                            defaultValue={medication.name}
+                            defaultValue={medication?.name}
                             onChangeText={(text) => {setMedication({...medication, name: text});}}>
                             </TextInput>
                             <Text>Dosage:</Text>
                             <TextInput
                             style={styles.inputView}
                             editable={editMedication}
-                            defaultValue={medication.dosage}
+                            defaultValue={medication?.dosage}
                             onChangeText={(text) => {setMedication({...medication, dosage: text});}}>
                             </TextInput>
                             <Text>Frequency:</Text>
                             <TextInput
                             style={styles.inputView}
                             editable={editMedication}
-                            defaultValue={medication.frequency}
+                            defaultValue={medication?.frequency}
                             onChangeText={(text) => {setMedication({...medication, frequency: text});}}>
                             </TextInput>
                             {/* <Text style={{fontSize:14, fontWeight:'bold', paddingLeft:60}}>Reminder</Text>
@@ -408,13 +452,13 @@ const Health = ({navigation}) => {
                         <List.Accordion
                         title="Emergency Contacts">
                             {
-                            emergencyContactsList.map((l,i) => (
+                            emergencyContactsList?.map((l,i) => (
                                 <ListItem key={i} 
                                 bottomDivider
                                 onPress={() => {setIndex(i); setContactToView(i); setViewOrEditContact(true);}}
                                 onLongPress={() => {setIndex(i);}}>
                                 <ListItem.Content>
-                                    <ListItem.Title>{l.firstName} {l.lastName}</ListItem.Title>
+                                    <ListItem.Title>{l?.firstName} {l?.lastName}</ListItem.Title>
                                 </ListItem.Content>
                                 <ListItem.Chevron/>
                             </ListItem>
@@ -435,31 +479,31 @@ const Health = ({navigation}) => {
                             <Text>First Name:</Text>
                             <TextInput
                             style={styles.inputView}
-                            defaultValue={emergencyContact.firstName}
+                            defaultValue={emergencyContact?.firstName}
                             editable={editContact}>
                             </TextInput>
                             <Text>Last Name:</Text>
                             <TextInput
                             style={styles.inputView}
-                            defaultValue={emergencyContact.lastName}
+                            defaultValue={emergencyContact?.lastName}
                             editable={editContact}>
                             </TextInput>
                             <Text>Phone Number:</Text>
                             <TextInput
                             style={styles.inputView}
-                            defaultValue={emergencyContact.phoneNumber}
+                            defaultValue={emergencyContact?.phoneNumber}
                             editable={editContact}>
                             </TextInput>
                             <Text>Email:</Text>
                             <TextInput
                             style={styles.inputView}
-                            defaultValue={emergencyContact.email}
+                            defaultValue={emergencyContact?.email}
                             editable={editContact}>
                             </TextInput>
                             <Text>Relation:</Text>
                             <TextInput
                             style={styles.inputView}
-                            defaultValue={emergencyContact.relation}
+                            defaultValue={emergencyContact?.relation}
                             editable={editContact}>
                             </TextInput>
                         </ScrollView>
@@ -494,6 +538,12 @@ const Health = ({navigation}) => {
                         >
                         </Button>
                     </View>
+                    <View style={{flex:1, flexDirection:'row', justifyContent:'center', paddingTop:5}}>
+                    <Button type='solid'
+                        onPress={() => onShare()} title="Share">
+                        <Text >Share Reminders</Text>
+                    </Button>
+                    </View>
                 </ScrollView>
             </SafeAreaProvider>
         </View>
@@ -508,7 +558,7 @@ const styles = StyleSheet.create({
         //justifyContent: 'center',
         flexDirection: 'row',
         backgroundColor:'#c8c8c8',//'#9a999a',//'#eae9eb'
-        paddingTop:30
+        paddingTop:15
     },
     overlayContainer: {
         flex:1,

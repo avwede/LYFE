@@ -248,7 +248,7 @@ Location: ${data[i].location.location}
         <View style={styles.container}>
             <ScrollView ref={ref} contentContainerStyle={{flexGrow : 1}}
             showsVerticalScrollIndicator={false}>
-            <View style={{marginTop: 75, alignItems:'center', flexDirection:'row', justifyContent: "space-between", width:WIDTH-50}}>
+            <View style={{marginTop: 25, alignItems:'center', flexDirection:'row', justifyContent: "space-between", width:WIDTH-50}}>
                 <Text>
                     Reminders
                 </Text>
