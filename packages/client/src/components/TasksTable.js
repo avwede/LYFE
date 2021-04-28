@@ -1,178 +1,255 @@
-import ReactDOM from 'react-dom';
-import { Table, Button, Tag, Space } from 'antd';
-import React, { Component, useState } from "react";
+import React, { Component } from 'react';
+import { Table, Button, Tag, Space, Tooltip } from 'antd';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  CarryOutOutlined,
+} from '@ant-design/icons';
+import TasksForm from './TasksForm';
+import TagForm from './TagForm';
+import { retrieveToken } from '../tokenStorage';
+import { buildPath } from './bp';
+import axios from 'axios';
+import moment from 'moment';
 import 'antd/dist/antd.css';
 
-function TasksTable(){
-  const columns = [
+class TasksTable extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tasks: [],
+      tags: [],
+      tagName: '',
+      tagColor: '',
+    };
+    this.tasksForm = React.createRef();
+  }
+
+  formatDateString = () => {
+    const dateCheck = new Date(this.state.health.dateOfBirth);
+
+    return `${
+      dateCheck.getMonth() + 1
+    }/${dateCheck.getDate()}/${dateCheck.getFullYear()}`;
+  };
+
+  componentDidMount() {
+    this.getTasks();
+    this.getTags();
+  }
+
+  getTasks = () => {
+    axios
+      .get(buildPath('api/reminders/'), {
+        headers: {
+          Authorization: `Bearer ${retrieveToken()}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        this.setState({ tasks: res.data });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  getTags = () => {
+    axios
+      .get(buildPath('api/reminder-types/'), {
+        headers: {
+          Authorization: `Bearer ${retrieveToken()}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        this.setState({ tags: res.data });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  createTag = (name) => {
+    const presets = [
+      '#f44336',
+      '#e91e63',
+      '#9c27b0',
+      '#673ab7',
+      '#3f51b5',
+      '#2196f3',
+      '#03a9f4',
+      '#00bcd4',
+      '#009688',
+      '#4caf50',
+      '#8bc34a',
+      '#cddc39',
+      '#ffeb3b',
+      '#ffc107',
+      '#ff9800',
+      '#ff5722',
+      '#795548',
+      '#607d8b',
+    ];
+    const randomPick = Math.floor(Math.random() * (presets.length - 1 + 1));
+    const newTag = {
+      type: name,
+      color: presets[randomPick],
+    };
+
+    axios
+      .post(buildPath(`api/reminder-types`), newTag, {
+        headers: {
+          Authorization: `Bearer ${retrieveToken()}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        this.setState({ tags: res.data });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  updateTag = (id, updatedTag) => {
+    axios
+      .put(buildPath(`api/reminder-types/${id}`), updatedTag, {
+        headers: {
+          Authorization: `Bearer ${retrieveToken()}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        this.setState({ tags: res.data });
+        this.getTasks();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  deleteTask = (id) => {
+    axios
+      .delete(buildPath(`api/reminders/${id}`), {
+        headers: {
+          Authorization: `Bearer ${retrieveToken()}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        this.setState({ tasks: res.data });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  deleteTag = (id) => {
+    axios
+      .delete(buildPath(`api/reminder-types/${id}`), {
+        headers: {
+          Authorization: `Bearer ${retrieveToken()}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        this.setState({ tags: res.data });
+        this.getTasks();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  updateTasks = (tasks) => {
+    this.setState({ tasks: tasks });
+  };
+
+  handleAdd = () => {
+    this.tasksForm.current.showDrawer('add');
+  };
+
+  handleEdit = (task) => {
+    this.tasksForm.current.showDrawer('edit', task);
+  };
+
+  columns = [
     {
-      title: 'Task',
-      dataIndex: 'task',
-      key: 'task',
-      render: text => <a>{text}</a>,
+      title: 'Tasks',
+      dataIndex: 'name',
     },
     {
       title: 'Date',
-      dataIndex: 'date',
-      key: 'date',
-    },
-    {
-      title: 'Tags',
-      key: 'tags',
-      dataIndex: 'tags',
-      render: tags => (
-        <>
-          {tags.map(tag => {
-            let color = tag.length > 5 ? 'geekblue' : 'green';
-            if (tag === 'School') {
-              color = 'geekblue';
-            }
-            else if (tag == 'Health'){
-              color = 'green';
-            }
-            else if (tag == 'Medication'){
-              color = 'volcano';
-            }
-            else if (tag == 'Exercise'){
-              color = 'purple';
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
+      dataIndex: 'startDate',
+      defaultSortOrder: 'ascend',
+      sorter: (a, b) =>
+        moment(a.startDate).format('x') - moment(b.startDate).format('x'),
+      sortDirections: ['ascend', 'descend', 'ascend'],
+      render: (date) => (
+        <Tooltip
+          placement="top"
+          title={moment(date).format('MM-DD-YYYY, h:mm:ss a')}
+        >
+          <span>{moment(date).calendar()}</span>
+        </Tooltip>
       ),
     },
     {
-      title: 'Action',
-      key: 'action',
+      title: 'Tags',
+      dataIndex: 'type',
+      render: (tagType) => {
+        if (tagType) {
+          const { _id, type, color } = tagType;
+          return (
+            <Tag color={color} key={_id}>
+              {type.toUpperCase()}
+              <TagForm
+                id={_id}
+                type={type}
+                color={color}
+                updateTag={this.updateTag}
+                deleteTag={this.deleteTag}
+              />
+            </Tag>
+          );
+        }
+      },
+    },
+    {
+      title: '',
       render: (text, record) => (
         <Space size="middle">
-          <a>Edit</a>
-          <a>Delete</a>
+          <EditOutlined key="edit" onClick={() => this.handleEdit(record)} />
+          <DeleteOutlined
+            key="delete"
+            onClick={() => this.deleteTask(record._id)}
+          />
         </Space>
       ),
     },
   ];
 
-  const data = [
-    {
-      key: '1',
-      task: 'Finish essay',
-      date: '10/3/21',
-      tags: ['School'],
-    },
-    {
-      key: '2',
-      task: 'Take tylenol',
-      date: '11/11/11',
-      tags: ['Medication', 'Health'],
-    },
-    {
-      key: '3',
-      task: 'Take a walk in the arboretum',
-      date: '11/11/11',
-      tags: ['Exercise', 'Health'],
-    },
-  ];
-
-
-  return (
-      <Table columns={columns} dataSource={data} pagination={false} />
-  );
-}
-// ReactDOM.render(<Table columns={columns} dataSource={data} />, mountNode);
-
-export default TasksTable;
-/*
-
-const columns = [
-  {
-    title: 'Task',
-    dataIndex: 'task',
-  },
-  {
-    title: 'Tags',
-    dataIndex: 'tags',
-    render: tags => (
-      <span>
-        {tags.map(tag => {
-          let color = tag.length > 5 ? 'geekblue' : 'green';
-          if (tag === 'loser') {
-            color = 'volcano';
-          }
-          return (
-            <Tag color={color} key={tag}>
-              {tag.toUpperCase()}
-            </Tag>
-          );
-        })}
-      </span>
-    ),
-  },
-  {
-    title: 'Date',
-    dataIndex: 'date',
-  },
-];
-
-const data = [];
-for (let i = 0; i < 20; i++) {
-  data.push({
-    key: i,
-    task: `homework ${i}`,
-    age: 32,
-    date: `4/7/2021 ${i}`,
-  });
-}
-
-class TasksTable extends React.Component {
-  state = {
-    selectedRowKeys: [], // Check here to configure the default column
-    loading: false,
-  };
-
-  start = () => {
-    this.setState({ loading: true });
-    // ajax request after empty completing
-    setTimeout(() => {
-      this.setState({
-        selectedRowKeys: [],
-        loading: false,
-      });
-    }, 1000);
-  };
-
-  onSelectChange = selectedRowKeys => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
-    this.setState({ selectedRowKeys });
-  };
-
   render() {
-    const { loading, selectedRowKeys } = this.state;
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange,
-    };
-    const hasSelected = selectedRowKeys.length > 0;
     return (
       <div>
-        <div style={{ marginBottom: 16 }}>
-          <Button type="primary" onClick={this.start} disabled={!hasSelected} loading={loading}>
-            Reload
-          </Button>
-          <span style={{ marginLeft: 8 }}>
-            {hasSelected ? `Selected ${selectedRowKeys.length} tasks` : ''}
-          </span>
-        </div>
-        <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
+        <Table
+          columns={this.columns}
+          dataSource={this.state.tasks}
+          pagination={{ defaultPageSize: 5 }}
+        />
+        <Button type="primary" onClick={this.handleAdd}>
+          <CarryOutOutlined /> New Task
+        </Button>
+        <TasksForm
+          ref={this.tasksForm}
+          tags={this.state.tags}
+          updateTasks={this.updateTasks}
+          createTag={this.createTag}
+        />
       </div>
     );
   }
 }
 
-ReactDOM.render(<TasksTable/>, document.getElementById('root'));
-
-export default TasksTable;*/
+export default TasksTable;

@@ -5,20 +5,25 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --watch --verbose",
     "start": "node server.js"
   },
   "license": "ISC",
   "dependencies": {
+    "@sendgrid/mail": "^7.4.2",
     "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.12.2",
+    "mongoose": "^5.12.5",
+    "randombytes": "^2.1.0",
+    "supertest": "^6.1.3",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.1.6"
   },
   "devDependencies": {
+    "jest": "^26.6.3",
     "nodemon": "^2.0.7"
   }
 }

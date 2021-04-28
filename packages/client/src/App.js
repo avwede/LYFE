@@ -2,28 +2,34 @@ import './index.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 // React Router for pages
-import React, { Component, Fragment } from "react";
+import React, {Fragment } from "react";
 import {
   BrowserRouter as Router,
   Route,
   Switch,
-  Link,
   Redirect
 } from "react-router-dom";
 
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
 import ErrorPage from "./pages/Error";
-import DashboardPage from "./pages/Dashboard";
 import HomePage from "./pages/Home";
 import Header from "./components/Header";
-
+import Dashboard from "./pages/Dashboard";
+import EmailRedirect from "./pages/EmailRedirect";
+import ForgetPassword from "./pages/ForgetPassword";
+import ResetPassword from "./pages/ResetPassword";
+import SendEmailVerification from "./pages/SendEmailVerification";
 
 function App(){
   return (
       <Router>
             <Switch>      
-            <Route exact path = "/Dashboard" component={DashboardPage} />
+            <Route exact path = "/Dashboard" component={Dashboard} />
+            <Route exact path = "/Dashboard/Health" component={Dashboard} />
+            <Route exact path = "/Dashboard/Home" component={Dashboard} />
+            <Route exact path = "/Dashboard/School" component={Dashboard} />
+            <Route exact path = "/Dashboard/Profile" component={Dashboard} />
 
             <Fragment>
                 <Header />
@@ -34,15 +40,17 @@ function App(){
                   <Route exact path = "/Login" component={LoginPage} />
                   <Route exact path = "/Register" component={RegisterPage} />
                   <Route exact path = "/Error" component={ErrorPage} />
+                  <Route exact path = "/EmailRedirect/:tok" component={EmailRedirect} />
+                  <Route exact path = "/ForgetPassword" component={ForgetPassword} />
+                  <Route exact path = "/ResetPassword/:tok" component={ResetPassword} />
+                  <Route exact path = "/SendEmailVerification" component={SendEmailVerification} />
                 </div>
+
             </Fragment>
           
             <Redirect to = "/Error" />
             
             </Switch>
-            
-        
-      
       </Router>
   );
 }

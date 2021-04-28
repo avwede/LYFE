@@ -1,102 +1,73 @@
-import React, { Component } from "react";
+import React from "react";
 import 'antd/dist/antd.css';
-import { Layout, Menu, Breadcrumb } from 'antd';
-import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
-import { Tooltip, Progress, Button, Card, Row, Col } from 'antd';
-import ReactDOM from 'react-dom';
+import { Layout, Menu } from 'antd';
+import { UserOutlined, LaptopOutlined, HomeOutlined, MedicineBoxOutlined } from '@ant-design/icons';
 
-import WaterCount from "../components/WaterCount";
-import TasksTable from "../components/TasksTable";
+import DashboardHome from "./DashboardHome";
+import DashboardHealth from "./DashboardHealth";
+import DashboardSchool from "./DashboardSchool";
+import DashboardProfile from "./DashboardProfile";
+import HeaderDashboard from "../components/HeaderDashboard";
 
-const { SubMenu } = Menu;
-const { Header, Content, Footer, Sider } = Layout;
+import {
+    BrowserRouter as Router,
+    Route,
+    Link,
+  } from "react-router-dom";
+
+const { Content, Footer, Sider } = Layout;
 
 
 const DashboardPage = () => {
   return (
     <Layout>
-        <Header className="header">
-        <div className="logo" />
-        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
-            <Menu.Item key="1">nav 1</Menu.Item>
-            <Menu.Item key="2">nav 2</Menu.Item>
-            <Menu.Item key="3">nav 3</Menu.Item>
-        </Menu>
-        </Header>
-        <Content style={{ padding: '0 50px' }}>
-        <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>List</Breadcrumb.Item>
-            <Breadcrumb.Item>App</Breadcrumb.Item>
-        </Breadcrumb>
-        <Layout className="site-layout-background" style={{ padding: '24px 0' }}>
-            <Sider className="site-layout-background" width={200}>
-            <Menu
-                mode="inline"
-                defaultSelectedKeys={['1']}
-                defaultOpenKeys={['sub1']}
-                style={{ height: '100%' }}
-            >   
-                <SubMenu key="sub0" icon={<UserOutlined />} title="Home">
+        <Router>
+        <HeaderDashboard />
 
-                </SubMenu>
+        <Content style={{ padding: '0 20px' }}>
+            <Layout className="site-layout-background" style={{ padding: '24px 0' }}>
+                
+                <Sider className="site-layout-background" width={200}>
+                <Menu
+                    mode="inline"
+                    defaultSelectedKeys={['1']}
+                    defaultOpenKeys={['sub1']}
+                    style={{ height: '100%' }}
+                >   
+                    <Menu.Item key="sub0" icon={<HomeOutlined />}>Home
+                    <Link to= "/Dashboard" />
+                    </Menu.Item>
 
-                <SubMenu key="sub1" icon={<UserOutlined />} title="Health">
-                <Menu.Item key="1">Health Information</Menu.Item>
-                <Menu.Item key="2">Emergency Contacts</Menu.Item>
-                <Menu.Item key="3">Allergies</Menu.Item>
-                <Menu.Item key="4">Medications</Menu.Item>
-                </SubMenu>
-
-                <SubMenu key="sub2" icon={<LaptopOutlined />} title="School">
-                <Menu.Item key="5">Classes</Menu.Item>
-                <Menu.Item key="6">Textbooks</Menu.Item>
-                <Menu.Item key="7">Zoom Links</Menu.Item>
-                <Menu.Item key="8">Goals</Menu.Item>
-                </SubMenu>
-
-                <SubMenu key="sub3" icon={<NotificationOutlined />} title="Profile">
-                <Menu.Item key="9">Assignments</Menu.Item>
-                <Menu.Item key="10">Errands</Menu.Item>
-                <Menu.Item key="11">Exercise</Menu.Item>
-                <Menu.Item key="12">Medications</Menu.Item>
-                </SubMenu>
-
-            </Menu>
-            </Sider>
-            <Content style={{ padding: '0 24px', minHeight: 280 }}>
-                <div className="site-card-wrapper">
-                    <Row gutter={[16, 16]}>
-                        <Col span={24}>
-                        <Card title="Progress Bar" bordered={false}>
-                            <Tooltip title="3 done / 4 to do">
-                            <Progress strokeColor={{
-                                    '0%': '#ACC1FF',
-                                    '100%': '#9CECFF',
-                                }} percent={60} />
-                            </Tooltip>
-                        </Card>
-                        </Col>
-                    </Row>
+                    <Menu.Item key="sub1" icon={<MedicineBoxOutlined />}>Health
+                    <Link to= "/Dashboard/Health" />        
+                    </Menu.Item>
                     
-                    <Row gutter={[16, 16]} >
-                    <Col span={16}>
-                        <Card title="Daily Tasks" bordered={false}>
-                            <TasksTable />
-                        </Card>
-                    </Col>
-                    <Col span={8} >
-                        <Card title="Health" bordered={false}>
-                            <WaterCount />
-                        </Card>
-                    </Col>
 
-                    </Row>
-                </div>
-                            
-            </Content>
-        </Layout>
+                    <Menu.Item key="sub2" icon={<LaptopOutlined />}>School
+                    <Link to="/Dashboard/School" />
+                    </Menu.Item>
+
+                    <Menu.Item key="sub3" icon={<UserOutlined />}>Profile
+                    <Link to= "/Dashboard/Profile" />
+                    </Menu.Item>
+
+                </Menu>
+                </Sider>        
+                
+                <Content style={{ padding: '0 50px' }}>
+                    <Route exact path='/' component={DashboardHome} />
+                    <Route exact path='/Dashboard' component={DashboardHome} />
+                    <Route exact path='/Dashboard/Health' component={DashboardHealth} />
+                    <Route exact path='/Dashboard/School' component={DashboardSchool} />
+                    <Route exact path='/Dashboard/Profile' component={DashboardProfile} />
+                </Content>
+                
+            </Layout>
         </Content>
+        </Router>
+
+
+        
         <Footer style={{ textAlign: 'center' }}>LYFE ©2021</Footer>
     </Layout>
     );

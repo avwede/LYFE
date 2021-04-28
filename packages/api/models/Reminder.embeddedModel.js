@@ -11,40 +11,80 @@ const locationSchema = require('./Location.embeddedModel');
  *      type: object
  *      required:
  *        - name
+ *        - startDate
  *      properties:
  *        name:
  *          type: string
- *          example: Doctor's Appointment
+ *          example: COP4331
  *        description:
  *          type: string
  *        type:
- *          type: string
- *          format: objectId
- *          example: 5b1ed13e8cea93c6ba72b1da
+ *          $ref: '#/components/schemas/ReminderType'
  *        location:
  *          $ref: '#/components/schemas/Location'
- *        datetime:
+ *        startDate:
+ *          type: string
+ *          format: date-time
+ *        endDate:
+ *          type: string
+ *          format: date-time
+ *        repeat:
+ *          type: boolean
+ *        dailyPattern:
  *          type: array
  *          items:
  *            type: string
- *            format: date
- *        repeat:
- *          type: boolean
+ *            enum: [Sun, Mon, Tues, Wed, Thur, Fri, Sat]
+ *            example: [Mon, Wed]
+ *          summary: The days of the week that this reminder should repeat. Ex. [Mon, Wed, Fri]
+ *        weeklyPattern:
+ *          type: integer
+ *          example: 1
+ *          summary: The number of weeks that this reminder should repeat. Ex. Repeats every 2 weeks
+ *          
  */
 const reminderSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Name is required for Reminder.'],
   },
-  description: String,
+  description: {
+    type: String,
+  },
   type: {
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'ReminderType' 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ReminderType',
   },
   location: locationSchema,
-  // How to model? Can either be a single date like March 15, 2021 or days of the week like MWF
-  datetime: [Date],
+  startDate: {
+    type: Date,
+    required: [true, 'Start date is required for Reminder.'],
+  },
+  endDate: {
+    type: Date,
+  },
   repeat: Boolean,
+  dailyPattern: {
+    type: [String],
+    enum: ['Sun', 'Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat'],
+    default: undefined,
+    required: [
+      function () {
+        return this.repeat;
+      },
+      'Daily pattern is required when Reminder repeats.',
+    ],
+  },
+  weeklyPattern: {
+    type: Number,
+    min: [1, 'Weekly pattern for Reminder must be greater than 0.'],
+    required: [
+      function () {
+        return this.repeat;
+      },
+      'Weekly pattern is required when Reminder repeats.',
+    ],
+  },
 });
 
 module.exports = reminderSchema;

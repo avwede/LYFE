@@ -53,6 +53,7 @@ const emergencyContactSchema = new mongoose.Schema({
         ),
       message: '{VALUE} is not a valid email address.',
     },
+    required: [true, 'Email is required for Emergency Contact.'],
   },
   relation: {
     type: String,

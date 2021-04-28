@@ -1,7 +1,5 @@
-import React, { Component } from "react";
-import styled from "styled-components";
-import { makeStyles } from '@material-ui/core/styles';
-import { Button, Grid, Paper } from '@material-ui/core';
+import React from "react";
+import { Button } from '@material-ui/core';
 import './Home.css';
 import '../App.css';
 import ReactTypingEffect from 'react-typing-effect';
