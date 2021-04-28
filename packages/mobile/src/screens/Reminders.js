@@ -1,11 +1,12 @@
 import React, { useState, useContext, useEffect, Component} from 'react';
-import { StyleSheet, Image, TextInput, TouchableNativeFeedback, Dimensions, CheckBox} from 'react-native';
+import { StyleSheet, Image, TextInput, TouchableNativeFeedback, Dimensions, Share, ScrollView, CheckBox} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Overlay, Divider, Button, registerCustomIconType } from 'react-native-elements';
 import { Container, Header, Content, Icon, Accordion, Text, View, Item } from 'native-base';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
 import {JWTContext} from '../contexts/JWTContext.js'
+import { useScrollToTop } from '@react-navigation/native';
 
 // https://reactnative.dev/docs/flexbox
 
@@ -29,7 +30,10 @@ const Reminders = (props) => {
     // This holds index in state for the edit and delete overlay. 
     const [activeIndex, setActiveIndex] = useState(Number.MIN_SAFE_INTEGER);
     const [triggerRefresh, setTriggerRefresh] = useState(false);
+    const [rand, setRand] = useState(Math.floor(Math.random() * 4));
 
+    const ref = React.useRef(null);
+    useScrollToTop(ref);
     const jwt = useContext(JWTContext);
 
     // https://stackoverflow.com/questions/58925515/using-react-native-community-datetimepicker-how-can-i-display-a-datetime-picker
@@ -155,7 +159,8 @@ const Reminders = (props) => {
             padding: 10,
             justifyContent: "space-between",
             alignItems: "center" ,
-            backgroundColor: "#A9DAD6" }}>
+            backgroundColor: "#A9DAD6",
+            width: WIDTH - 50 }}>
             <Text style={{ fontWeight: "600" }}>
               {item.name}
             </Text>
@@ -176,12 +181,9 @@ const Reminders = (props) => {
             <Text>{item.description}</Text>
         </View>
         <View style={styles.textSpacing}>
-            <Text>Type: {item.type}</Text>
-        </View>
-        <View style={styles.textSpacing}>
             <Text>Location: {item.location.location}</Text>
         </View>
-        <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
+        <View style={{flexDirection: 'row', justifyContent: "space-around", paddingBottom: 10}}>
             <TouchableNativeFeedback
             onPress = {() => editHelper(index)}>
                 <Icon type="FontAwesome5" name="edit">
@@ -207,14 +209,46 @@ const Reminders = (props) => {
         return `${dateCheck.getMonth() + 1}/${dateCheck.getDate()}/${dateCheck.getFullYear()} ${dateCheck.getHours()}:${dateCheck.getMinutes() < 10 ? '0' + dateCheck.getMinutes() : dateCheck.getMinutes()}`;
     }
 
+    const createMsg = () => {
+        let msg = `Hello! Here are my LYFE Reminders:
+        
+`;
+        for (let i = 0; i < data.length; i++)
+        {
+            msg += `${i + 1}) ${data[i].name}
+${formatDateString(i)}
+            
+${data[i].description}
+            
+Location: ${data[i].location.location}
+
+`
+        }
+
+        return msg;
+    }
+
+    const onShare = async () => {
+        try {
+          const msg = createMsg();
+          const result = await Share.share({
+            message: msg,
+          });
+        } catch (error) {
+          console.log(error.message);
+        }
+      };
+
     useEffect(() => {
        getReminders();
+       setRand(Math.floor(Math.random() * 4));
     }, [triggerRefresh]);
     
     return(
-        <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
-            <View style={{alignItems:'center', marginTop: 150, flexDirection:'row', 
-            justifyContent: "space-between", width:WIDTH-100}}>
+        <View style={styles.container}>
+            <ScrollView ref={ref} contentContainerStyle={{flexGrow : 1}}
+            showsVerticalScrollIndicator={false}>
+            <View style={{marginTop: 75, alignItems:'center', flexDirection:'row', justifyContent: "space-between", width:WIDTH-50}}>
                 <Text>
                     Reminders
                 </Text>
@@ -286,8 +320,15 @@ const Reminders = (props) => {
                         </View>
                         </Overlay>)}
             </View>
-            <View>
-                <Divider />
+            <View style={{marginVertical: 25, height: (0.01*HEIGHT), width: WIDTH - 50}}>
+                <Text>
+                {
+                    (rand === 0) ? `"Write a wise saying and your name will live forever. " - Anonymous` :
+                    (rand === 1) ? `"People say nothing is impossible, but I do nothing every day." - A.A. Milne` :
+                    (rand === 2) ? `"A witty saying proves nothing." - Voltaire` :
+                    `"JUST DO IT" - Shia Labeouf`
+                }
+                </Text>
             </View>
             <View style={styles.accordion}>
                 <Accordion
@@ -300,7 +341,12 @@ const Reminders = (props) => {
                 renderContent={renderAccordion}
                 />            
             </View>
-        </LinearGradient>
+            <Button style={styles.loginBtn}
+                onPress={() => onShare()} title="Share">
+                    <Text style={styles.signUp} >Share Reminders</Text>
+            </Button>
+            </ScrollView>
+        </View>
     );
 }
 
@@ -311,12 +357,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
+        backgroundColor:'#eae9eb'
     },
     inputContainer:{
         marginTop:10
     },
     inputView:{
-        width: WIDTH - 100,
+        width: WIDTH - 50,
         backgroundColor:"white",
         borderRadius:25,
         height:50,
@@ -339,7 +386,7 @@ const styles = StyleSheet.create({
         marginTop:60
     },
     signUp:{
-        color:'white',
+        //color:'white',
         fontSize: 13,
         fontFamily: 'sans-serif',
     },
@@ -350,10 +397,10 @@ const styles = StyleSheet.create({
     },
     accordion:{
         alignItems:'center', 
-        marginTop: 50
+        marginTop: 30
     },
     expandedAccordion: {
-        width: WIDTH - 90
+        width: WIDTH - 50
     },
     textSpacing:{
         marginVertical: 10

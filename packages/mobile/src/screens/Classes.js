@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, Component} from 'react';
-import { StyleSheet, Image, TextInput, TouchableNativeFeedback, Dimensions, CheckBox} from 'react-native';
+import { StyleSheet, Image, TextInput, TouchableNativeFeedback, Dimensions, Share, ScrollView, CheckBox} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Overlay, Divider, Button, registerCustomIconType } from 'react-native-elements';
 import { Container, Header, Content, Icon, Accordion, Text, View, Picker, Item } from 'native-base';
@@ -8,10 +8,9 @@ import {MaterialIcons} from '@expo/vector-icons';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import axios from 'axios';
 import {JWTContext} from '../contexts/JWTContext.js'
+import { useScrollToTop } from '@react-navigation/native';
 
 // https://reactnative.dev/docs/flexbox
-
-// TODO: Implement scrolling. Note: tab navigator on bottom interferes with current scrolling.
 
 const {width: WIDTH} = Dimensions.get('window')
 const {height: HEIGHT} = Dimensions.get('window')
@@ -38,6 +37,8 @@ const Classes = (props) => {
     const [activeIndex, setActiveIndex] = useState(Number.MIN_SAFE_INTEGER);
     const [triggerRefresh, setTriggerRefresh] = useState(false);
 
+    const ref = React.useRef(null);
+    useScrollToTop(ref);
     const jwt = useContext(JWTContext);
     const token = jwt.getToken();
 
@@ -186,7 +187,8 @@ const Classes = (props) => {
             padding: 10,
             justifyContent: "space-between",
             alignItems: "center" ,
-            backgroundColor: "#A9DAD6" }}>
+            backgroundColor: "#A9DAD6",
+            width: WIDTH - 50 }}>
             <View>
             <Text style={{ fontWeight: "600" }}>
                 {item.courseCode}
@@ -200,7 +202,7 @@ const Classes = (props) => {
           </View>)
     }
 
-    // TODO: Link if location.type="Zoom Link", else text
+    // Link if location type is link?
     const renderAccordion = (item, index) => {
         return(
         <View style={styles.expandedAccordion}>
@@ -208,7 +210,7 @@ const Classes = (props) => {
             <Text>Location: {item.location.location}</Text>
         </View>
         <View style={styles.textSpacing}>
-            <Text>Class Days: {`${item.day} 
+            <Text>Class Days: {`${(item.day).join(', ')} 
 
 ${formatTimeStart(index)} - ${formatTimeEnd(index)}`}</Text>
         </View>
@@ -218,7 +220,7 @@ ${formatTimeStart(index)} - ${formatTimeEnd(index)}`}</Text>
         <View style={styles.textSpacing}>
             <Text>Ending: {formatDateStringEnd(index)}</Text>
         </View>
-        <View style={{flexDirection: 'row', justifyContent: "space-around"}}>
+        <View style={{flexDirection: 'row', justifyContent: "space-around", paddingBottom: 10}}>
             <TouchableNativeFeedback 
             onPress = {() => editHelper(index)}>
                 <Icon type="FontAwesome5" name="edit">
@@ -262,17 +264,53 @@ ${formatTimeStart(index)} - ${formatTimeEnd(index)}`}</Text>
         return `${dateCheck.getHours()}:${dateCheck.getMinutes() < 10 ? '0' + dateCheck.getMinutes() : dateCheck.getMinutes()}`;
     }
 
+    const createMsg = () => {
+        let msg = `Hello! Here is my class schedule:
+        
+`;
+        console.log(msg);
+
+        for (let i = 0; i < data.length; i++)
+        {
+            msg += `${i + 1}) ${data[i].courseCode} with ${data[i].professor}
+Location: ${data[i].location.location}
+
+${data[i].day} 
+
+${formatTimeStart(i)} - ${formatTimeEnd(i)}
+            
+Started: ${formatDateStringStart(i)} 
+
+Ending: ${formatDateStringEnd(i)}
+
+`       }
+
+        console.log(msg);
+        return msg;
+    }
+
+    const onShare = async () => {
+        try {
+            const msg = createMsg();
+            console.log(msg);
+            const result = await Share.share({
+              message: `${msg}`,
+            });
+        } catch (error) {
+          console.log(error.message);
+        }
+      };
 
     useEffect(() => {
        getClasses();
        setRand(Math.floor(Math.random() * 4));
     }, [triggerRefresh]);
     
-    // TODO: Add motivational quotes?
     return(
-        <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
-            <View style={{alignItems:'center', marginTop: 150, flexDirection:'row', 
-            justifyContent: "space-between", width:WIDTH-100}}>
+        <View style={styles.container}>
+            <ScrollView ref={ref} showsVerticalScrollIndicator={false} contentContainerStyle={{flexGrow : 1}}>
+            <View style={{marginTop: 75, alignItems: 'center', flexDirection:'row', 
+            justifyContent: "space-between", width: WIDTH-50}}>
                 <Text>
                     Classes
                 </Text>
@@ -310,7 +348,7 @@ ${formatTimeStart(index)} - ${formatTimeEnd(index)}`}</Text>
                         defaultValue={addOrEdit ? undefined : location}
                         onChangeText={(text) => setLocation(text)}
                         ></TextInput></View>
-                        <View style={{width: WIDTH - 100,
+                        <View style={{width: WIDTH - 50,
                                         height:20,
                                         paddingLeft:12,
                                         paddingBottom: 3,
@@ -403,28 +441,33 @@ ${formatTimeStart(index)} - ${formatTimeEnd(index)}`}</Text>
                         </View>
                         </Overlay>)}
             </View>
-            <View style={{marginVertical: 25, height: (0.01*HEIGHT), width: WIDTH - 100}}>
+            <View style={{marginVertical: 25, height: (0.01*HEIGHT), width: WIDTH - 50}}>
                 <Text>
                 {
-                    (rand === 0) ? `"JUST DO IT" - Shia Labeouf` :
-                    (rand === 1) ? `"How can mirrors be real if our eyes aren't real?" - Jayden Smith` :
+                    (rand === 0) ? `"If you wish to bake an apple pie from scratch, you must first invent the universe." - Carl Sagan` :
+                    (rand === 1) ? `"A ship in harbor is safe, but that is not what ships are built for." - John A. Shedd` :
                     (rand === 2) ? `"With great power comes great responsibility." - Stan Lee` :
                     `"The early bird catches the worm but the second mouse eats the cheese." - Unknown Redditor`
                 }
                 </Text>
             </View>
-            <View style={styles.accordion}>
-                <Accordion
-                dataArray={data}
-                animation={true}
-                icon="add"
-                expandedIcon="remove"
-                expanded={[]} 
-                renderHeader={renderHeader}
-                renderContent={renderAccordion}
-                />            
-            </View>
-        </LinearGradient>
+                <View style={styles.accordion}>
+                    <Accordion
+                    dataArray={data}
+                    animation={true}
+                    icon="add"
+                    expandedIcon="remove"
+                    expanded={[]} 
+                    renderHeader={renderHeader}
+                    renderContent={renderAccordion}
+                    />            
+                </View>
+            <Button style={styles.loginBtn}
+                onPress={onShare} title="Share">
+                    <Text style={styles.signUp}>Share Classes</Text>
+            </Button>
+            </ScrollView>
+        </View>
     );
 }
 
@@ -435,12 +478,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
+        backgroundColor:'#eae9eb'
     },
     inputContainer:{
         marginTop:10
     },
     inputView:{
-        width: WIDTH - 100,
+        width: WIDTH - 50,
         backgroundColor:"white",
         borderRadius:25,
         height:50,
@@ -463,7 +507,7 @@ const styles = StyleSheet.create({
         marginTop:60
     },
     signUp:{
-        color:'white',
+        //color:'white',
         fontSize: 13,
         fontFamily: 'sans-serif',
     },
@@ -477,7 +521,7 @@ const styles = StyleSheet.create({
         marginTop: 50
     },
     expandedAccordion: {
-        width: WIDTH - 90
+        width: WIDTH - 50
     },
     textSpacing:{
         marginVertical: 10

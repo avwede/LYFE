@@ -1,15 +1,29 @@
 import React, { useState, useContext, Component} from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Dimensions} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import axios from 'axios';
 
 const {width: WIDTH} = Dimensions.get('window')
 const ForgotPassword = (props) => {
+    const [sent, setSent] = useState(false);
+    const [email, setEmail] = useState();
+    const [error, setError] = useState(false);
+    const [errorMsg, setErrorMsg] = useState();
+
+    const sendPasswordReset = async () => {
+        setError(false);
+        setSent(false);
+        await axios.post("https://lyfe--app.herokuapp.com/api/users/reset", {
+            "email": email,
+          }).then(() => setSent(true)).catch((err) => {setError(true); setErrorMsg(err.response.data.error);});
+    }
+
     return(
         <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style={styles.container}>
             <View style={styles.logoContainer}>
                 <Image style={styles.logo} source={require('../../assets/logo4.png')}></Image>
             </View>
-            <View style={{alignItems:'center', marginBottom:60}}>
+            <View style={{alignItems:'center', marginBottom:30}}>
                 <Text style={styles.loginText}>
                     Forgot your password? No problem!
                 </Text>
@@ -25,15 +39,31 @@ const ForgotPassword = (props) => {
                 underlineColorAndroid='transparent'
                 returnKeyType='next'
                 blurOnSubmit={false}
+                onChangeText={(text) => setEmail(text)}
                 ></TextInput>
             </View>
-            <TouchableOpacity style={styles.toLogin}
-            onPress={() => props.navigation.navigate('Login')}>
-            <View style={{alignContent:'center', marginTop:30}}>
-                <Text style={styles.loginText} >
-                    Finished with password reset? Tap here to go back to Login page.
+            {error && 
+                <View>
+                <Text style={styles.loginText}>
+                    Error: {errorMsg}
                 </Text>
-            </View>
+            </View>}
+            {sent && <View>
+                    <Text style={styles.loginText}>
+                        Email sent! Please reset your password using the provided link.
+                    </Text>
+                </View>}
+            <TouchableOpacity style={styles.loginBtn}
+            onPress={() => sendPasswordReset()}>
+                <Text style={styles.signUp} >
+                    Send Password Reset Token
+                </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.loginBtn}
+            onPress={() => props.navigation.navigate('Login')}>
+                <Text style={styles.signUp} >
+                    Log In with New Password
+                </Text>
             </TouchableOpacity>
         </LinearGradient>
     );
