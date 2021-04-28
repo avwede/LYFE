@@ -194,11 +194,13 @@ router.post('/', authenticateJWT, async (req, res) => {
  *              $ref: '#/components/schemas/Reminder'
  *      responses:
  *        200:
- *          description: Reminder successfully updated.
+ *          description: Updated list of reminders.
  *          content:
  *            application/json:
  *              schema:
- *                $ref: '#/components/schemas/Reminder'
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/Reminder'
  *        400:
  *          $ref: '#/components/responses/400BadRequest'
  *        401:
@@ -266,8 +268,14 @@ router.put('/:id', authenticateJWT, async (req, res) => {
  *            format: objectId
  *          example: 6058319d6aedde248dbad720
  *      responses:
- *        204:
- *          description: Reminder successfully deleted.
+ *        200:
+ *          description: Updated list of reminders.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/Reminder'
  *        401:
  *          $ref: '#/components/responses/401Unauthorized'
  *        404:
@@ -309,8 +317,9 @@ const deleteReminder = (user, reminderId, res) => {
     reminder.remove();
 
     user.save()
-      .then(() => {
-        sendResponse(res, 204, {});
+      .then(async () => {
+        await user.populate('reminders.type').execPopulate();
+        sendResponse(res, 200, user.reminders);
       })
       .catch((err) => {
         sendError(res, err, err.message);

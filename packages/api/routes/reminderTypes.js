@@ -33,15 +33,7 @@ const { authenticateJWT } = require('../middleware/routerMiddleware');
  */
 router.get('/', authenticateJWT, (req, res) => {
   const userId = req.tokenPayload.id;
-
-  ReminderType.find({ user: userId })
-    .then(results => {
-      sendResponse(res, 200, results);
-    })
-    .catch(err => {
-      console.log(err);
-      sendError(res, err, err.message);
-    });
+  getReminderTypes(userId, res, 200);
 });
 
 /**
@@ -136,13 +128,13 @@ router.get('/:id', authenticateJWT, async (req, res) => {
  *                example: '#001C5C'
  *      responses:
  *        201:
- *          description: New reminder type successfully created.
+ *          description: List of updates reminder types.
  *          content:
  *            application/json:
  *              schema:
  *                type: array
  *                items:
- *                  $ref: '#/components/schemas/Reminder'
+ *                  $ref: '#/components/schemas/ReminderType'
  *        400:
  *          $ref: '#/components/responses/400BadRequest'
  *        401:
@@ -157,8 +149,8 @@ router.post('/', authenticateJWT, async (req, res) => {
   newReminderType['user'] = userId;
 
   ReminderType.create(newReminderType)
-    .then(reminderType => {
-      sendResponse(res, 201, reminderType);
+    .then(() => {
+      getReminderTypes(userId, res, 201);
     })
     .catch(err => {
       sendError(res, err, 'The reminder type could not be created.');
@@ -196,11 +188,13 @@ router.post('/', authenticateJWT, async (req, res) => {
  *              $ref: '#/components/schemas/ReminderType'
  *      responses:
  *        200:
- *          description: Reminder type successfully updated.
+ *          description: List of updated reminder types.
  *          content:
  *            application/json:
  *              schema:
- *                $ref: '#/components/schemas/ReminderType'
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/ReminderType'
  *        400:
  *          $ref: '#/components/responses/400BadRequest'
  *        401:
@@ -231,7 +225,7 @@ router.put('/:id', authenticateJWT, async (req, res) => {
       const updatedReminderType = partialUpdate(reminderType, updatedFields);
       reminderType.save()
         .then(() => {
-          sendResponse(res, 200, updatedReminderType);
+          getReminderTypes(userId, res, 200);
         })
         .catch(err => {
           sendError(res, err, err.message);
@@ -268,8 +262,14 @@ router.put('/:id', authenticateJWT, async (req, res) => {
  *            format: objectId
  *          example: 6058319d6aedde248dbad720
  *      responses:
- *        204:
- *          description: Reminder type successfully deleted.
+ *        200:
+ *          description: List of updated reminder types.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/ReminderType'
  *        401:
  *          $ref: '#/components/responses/401Unauthorized'
  *        403:
@@ -294,7 +294,7 @@ router.delete('/:id', authenticateJWT, async (req, res) => {
 
   if (reminderType) {
     if (reminderType.user == userId) {
-      deleteReminderType(id, res);
+      deleteReminderType(userId, id, res);
     } else {
       sendError(res, 403, 'This user is not authorized to perform this action.');
     }
@@ -304,18 +304,37 @@ router.delete('/:id', authenticateJWT, async (req, res) => {
 });
 
 /**
+ * Get all reminder types.
+ * 
+ * @param {String} userId User object id.
+ * @param {Object} res Express response object.
+ * @param {Integer} statusCode Success status code.
+ */
+const getReminderTypes = (userId, res, statusCode) => {
+  ReminderType.find({ user: userId })
+    .then((results) => {
+      sendResponse(res, statusCode, results);
+    })
+    .catch((err) => {
+      console.log(err);
+      sendError(res, err, err.message);
+    });
+};
+
+/**
  * Delete the remainder type with the given id.
  * 
- * @param {String} id Reminder type object id.
- * @param {Object} resp Express response object.
+ * @param {String} userId User object id.
+ * @param {String} reminderId Reminder type object id.
+ * @param {Object} res Express response object.
  */
-const deleteReminderType = (id, res) => {
-  ReminderType.findByIdAndRemove({ _id: id })
+const deleteReminderType = (userId, reminderId, res) => {
+  ReminderType.findByIdAndRemove({ _id: reminderId })
     .then(() => {
-      sendResponse(res, 204, {});
+      getReminderTypes(userId, res, 200);
     })
     .catch(err => {
-      sendError(res, err, `The reminder type with id ${id} could not be removed.`);
+      sendError(res, err, `The reminder type with id ${reminderId} could not be removed.`);
     });
 };
 
