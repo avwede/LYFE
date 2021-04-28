@@ -19,7 +19,6 @@ import Dashboard from "./pages/Dashboard";
 import EmailRedirect from "./pages/EmailRedirect";
 import ForgetPassword from "./pages/ForgetPassword";
 import ResetPassword from "./pages/ResetPassword";
-import VerifiedSuccess from "./pages/VerifiedSuccess";
 import SendEmailVerification from "./pages/SendEmailVerification";
 
 function App(){
@@ -44,7 +43,6 @@ function App(){
                   <Route exact path = "/EmailRedirect/:tok" component={EmailRedirect} />
                   <Route exact path = "/ForgetPassword" component={ForgetPassword} />
                   <Route exact path = "/ResetPassword/:tok" component={ResetPassword} />
-                  <Route exact path = "/EmailRedirect/VerifiedSuccess" component={VerifiedSuccess} />
                   <Route exact path = "/SendEmailVerification" component={SendEmailVerification} />
                 </div>
 

@@ -70,8 +70,8 @@ function EmailRedirect () {
                     <input type="password" id = 'password' className="form-control" placeholder="Enter password" ref={(c) => password = c} />
                 </div>
 
-                <button type="submit" onClick={verifyEmail} className="btn btn-dark btn-lg btn-block" style={{marginBottom: '20px'}}>Verify Password!</button>
-				<span id="loginResult" style={{color: 'green', fontWeight: 'bold'}}>{message}</span>
+                <button type="submit" onClick={verifyEmail} className="btn btn-dark btn-lg btn-block" style={{marginBottom: '20px'}}>Verify Account!</button>
+				<span id="loginResult" style={{color: 'black', fontWeight: 'bold'}}>{message}</span>
 
 			  
 			  </div>
