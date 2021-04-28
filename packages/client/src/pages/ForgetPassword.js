@@ -36,7 +36,8 @@ function ForgetPassword() {
                         setMessage(res.error);
                     } 
                     else {
-                        setMessage(res);
+                        setMessage('An email to reset your password has been sent.');
+                        // window.location.href = './VerifiedSuccess';
                     }
 
                 })

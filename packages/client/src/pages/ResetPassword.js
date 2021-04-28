@@ -35,11 +35,10 @@ function ResetPassword () {
 					var res = response.data;
 
 					if (res.error) {
-						setMessage(res);
+						setMessage('Error');
 
 					} else {
-						storage.storeToken(res);
-						window.location.href = './Login';
+						setMessage('Password has been reset');
 					}
 
 				})
@@ -65,7 +64,13 @@ function ResetPassword () {
                     </div>
     
                     <button type="submit" onClick = {resetPass} className="btn btn-dark btn-lg btn-block" style={{marginBottom: '20px'}}>Reset Password</button>
-                    <span id="loginResult" style={{color: 'red', fontWeight: 'bold'}}></span>
+                    <span id="resetResult" style={{color: 'red', fontWeight: 'bold'}}>{message}</span>
+
+
+					<h3>
+                    	<a href="/Login">Return to login.</a>
+                	</h3>
+
     
                 </form>
     

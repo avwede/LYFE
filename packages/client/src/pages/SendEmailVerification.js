@@ -15,7 +15,7 @@ function SendEmailVerification () {
         try {
 			var config = {
 				method: 'get',
-				url: bp.buildPath('api/users/register'), //'http://localhost:3001/api/users/register', 
+				url: bp.buildPath('api/users/'), //'http://localhost:3001/api/users/register', 
 				headers: {
                     'Bearer': storage.retrieveToken(),
 					'Content-Type': 'application/json'
@@ -29,7 +29,7 @@ function SendEmailVerification () {
 					var res = response.data;
 
 					if (res.error) {
-						setMessage(res.error);
+						setMessage('Error');
 
 					} else {
 						email = res.email;
@@ -56,7 +56,7 @@ function SendEmailVerification () {
 		try {
 			var config = {
 				method: 'post',
-				url: bp.buildPath('api/users/register'), //'http://localhost:3001/api/users/register', 
+				url: bp.buildPath('api/users/verify/resend'), //'http://localhost:3001/api/users/register', 
 				headers: {
 					'Content-Type': 'application/json'
 				},
@@ -72,8 +72,8 @@ function SendEmailVerification () {
 						setMessage('User already exists.');
 
 					} else {
-						storage.storeToken(res);
-						// window.location.href = './Login';
+						setMessage('Email has been re-sent')
+						//window.location.href = './VerifiedSuccess';
 					}
 
 				})
@@ -95,7 +95,7 @@ function SendEmailVerification () {
                     <h3>A verification link has been sent to your email.</h3>
                     <h3><a href="#" onClick = {sendReset}>Resend Email</a></h3>
 
-                
+                    <span id="sentResult" style={{color: 'red', fontWeight: 'bold'}}>{message}</span>
             </div>
         );
 }
