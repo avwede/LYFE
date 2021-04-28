@@ -1,10 +1,10 @@
-import { Button } from 'antd';
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { Row, Col, Drawer, Form, Input, Select, Divider } from 'antd';
+import { Row, Col, Drawer, Form, Input, Select, Divider, DatePicker, Button } from 'antd';
 import { retrieveToken } from '../tokenStorage';
 import { buildPath } from './bp';
 import axios from 'axios';
+import moment from 'moment';
 import 'antd/dist/antd.css';
 
 const { Option } = Select;
@@ -17,12 +17,11 @@ class TasksForm extends Component {
       action: '',
       taskId: '',
       name: '',
+      startDateMoment: null,
       startDate: '',
-      description: '',
-      type: '',
-      taskTypes: [],
+      tagType: '',
+      newTag: '',
     };
-    this.index = 0;
   }
 
   showDrawer = () => {
@@ -41,8 +40,10 @@ class TasksForm extends Component {
     const newTask = {
       name: this.state.name,
       startDate: this.state.startDate,
-      description: this.state.description,
     };
+
+    if (this.state.tagType !== '')
+      newTask['type'] = this.state.tagType;
 
     axios
       .post(buildPath('api/reminders/'), newTask, {
@@ -64,7 +65,7 @@ class TasksForm extends Component {
     const updatedTask = {
       name: this.state.name,
       startDate: this.state.startDate,
-      description: this.state.description,
+      type: this.state.tagType,
     };
 
     axios
@@ -88,7 +89,16 @@ class TasksForm extends Component {
   };
 
   handleDropdownChange = (value) => {
-    this.setState({ description: value });
+    this.setState({ tagType: value });
+  };
+
+  handleCreateTag = () => {
+    this.props.createTag(this.state.newTag);
+    this.setState({ newTag: '' });
+  };
+
+  handleDateChange = (value, dateString) => {
+    this.setState({ startDateMoment: value, startDate: dateString });
   };
 
   showDrawer = (action, task) => {
@@ -110,7 +120,8 @@ class TasksForm extends Component {
       taskId: task._id,
       name: task.name,
       startDate: task.startDate,
-      description: task.description,
+      startDateMoment: moment(task.startDate),
+      tagType: task.type ? task.type._id : '',
     });
   };
 
@@ -120,7 +131,8 @@ class TasksForm extends Component {
       visible: true,
       name: '',
       startDate: '',
-      description: '',
+      startDateMoment: moment(),
+      tagType: '',
     });
   };
 
@@ -165,7 +177,7 @@ class TasksForm extends Component {
                     rules={[
                       {
                         required: true,
-                        message: 'Please enter task',
+                        message: 'Please enter a task',
                       },
                     ]}
                   >
@@ -179,7 +191,7 @@ class TasksForm extends Component {
                 </Col>
               </Row>
               <Row gutter={16}>
-                <Col span={24}>
+                <Col span={8}>
                   <Form.Item
                     id="startDate"
                     label="Date"
@@ -190,42 +202,69 @@ class TasksForm extends Component {
                       },
                     ]}
                   >
-                    <Input
-                      onChange={this.handleInputChange}
-                      placeholder="Ex. 11/11/11"
-                      value={this.state.startDate}
-                      //{this.formatDateString()}
-                      name="startDate"
+                    <DatePicker
+                      onChange={this.handleDateChange}
+                      showTime={{ format: 'HH:mm' }}
+                      format="YYYY-MM-DD HH:mm"
+                      value={this.state.startDateMoment}
                     />
                   </Form.Item>
                 </Col>
-              </Row>
-              <Row gutter={16}>
-                <Col span={24}>
-
-                  {/* <Form.Item
-                    id="description"
+                <Col span={16}>
+                  <Form.Item
+                    id="tags"
                     label="Tags"
                     rules={[
                       {
                         required: true,
-                        message: 'Please enter the appropriate tags',
+                        message: 'Please select a tag',
                       },
                     ]}
                   >
                     <Select
                       onSelect={this.handleDropdownChange}
-                      placeholder="Ex. School"
-                      value={this.state.description}
-                      name="description"
+                      placeholder="Select a tag."
+                      value={this.state.tagType}
+                      name="tags"
+                      dropdownRender={(menu) => (
+                        <div>
+                          {menu}
+                          <Divider style={{ margin: '4px 0' }} />
+                          <div
+                            style={{
+                              display: 'flex',
+                              flexWrap: 'nowrap',
+                              padding: 8,
+                            }}
+                          >
+                            <Input
+                              style={{ flex: 'auto' }}
+                              name="newTag"
+                              onChange={this.handleInputChange}
+                              value={this.state.newTag}
+                            />
+                            <Button
+                              type="link"
+                              style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                              }}
+                              onClick={this.handleCreateTag}
+                            >
+                              <PlusOutlined /> Add item
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                     >
-                      <Option value="School">School</Option>
-                      <Option value="Appointments">Appointments</Option>
-                      <Option value="Medication">Medication</Option>
-                      <Option value="Exercise">Exercise</Option>
-                      <Option value="Other">Other</Option>
+                      {this.props.tags.map((tag) => (
+                        <Option key={tag._id} value={tag._id}>
+                          {tag.type}
+                        </Option>
+                      ))}
                     </Select>
-                  </Form.Item> */}
+                  </Form.Item>
                 </Col>
               </Row>
             </Form>
