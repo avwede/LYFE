@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { Table, Button, Tag, Space, Tooltip } from 'antd';
-import { DeleteOutlined, EditOutlined, CarryOutOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  CarryOutOutlined,
+} from '@ant-design/icons';
 import TasksForm from './TasksForm';
 import TagForm from './TagForm';
 import { retrieveToken } from '../tokenStorage';
@@ -21,6 +25,14 @@ class TasksTable extends Component {
     this.tasksForm = React.createRef();
   }
 
+  formatDateString = () => {
+    const dateCheck = new Date(this.state.health.dateOfBirth);
+
+    return `${
+      dateCheck.getMonth() + 1
+    }/${dateCheck.getDate()}/${dateCheck.getFullYear()}`;
+  };
+
   componentDidMount() {
     this.getTasks();
     this.getTags();
@@ -35,7 +47,7 @@ class TasksTable extends Component {
         },
       })
       .then((res) => {
-        this.setState({ tasks: res.data, prettyDate: res.data.startDate});
+        this.setState({ tasks: res.data });
       })
       .catch(function (error) {
         console.log(error);
