@@ -138,7 +138,11 @@ router.put('/', authenticateJWT, async (req, res) => {
   const user = await User.findById(userId);
 
   if (user) {
-    const updatedHealth = partialUpdate(user.health, updatedFields);
+    let updatedHealth = {};
+
+    if (user.health)
+      updatedHealth = partialUpdate(user.health, updatedFields);
+
     user.save()
       .then(() => {
         sendResponse(res, 200, updatedHealth);

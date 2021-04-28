@@ -7,7 +7,7 @@ const randomBytes = require('randombytes');
 const emergencyContactSchema = require('./EmergencyContact.embeddedModel');
 const healthSchema = require('./Health.embeddedModel');
 const reminderSchema = require('./Reminder.embeddedModel');
-const courseSchema = require('./Course');
+const courseSchema = require('./Course.embeddedModel');
 const saltRounds = 12;
 const { JWT_SECRET } = process.env;
 
