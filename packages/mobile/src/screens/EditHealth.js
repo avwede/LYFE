@@ -1066,7 +1066,7 @@ const EditHealth = ({navigation}) => {
                     <KeyboardAvoidingView>
                     <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style= {{flex:5, backgroundColor:'white', borderRadius:15}}>
                         <List.Accordion
-                        title="Additonal Information">
+                        title="Additional Information">
                         
                             <ListItem bottomDivider>
                                 <ListItem.Content style={{flex:1}}>

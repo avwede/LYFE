@@ -21,10 +21,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-/* Suppressing an unnecessary warning from datetimepicker
-// Minor error in 3rd party dependency, does not affect functionality
-LogBox.ignoreLogs(['Warning: Possible Unhandled Promise Rejection']);
-*/
+// Keep warnings confined to the console view, not visible to user.
+// All warnings which affected functionality have been resolved.
+LogBox.ignoreAllLogs();
 
 export default function App() {  
   //const [initialState, toggleInitialState] = useState(true);

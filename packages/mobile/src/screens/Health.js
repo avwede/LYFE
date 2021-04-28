@@ -514,7 +514,7 @@ msg += `Additional Info: ${additionalInformation}
                     <KeyboardAvoidingView>
                     <LinearGradient colors={['#ACC1FF', '#9CECFF', '#DBF3FA']} style= {{flex:5, backgroundColor:'white', borderRadius:15}}>
                         <List.Accordion
-                        title="Additonal Information">
+                        title="Additional Information">
                             <ListItem bottomDivider>
                                 <ListItem.Content style={{flex:1}}>
                                     <View style={{flex:1, justifyContent:'center', borderRadius:15}}>
