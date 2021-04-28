@@ -24,7 +24,7 @@ const medicationSchema = require('./Medication.embeddedModel');
  *          summary: The weight in lbs.
  *        gender:
  *          type: string,
- *          enum: [Male, Female, Prefer not to say]
+ *          enum: [Male, Female, Non-Binary, Prefer not to say]
  *          example: Male
  *        bloodType:
  *          type:  string,
@@ -61,7 +61,7 @@ const healthSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    enum: ['Male', 'Female', 'Prefer not to say'],
+    enum: ['Male', 'Female', 'Non-Binary', 'Prefer not to say'],
   },
   bloodType: {
     type: String,
