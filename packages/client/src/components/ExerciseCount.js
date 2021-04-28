@@ -76,8 +76,8 @@ class ExerciseCount extends React.Component {
   render() {
     return (
       <>
-        <h5 style={{paddingTop: '101px'}}>Daily Exercise Tracker</h5>
-        <Progress strokeColor={{'0%': '#ACC1FF', '100%': '#9CECFF',}} type="circle" percent={this.state.exercise} format={percent => `${percent/3.333333333333333333333333} Mins`}/>
+        <h4 style={{paddingTop: '50px'}}>Daily Exercise Tracker</h4>
+        <Progress strokeColor={{'0%': '#ACC1FF', '100%': '#9CECFF',}} type="circle" percent={this.state.exercise} format={percent => `${percent/3.333333333333333333333333} Mins`} style={{paddingBottom: '28px'}} />
         
         <Button.Group style={{margin: 30}}>
           <Button onClick={this.decline} icon={<MinusOutlined />} />

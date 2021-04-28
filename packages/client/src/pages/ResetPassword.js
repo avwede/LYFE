@@ -64,7 +64,7 @@ function ResetPassword () {
                     </div>
     
                     <button type="submit" onClick = {resetPass} className="btn btn-dark btn-lg btn-block" style={{marginBottom: '20px'}}>Reset Password</button>
-                    <span id="resetResult" style={{color: 'red', fontWeight: 'bold'}}>{message}</span>
+                    <span id="resetResult" style={{color: 'black', fontWeight: 'bold'}}>{message}</span>
 
 
 					<h3>

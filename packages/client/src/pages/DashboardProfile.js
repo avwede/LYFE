@@ -21,19 +21,6 @@ const layout = {
     },
   };
   
-const validateMessages = {
-    required: '${label} is required!',
-    types: {
-      email: '${label} is not a valid email!',
-      number: '${label} is not a valid number!',
-    },
-    number: {
-      range: '${label} must be between ${min} and ${max}',
-    },
-  };
-
-
-
 class DashboardProfile extends React.Component {
     constructor(props) {
       super(props);
@@ -74,12 +61,19 @@ class DashboardProfile extends React.Component {
                         
                         <Card title="Profile" bordered={false}>
                             <Row gutter={[16, 16]}>
-                                <Col span={4}>
-                                    <img className="Header" src={profilePic} style={{margin: '50px', width: '322px', height: '216px'}} alt="Logo" />
+                                <Col span={12}>
+                                    <img className="Header" src={profilePic} style={{margin: '50px', width: '604px', height: '392px'}} alt="Logo" />
                                 </Col>
-                                
-                                <Col span={20}>
-                                    <Form {...layout} name="nest-messages" validateMessages={validateMessages} style={{paddingTop:'85px'}}>
+                                <Col span={12} >
+
+                                <h3 style={{fontWeight: 'bold', paddingTop:'160px'}}> First Name: {this.state.firstName}</h3>
+                                <h3 style={{fontWeight: 'bold'}}> Last Name: {this.state.lastName}</h3>
+                                <h3 style={{fontWeight: 'bold'}}> Email: {this.state.email}</h3>
+                                <Button type="primary">
+                                  <a href="/Home">Logout</a>
+                                </Button>
+
+                                    {/* <Form {...layout} name="nest-messages" style={{paddingTop:'85px'}}>
                                         <Form.Item
                                             name={['user', 'firstName']}
                                             label="First Name"
@@ -104,11 +98,9 @@ class DashboardProfile extends React.Component {
                                             <Input name="email" value={this.state.email}/>
                                         </Form.Item>
                                         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }} style={{paddingBottom:'85px'}}>
-                                            <Button type="primary">
-                                              <a href="/Home">Logout</a>
-                                            </Button>
+                                            
                                         </Form.Item>
-                                    </Form>
+                                    </Form> */}
                                 </Col>
                             </Row>
                             

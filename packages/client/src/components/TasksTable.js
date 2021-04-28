@@ -69,39 +69,39 @@ class TasksTable extends React.Component {
       dataIndex: 'startDate',
 
     },
-    {
-      title: 'Tags',
-      key: 'description', 
-      dataIndex: 'description',
-      render: (text, description) => (
-        <>
-          {this.state.tasks.map((tag) => {
-            let color = 'gray';
+    // {
+    //   title: 'Tags',
+    //   key: 'description', 
+    //   dataIndex: 'description',
+    //   render: (text, description) => (
+    //     <>
+    //       {this.state.tasks.map((tag) => {
+    //         let color = 'gray';
             
-            if (tag.description === 'School') {
-              color = 'geekblue';
-            }
-            else if (tag.description == 'Appointments'){
-              color = 'green';
-            }
-            else if (tag.description == 'Medication'){
-              color = 'volcano';
-            }
-            else if (tag.description == 'Exercise'){
-              color = 'purple';
-            }
-            else if (tag.description == 'Other'){
-              color = 'magenta';
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {tag.description.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      ),
-    },
+    //         if (tag.description === 'School') {
+    //           color = 'geekblue';
+    //         }
+    //         else if (tag.description == 'Appointments'){
+    //           color = 'green';
+    //         }
+    //         else if (tag.description == 'Medication'){
+    //           color = 'volcano';
+    //         }
+    //         else if (tag.description == 'Exercise'){
+    //           color = 'purple';
+    //         }
+    //         else if (tag.description == 'Other'){
+    //           color = 'magenta';
+    //         }
+    //         return (
+    //           <Tag color={color} key={tag}>
+    //             {tag.description.toUpperCase()}
+    //           </Tag>
+    //         );
+    //       })}
+    //     </>
+    //   ),
+    // },
     {
       title: '',
       render: (text, record) => (
