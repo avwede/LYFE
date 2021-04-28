@@ -73,17 +73,10 @@ export default function App() {
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}>
-<<<<<<< HEAD
-        <Tab.Screen name="Dashboard" component={Dashboard}  />
-        <Tab.Screen name="Reminders" component={Reminders}  />
-        <Tab.Screen name="Health" component={EditHealth} />
-        <Tab.Screen name="School" component={Classes} />
-=======
         <Tab.Screen name="Dashboard" component={DashboardStackScreen}  />
         <Tab.Screen name="Reminders" component={ReminderStackScreen}  />
         <Tab.Screen name="Health" component={HealthStackScreen} />
         <Tab.Screen name="School" component={ClassesStackScreen} />
->>>>>>> 983c59e6e3e0f0d4db20752f4553175ae280e1dd
         <Tab.Screen name="Profile" >
           {props => <Profile {...props} updateLoggedIn={loggedInCheck} />}
         </Tab.Screen>
