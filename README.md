@@ -13,6 +13,13 @@ Try it out at [lyfe.studio](http://lyfe.studio)!
 * [Prathik Ramesh](https://github.com/prathik2001) - Mobile App   
 
 ## Description
+MERN Stack - MongoDB, Express, React, Node.js
+Web App - Ant Design, Postman, SwaggerHub, Axios
+Mobile App - React Native, Postman
+Backend - Heroku, NoSQL, Name.com
+Security - JSON Web Tokens, SendGrid
+Team Communication - Discord, Jira, When2Meet
+Version Control - GitHub, Git, VSCode Live Share
 
 ## Features
 
