@@ -1,6 +1,6 @@
 # LYFE
 An all in one life manager.
-Try it out at http://lyfe.studio!
+Try it out at [lyfe.studio](http://lyfe.studio)!
 
 ## Meet the Team! 
 ##### Processes for Object Oriented Software Development COP 4331 - Group 11   
